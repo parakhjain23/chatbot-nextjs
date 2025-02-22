@@ -14,5 +14,17 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    require('daisyui'),
+
+  ],
+  daisyui: {
+    themes: [{
+      mytheme: {
+        primary: "#000000",
+        "new-color": "#eff1ae", 
+        "primary-focus": "#570df8",
+      },
+    }, "light", "dark", "cupcake"],
+  },
 } satisfies Config;

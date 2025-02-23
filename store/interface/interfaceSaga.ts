@@ -1,5 +1,5 @@
 import { takeLatest } from "redux-saga/effects";
-import { getInterfaceByIdSaga } from "./interefaceGeneratorFunctions.ts";
+import { getInterfaceByIdSaga } from "./interefaceGeneratorFunctions";
 
 export default function* InterfaceSaga() {
   // yield takeLatest("Interface/getAllInterfaceStart", getAllInterfaceSaga);

@@ -1,11 +1,11 @@
 import { call, put } from "redux-saga/effects";
-import { getInterfaceByIdApi } from "../../api/InterfaceApis/InterfaceApis.ts";
+import { getInterfaceByIdApi } from "../../api/InterfaceApis/InterfaceApis";
 import { errorToast } from "../../components/customToast";
-import actionType from "../../types/utility.ts";
+import actionType from "../../types/utility";
 import {
   getInterfaceDataByIdError,
   getInterfaceDataByIdSuccess,
-} from "./interfaceSlice.ts";
+} from "./interfaceSlice";
 
 export function* getInterfaceByIdSaga(
   action: actionType<{ gridId: string; componentId: string }>

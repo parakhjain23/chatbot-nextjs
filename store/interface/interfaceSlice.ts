@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { initialState, reducers } from "@/store/interface/interfaceReducer";
+import { initialState, reducers } from "./interfaceReducer";
 
 const interfaceSlice = createSlice({
   name: "Interface",

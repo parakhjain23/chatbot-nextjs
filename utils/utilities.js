@@ -1,3 +1,4 @@
+"use client";
 import { Box, Typography } from "@mui/material";
 import { customAlphabet } from "nanoid";
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
@@ -262,7 +263,7 @@ export const getSubdomain = () => {
 };
 
 export const getCurrentEnvironment = () =>
-  process.env.REACT_APP_API_ENVIRONMENT;
+  process.env.NEXT_PUBLIC_API_ENVIRONMENT;
 
 export const setInCookies = (key, value) => {
   const domain = getDomain();
@@ -319,9 +320,10 @@ export const removeCookie = (cookieName) => {
   document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${domain};`;
 };
 
-export const getInfoParamtersFromUrl = () => {
+export const getInfoParametersFromUrl = () => {
   const params = window.location.pathname.slice(1)?.split("/");
   const urlParameters = {};
   if (params[0] === "i") urlParameters.interfaceId = params[1];
+  console.log(urlParameters, 232);
   return urlParameters;
 };

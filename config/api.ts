@@ -127,28 +127,38 @@ export async function getPreviousMessage(
     subThreadId: string | null = threadId,
     limit = 40
 ): Promise<{ previousChats: any; starterQuestion: string[] }> {
-    if (currentController) {
-        currentController.abort();
-    }
-    currentController = new AbortController();
-
     try {
+        if (currentController) {
+            currentController.abort();
+        }
+        currentController = new AbortController();
+
         const response = await axios.get(
             `${URL}/api/v1/config/gethistory-chatbot/${threadId}/${bridgeName}?sub_thread_id=${subThreadId || threadId
             }&pageNo=${pageNo}&limit=${limit}`,
             { signal: currentController.signal }
         );
+
         return {
             previousChats: response?.data?.data || [],
             starterQuestion: response?.data?.starterQuestion || [],
         };
-    } catch (error) {
-        if (error.name === "AbortError") {
-            console.log("Request aborted:", error.message);
-        } else {
-            console.error("Error fetching previous messages:", error);
+    } catch (error: any) {
+        if (axios.isCancel(error)) {
+            // Handle canceled request
+            console.log("Request canceled:", error.message);
+            return {
+                previousChats: [],
+                starterQuestion: []
+            };
         }
-        return [];
+        console.error("Error fetching previous messages:", error);
+        return {
+            previousChats: [],
+            starterQuestion: []
+        };
+    } finally {
+        currentController = null;
     }
 }
 

@@ -1,4 +1,4 @@
-export function isColorLight(color) {
+export default function isColorLight(color) {
   // Create an offscreen canvas for measuring the color brightness
   const canvas = document.createElement("canvas");
   canvas.width = 1;

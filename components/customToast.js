@@ -1,3 +1,4 @@
+"use client";
 import { createRoot } from "react-dom/client";
 import Snackbar from "@mui/material/Snackbar";
 import { Alert, AlertTitle, IconButton } from "@mui/material";

@@ -1,5 +1,5 @@
 import { SliceCaseReducers, ValidateSliceCaseReducers } from "@reduxjs/toolkit";
-import { $HelloReduxType } from "../../types/hello/HelloReduxType.ts";
+import { $HelloReduxType } from "../../types/hello/HelloReduxType";
 
 export const initialState: $HelloReduxType = {
   isHuman: false,

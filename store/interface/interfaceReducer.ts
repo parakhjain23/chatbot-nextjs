@@ -4,8 +4,8 @@ import { SliceCaseReducers, ValidateSliceCaseReducers } from "@reduxjs/toolkit";
 import {
   $InterfaceReduxType,
   InterFaceDataType,
-} from "../../types/interface/InterfaceReduxType.ts";
-import actionType from "../../types/utility.ts";
+} from "../../types/interface/InterfaceReduxType";
+import actionType from "../../types/utility";
 
 const sampleInterfaceData: any = {
   interfaceContext: {},
@@ -40,6 +40,7 @@ export const reducers: ValidateSliceCaseReducers<
 > = {
   getInterfaceDataByIdStart(state, action: actionType<string>) {
     const { interfaceId } = action?.urlData;
+    console.log(interfaceId, "bystart");
     if (!state.interfaceData?.[interfaceId]) {
       state.interfaceData = {
         [interfaceId]: { ...sampleInterfaceData, isLoading: true },

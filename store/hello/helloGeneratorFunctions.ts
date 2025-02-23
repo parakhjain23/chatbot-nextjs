@@ -1,9 +1,9 @@
 import { PayloadAction } from "@reduxjs/toolkit";
 import { SagaIterator } from "redux-saga";
 import { call, put } from "redux-saga/effects";
-import { getHelloDetailsApi } from "../../api/InterfaceApis/InterfaceApis.ts";
+import { getHelloDetailsApi } from "../../api/InterfaceApis/InterfaceApis";
 import { errorToast } from "../../components/customToast";
-import { getHelloDetailsSuccess } from "./helloSlice.ts";
+import { getHelloDetailsSuccess } from "./helloSlice";
 
 export function* getHelloDetailsSaga(
   action: PayloadAction<{

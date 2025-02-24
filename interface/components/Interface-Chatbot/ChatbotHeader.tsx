@@ -141,14 +141,14 @@ function ChatbotHeader({ setLoading, setChatsLoading }) {
         )}
       </div>
 
-      {/* {chatbotSubtitle && ( */}
-      <p
-        className="font-normal mt-1 italic text-center"
-        style={{ color: textColor }}
-      >
-        {chatbotSubtitle || "Do you have any questions? Ask us!"}
-      </p>
-      {/* )} */}
+      {chatbotSubtitle && (
+        <p
+          className="font-normal mt-1 italic text-center"
+          style={{ color: textColor }}
+        >
+          {chatbotSubtitle || "Do you have any questions? Ask us!"}
+        </p>
+      )}
 
       <ChatbotDrawer
         open={open}
@@ -193,7 +193,7 @@ const ResetChatOption = React.memo(
   addUrlDataHoc(
     ({
       textColor,
-      setChatsLoading = () => {},
+      setChatsLoading = () => { },
       preview = false,
       interfaceId,
     }) => {

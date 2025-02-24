@@ -21,7 +21,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const [themeColor, setThemeColor] = useState("#000000");
+  const [themeColor, setThemeColor] = useState("#333333");
   const [chatbotConfig, setChatbotConfig] = useState({});
   const theme = generateTheme(themeColor);
 

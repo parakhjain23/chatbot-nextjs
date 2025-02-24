@@ -105,7 +105,7 @@ function ChatbotDrawer({
                       }
                     : {
                         backgroundColor: "transparent",
-                        color: "black",
+                        color: textColor,
                       }),
                 }}
                 onClick={() => handleChangeSubThread(thread?.sub_thread_id)}
@@ -129,10 +129,10 @@ function ChatbotDrawer({
       className={`fixed top-0 left-0 w-[280px] h-full shadow-lg transform transition-transform z-50 ${
         open ? "translate-x-0" : "-translate-x-full"
       }`}
-      style={{ background: lighten(theme.palette.primary.main, 0.5) }}
+      style={{ background: lighten(theme.palette.primary.main, 0.2) }}
     >
       <div className="h-full flex flex-col">
-        <div className="px-4 py-2 flex items-center justify-between">
+        <div className="px-4 py-3 flex items-center justify-between" style={{backgroundColor: theme.palette.primary.main}}>
           <button onClick={toggleDrawer(false)} className="p-1">
             <CloseSidebarIcon color={textColor} />
           </button>

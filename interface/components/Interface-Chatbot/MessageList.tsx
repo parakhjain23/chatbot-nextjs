@@ -1,5 +1,5 @@
 "use client";
-import { Box, LinearProgress, Typography, useTheme } from "@mui/material";
+import { Box, lighten, LinearProgress, Typography, useTheme } from "@mui/material";
 import React, {
   useCallback,
   useContext,
@@ -174,7 +174,7 @@ function MessageList() {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowGif(true);
-    }, 4000);
+    }, 0);
     return () => clearTimeout(timer);
   }, []);
 
@@ -195,9 +195,9 @@ function MessageList() {
             <div
               key={index}
               onClick={() => addMessage(question)}
-              className={`cursor-pointer mb-1 p-2 rounded-md  border-[0.5px] border-[${theme.palette.primary.main}]`}
+              className={`cursor-pointer mb-1 p-2 rounded-md  border-[0.5px] border-black`}
             >
-              <p className="text-[${theme.palette.primary.main}] text-base">
+              <p className="text-base">
                 {question}
               </p>
             </div>
@@ -209,9 +209,8 @@ function MessageList() {
     <div className="flex justify-center h-full">
       <div
         id="scrollableDiv"
-        className={` h-full overflow-y-auto flex w-full max-w-[900px] ${
-          isInverse ? "flex-col" : "flex-col-reverse"
-        } p-2`}
+        className={` h-full overflow-y-auto flex w-full max-w-[900px] ${isInverse ? "flex-col" : "flex-col-reverse"
+          } p-2`}
         ref={containerRef}
         onScroll={handleScroll}
       >

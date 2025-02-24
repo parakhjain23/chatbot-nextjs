@@ -611,47 +611,21 @@ function InterfaceChatbot({
       }}
     >
       <FormComponent open={open} setOpen={setOpen} />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          height: "100vh",
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
-        <ChatbotHeader
-          setLoading={setLoading}
-          setChatsLoading={setChatsLoading}
-        />
-        <ChatbotHeaderTab />
-        {chatsLoading && (
-          <LinearProgress
-            variant="indeterminate"
-            color="secondary"
-            sx={{ height: 4 }}
+      <div className="flex flex-col w-full h-svh overflow-hidden relative items-center">
+        <div className="w-full">
+          <ChatbotHeader
+            setLoading={setLoading}
+            setChatsLoading={setChatsLoading}
           />
-        )}
-        <Grid
-          item
-          xs
-          className="second-grid"
-          sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
-        >
+          <ChatbotHeaderTab />
+        </div>
+
+        {/* <div className="flex flex-col h-full w-full items-center"> */}
+        <div className="h-full w-full  overflow-y-auto">
           <MessageList />
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          className="third-grid"
-          sx={{
-            paddingX: theme.spacing(3),
-            display: "flex",
-            alignItems: "end",
-            marginBottom: theme.spacing(2),
-          }}
-        >
+        </div>
+
+        <div className="px-2 w-full ">
           <ChatbotTextField
             loading={loading}
             options={options}
@@ -663,8 +637,9 @@ function InterfaceChatbot({
             setImages={setImages}
             images={images}
           />
-        </Grid>
-      </Box>
+        </div>
+      </div>
+      {/* </div> */}
     </MessageContext.Provider>
   );
 }

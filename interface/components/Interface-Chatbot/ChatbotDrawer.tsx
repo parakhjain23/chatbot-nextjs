@@ -1,20 +1,6 @@
 "use client";
 import CreateIcon from "@mui/icons-material/Create";
-import {
-  Box,
-  Divider,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Tooltip,
-  Typography,
-  useTheme,
-  Paper,
-  IconButton,
-  Stack,
-} from "@mui/material";
+import { useTheme } from "@mui/material";
 import { lighten } from "@mui/system";
 import React from "react";
 import { useDispatch } from "react-redux";
@@ -42,9 +28,16 @@ interface ChatbotDrawerProps {
   interfaceId: string;
 }
 
-function ChatbotDrawer({ setLoading, open, toggleDrawer, interfaceId }: ChatbotDrawerProps) {
+function ChatbotDrawer({
+  setLoading,
+  open,
+  toggleDrawer,
+  interfaceId,
+}: ChatbotDrawerProps) {
   const theme = useTheme();
-  const isLightBackground = theme?.palette?.primary?.main ? isColorLight(theme.palette.primary.main) : false;
+  const isLightBackground = theme?.palette?.primary?.main
+    ? isColorLight(theme.palette.primary.main)
+    : false;
   const textColor = isLightBackground ? "black" : "white";
   const dispatch = useDispatch();
   const { reduxThreadId, subThreadList, reduxSubThreadId, reduxBridgeName } =
@@ -91,89 +84,73 @@ function ChatbotDrawer({ setLoading, open, toggleDrawer, interfaceId }: ChatbotD
   };
 
   const DrawerList = (
-    <Paper elevation={0} sx={{ width: 280, bgcolor: 'transparent' }}>
+    <div className="bg-transparent">
       {(subThreadList || []).length === 0 ? (
-        <Box display="flex" justifyContent="center" alignItems="center" height="100%" minHeight={200}>
-          <Typography variant="subtitle1" color="text.secondary">
+        <div className="flex justify-center items-center h-full min-h-[200px] p-5">
+          <p className=" text-lg" style={{ color: textColor }}>
             No Threads Available
-          </Typography>
-        </Box>
+          </p>
+        </div>
       ) : (
-        <List disablePadding>
+        <ul className="p-0">
           {subThreadList.map((thread: any, index: number) => (
-            <ListItem
-              key={thread?._id || index}
-              disablePadding
-              sx={{ mb: 0.5 }}
-            >
-              <ListItemButton
-                selected={thread?.sub_thread_id === selectedSubThreadId}
-                onClick={() => handleChangeSubThread(thread?.sub_thread_id)}
-                sx={{
-                  borderRadius: 1,
-                  '&.Mui-selected': {
-                    backgroundColor: 'primary.main',
-                    color: 'primary.contrastText',
-                    '&:hover': {
-                      backgroundColor: 'primary.dark',
-                    }
-                  },
-                  '&:hover': {
-                    backgroundColor: theme.palette.action.hover,
-                  }
+            <li key={thread?._id || index} className="mb-1">
+              <button
+                className="w-full rounded-md p-2 text-left transition-colors"
+                style={{
+                  ...(thread?.sub_thread_id === selectedSubThreadId
+                    ? {
+                        backgroundColor: theme.palette.primary.main,
+                        color: textColor,
+                      }
+                    : {
+                        backgroundColor: "transparent",
+                        color: "black",
+                      }),
                 }}
+                onClick={() => handleChangeSubThread(thread?.sub_thread_id)}
               >
-                <ListItemText
-                  primary={
-                    <Tooltip title={thread?.display_name || thread?.sub_thread_id} placement="top">
-                      <Typography variant="body2" noWrap>
-                        {thread?.display_name || thread?.sub_thread_id}
-                      </Typography>
-                    </Tooltip>
-                  }
-                  sx={{ color: 'inherit' }}
-                />
-              </ListItemButton>
-            </ListItem>
+                <span
+                  className="truncate block"
+                  title={thread?.display_name || thread?.sub_thread_id}
+                >
+                  {thread?.display_name || thread?.sub_thread_id}
+                </span>
+              </button>
+            </li>
           ))}
-        </List>
+        </ul>
       )}
-    </Paper>
+    </div>
   );
 
   return (
-    <Drawer
-      open={open}
-      onClose={toggleDrawer(false)}
-      PaperProps={{
-        sx: {
-          width: 280,
-          bgcolor: theme?.palette?.primary?.main ? lighten(theme.palette.primary.main, 0.2) : '#fff',
-        }
-      }}
+    <div
+      className={`fixed top-0 left-0 w-[280px] h-full shadow-lg transform transition-transform z-50 ${
+        open ? "translate-x-0" : "-translate-x-full"
+      }`}
+      style={{ background: lighten(theme.palette.primary.main, 0.5) }}
     >
-      <Stack height="100%">
-        <Box px={2} py={1.5} display="flex" alignItems="center" justifyContent="space-between">
-          <IconButton onClick={toggleDrawer(false)} size="small">
+      <div className="h-full flex flex-col">
+        <div className="px-4 py-2 flex items-center justify-between">
+          <button onClick={toggleDrawer(false)} className="p-1">
             <CloseSidebarIcon color={textColor} />
-          </IconButton>
-          <Typography variant="h6" fontWeight="medium" color={textColor}>
+          </button>
+          <p className="text-lg font-bold" style={{ color: textColor }}>
             Chat History
-          </Typography>
-          <IconButton
+          </p>
+          <button
             onClick={handleCreateNewSubThread}
-            size="small"
-            sx={{ color: textColor }}
+            className="p-1"
+            style={{ color: textColor }}
           >
-            <CreateIcon fontSize="small" />
-          </IconButton>
-        </Box>
-        <Divider sx={{ borderColor: 'divider' }} />
-        <Box flex={1} overflow="auto" p={2}>
-          {DrawerList}
-        </Box>
-      </Stack>
-    </Drawer>
+            <CreateIcon className="text-sm" />
+          </button>
+        </div>
+        <hr className="border-t border-gray-300" />
+        <div className="flex-1 p-1">{DrawerList}</div>
+      </div>
+    </div>
   );
 }
 

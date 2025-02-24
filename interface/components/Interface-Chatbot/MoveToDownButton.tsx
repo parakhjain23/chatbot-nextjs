@@ -13,6 +13,7 @@ function MoveToDownButton({ movetoDown, showScrollButton }: any) {
         color: "white",
         position: "fixed",
         bottom: "20px",
+        zIndex: "10",
         right: "20px",
       }}
       disableRipple

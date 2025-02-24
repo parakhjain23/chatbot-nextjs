@@ -16,110 +16,60 @@ import {
   Tooltip,
   Typography,
   useTheme,
+  keyframes,
 } from "@mui/material";
 import copy from "copy-to-clipboard";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { AiIcon, UserAssistant } from "../../../public/assestsIndex";
+import { UserAssistant } from "../../../public/assestsIndex";
 import isColorLight from "../../../utils/themeUtility.js";
 import { isJSONString } from "../../utils/InterfaceUtils";
 import InterfaceGrid from "../Grid/Grid";
 import { Anchor, Code } from "./Interface-Markdown/MarkdownUtitily";
 import Image from "next/image";
+import { AiIcon } from "@/assests/assestsIndex";
 
 const ResetHistoryLine = ({ text = "" }) => {
   return (
-    <Divider className="mb-2">
-      <Chip
-        label={text || "History cleared"}
-        size="small"
-        color={!text ? "error" : "success"}
-      />
-    </Divider>
+    <div className=" flex items-center justify-center w-full  border-gray-300 my-2">
+      <div className="h-1 border-2 border-black w-full"></div>
+      <span
+        className={`px-2 py-1 text-lg font-medium rounded-full text-nowrap ${
+          text ? "bg-green-500 text-white" : "bg-red-500 text-white"
+        }`}
+      >
+        {text || "History cleared"}
+      </span>
+      <div className="h-1 border-2 border-black w-full"></div>
+    </div>
   );
 };
 
 const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
   return (
     <>
-      <Stack
-        className="user-message-slide"
-        sx={{
-          alignItems: "flex-end",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          width: "100%",
-          justifyContent: "flex-end",
-          "@media(max-width:479px)": {
-            height: "fit-content",
-            columnGap: "5px",
-          },
-          marginBottom: "10px",
-        }}
-        direction="row"
-      >
+      <div className="flex flex-col items-end gap-2 w-full mb-2">
         {Array.isArray(message?.urls) && message.urls.length > 0 && (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row-reverse",
-              flexWrap: "wrap",
-              gap: "10px",
-              maxWidth: "80%",
-              padding: "10px",
-              boxSizing: "border-box",
-              borderRadius: "10px 10px 1px 10px",
-            }}
-          >
+          <div className="flex flex-row-reverse flex-wrap gap-2 max-w-[80%] p-2 rounded-lg">
             {message.urls.map((url, index) => (
               <Image
                 key={index}
                 src={url}
                 alt={`Image ${index + 1}`}
-                style={{
-                  display: "block",
-                  maxWidth: "40%",
-                  height: "auto",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
+                className="block max-w-[40%] h-auto rounded-md cursor-pointer"
                 onClick={() => window.open(url, "_blank")}
               />
             ))}
-          </Box>
+          </div>
         )}
-        <Box
-          sx={{
-            backgroundColor: theme.palette.primary.main,
-            padding: "10px",
-            boxSizing: "border-box",
-            height: "fit-content",
-            minWidth: "150px",
-            borderRadius: "10px 10px 1px 10px",
-            wordBreak: "break-word",
-            whiteSpace: "normal",
-            overflowWrap: "break-word",
-            maxWidth: "80%",
-            //  boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
-          }}
+        <div
+          className="px-4 py-2 rounded-lg max-w-[80%] sm:max-w-[90%] break-words whitespace-pre-wrap shadow-md"
+          style={{ backgroundColor: lighten(theme.palette.primary.main, 0.8) }}
         >
-          <Typography
-            variant="body1"
-            sx={{
-              // fontFamily: "var(--theme-font-family)",
-              color: textColor,
-              whiteSpace: "pre-wrap",
-              // fontSize: "15px",
-              // "@media(max-width:991px)": { fontSize: "14px" },
-              // "@media(max-width:479px)": { fontSize: "12px" },
-            }}
-          >
-            {message?.content}
-          </Typography>
-        </Box>
-      </Stack>
+          <p className={`font-medium text-lg`}>{message?.content}</p>
+        </div>
+      </div>
       {message?.is_reset && <ResetHistoryLine />}
     </>
   );
@@ -145,290 +95,150 @@ const AssistantMessageCard = React.memo(
     const themePalette = {
       "--primary-main": lighten(theme.palette.secondary.main, 0.4),
     };
+    const dotPulse = keyframes`
+    0% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.2); }
+    100% { opacity: 0.3; transform: scale(1); }
+  `;
 
     return (
-      <Box className="assistant_message_card">
-        <Stack
-          className="assistant-message-slide"
-          sx={{
-            alignItems: "flex-end",
-            gap: "10px",
-            maxWidth: "90%",
-            "@media(max-width:479px)": {
-              height: "fit-content",
-              columnGap: "5px",
-            },
-            marginBottom: "10px",
-          }}
-          direction="row"
-        >
-          <Stack
-            sx={{
-              alignItems: "center",
-              width: "30px",
-              justifyContent: "flex-end",
-              "@media(max-width:479px)": { width: "30px" },
-            }}
-            spacing="5px"
-          >
-            <Image
-              src={AiIcon}
-              width="28"
-              height="28"
-              alt="AI"
-              style={{ color: "red" }}
-            />
-          </Stack>
-          {message?.wait && (
-            <div className="w-100">
-              <Typography variant="subtitle2">{message?.content}</Typography>
-              <div className="loading-indicator" style={themePalette}>
-                <div className="loading-bar"></div>
-                <div className="loading-bar"></div>
-                <div className="loading-bar"></div>
-              </div>
+      <div className="assistant_message_card my-4">
+        <div className="flex flex-row items-end gap-2 max-w-[90%] mb-2 md:gap-4">
+          <Image
+            src={AiIcon}
+            width={24}
+            height={24}
+            alt="AI"
+            // className="w-20 h-20 object-contain"
+          />
+
+          {message?.wait ? (
+            <div className="flex items-center gap-1 pl-1">
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="w-[20px] h-[20px] rounded-full animate-pulse"
+                  style={{
+                    animationDelay: `${i * 0.2}s`,
+                    backgroundColor: theme.palette.primary.main,
+                  }}
+                ></div>
+              ))}
             </div>
-          )}
-          {!message?.wait && (
-            <Box
-              className="assistant-message-slide"
-              sx={{
-                backgroundColor: theme.palette.background.default,
-                padding: "2px 10px",
-                boxSizing: "border-box",
-                height: "fit-content",
-                minWidth: "150px",
-                borderRadius: "10px 10px 10px 1px",
-                boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
-                wordBreak: "break-word",
-                overflowWrap: "break-word",
-                maxWidth: "100%",
-                color: "black",
-                whiteSpace: "pre-wrap",
-              }}
-            >
+          ) : (
+            <div className="p-2 min-w-[150px] rounded-lg break-words max-w-full text-lg shadow-sm text-black whitespace-pre-wrap">
               {message?.timeOut ? (
-                <Box className="flex-start-center w-100 gap-5 p-1">
-                  <Typography variant="body1">
-                    Timeout reached. Please try again later.
-                  </Typography>
-                </Box>
+                <div className="flex items-start w-full gap-2 p-1">
+                  <p>Timeout reached. Please try again later.</p>
+                </div>
               ) : message.image_url ? (
-                <Box className="assistant-message-slide">
+                <div className="assistant-message-slide">
                   <div>
                     <Image
                       src={message.image_url}
                       alt="Message Image"
-                      style={{
-                        maxWidth: "100%",
-                        minWidth: "150px",
-                        maxHeight: "400px",
-                        minHeight: "100px",
-                        borderRadius: "10px",
-                      }}
+                      className="max-w-full min-w-[150px] max-h-[400px] min-h-[100px] rounded-lg"
                     />
                     <Button
                       href={message.image_url}
                       target="_blank"
                       download
                       variant="text"
-                      sx={{
-                        display: "block",
-                        textAlign: "center",
-                        color: theme.palette.primary.main,
-                        textDecoration: "none",
-                      }}
+                      className="block text-center"
+                      style={{ color: theme.palette.primary.main }}
                     >
                       Full screen image
                     </Button>
                   </div>
-                </Box>
+                </div>
               ) : (
-                <Box className="assistant-message-slide">
-                  {(() => {
-                    const parsedContent = isJSONString(
-                      isError
-                        ? message?.error
-                        : message?.chatbot_message || message?.content
-                    )
-                      ? JSON.parse(
-                          isError
-                            ? message.error
-                            : message?.chatbot_message || message?.content
+                <div className="assistant-message-slide">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {message?.chatbot_message || message?.content}
+                  </ReactMarkdown>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+        {!message?.wait && !message?.timeOut && !message?.error && (
+          <div className="flex flex-row ml-12 gap-2">
+            <Tooltip title="Copy">
+              {!isCopied ? (
+                <ContentCopyIcon
+                  fontSize="small"
+                  className="cursor-pointer opacity-50"
+                  onClick={handleCopy}
+                />
+              ) : (
+                <FileDownloadDoneIcon
+                  fontSize="small"
+                  className="cursor-pointer text-green-500 opacity-70"
+                />
+              )}
+            </Tooltip>
+            {message?.message_id && (
+              <>
+                <Tooltip title="Good response">
+                  {message?.user_feedback === 1 ? (
+                    <ThumbUpIcon
+                      fontSize="small"
+                      className="cursor-pointer text-green-500 "
+                      onClick={() =>
+                        handleFeedback(
+                          message?.message_id,
+                          1,
+                          message?.user_feedback
                         )
-                      : null;
-                    if (
-                      parsedContent &&
-                      (parsedContent.hasOwnProperty("isMarkdown") ||
-                        parsedContent.hasOwnProperty("response") ||
-                        parsedContent.hasOwnProperty("components"))
-                    ) {
-                      return parsedContent.isMarkdown ||
-                        parsedContent?.response ? (
-                        <>
-                          <ReactMarkdown
-                            remarkPlugins={[remarkGfm]}
-                            components={{
-                              code: Code,
-                              a: Anchor,
-                            }}
-                          >
-                            {parsedContent?.markdown ||
-                              JSON.stringify(parsedContent?.response)}
-                          </ReactMarkdown>
-                          {parsedContent?.options && (
-                            <Box className="flex flex-col gap-1">
-                              {parsedContent.options.map(
-                                (option: any, index: number) => (
-                                  <Button
-                                    key={index}
-                                    className="option-button mr-2 cursor-pointer"
-                                    variant="outlined"
-                                    onClick={() => addMessage(option)}
-                                  >
-                                    {option}
-                                  </Button>
-                                )
-                              )}
-                            </Box>
-                          )}
-                        </>
-                      ) : (
-                        <InterfaceGrid
-                          inpreview={false}
-                          ingrid={false}
-                          gridId={parsedContent?.responseId || "default"}
-                          loadInterface={false}
-                          componentJson={parsedContent}
-                          msgId={message?.createdAt}
-                        />
-                      );
-                    }
-                    return (
-                      <ReactMarkdown
-                        remarkPlugins={[remarkGfm]}
-                        components={{
-                          code: Code,
-                          a: Anchor,
-                        }}
-                      >
-                        {!isError
-                          ? message?.chatbot_message || message?.content
-                          : message.error}
-                      </ReactMarkdown>
-                    );
-                  })()}
-                </Box>
-              )}
-            </Box>
-          )}
-        </Stack>
-        <Box className="flex flex-row">
-          <Box
-            sx={{
-              alignItems: "center",
-              width: "30px",
-              justifyContent: "flex-end",
-              "@media(max-width:479px)": { width: "30px" },
-            }}
-          ></Box>
-          {/* Icon box that will show on hover of the message card */}
-          {!message?.wait && !message?.timeOut && !message?.error && (
-            <Box className="icon-box flex flex-row ml-2 gap-1 hover-and-see">
-              <Tooltip title="Copy">
-                {!isCopied ? (
-                  <ContentCopyIcon
-                    fontSize="inherit"
-                    sx={{ fontSize: "16px" }}
-                    onClick={handleCopy}
-                    className="cursor-pointer"
-                  />
-                ) : (
-                  <FileDownloadDoneIcon
-                    fontSize="inherit"
-                    sx={{ fontSize: "16px" }}
-                    color="success"
-                    className="cursor-pointer"
-                  />
-                )}
-              </Tooltip>
-              {message?.message_id && (
-                <>
-                  <Tooltip title="Good response">
-                    {message?.user_feedback === 1 ? (
-                      <ThumbUpIcon
-                        fontSize="inherit"
-                        sx={{
-                          fontSize: "16px",
-                          color: "green",
-                        }}
-                        onClick={() =>
-                          handleFeedback(
-                            message?.message_id,
-                            1,
-                            message?.user_feedback
-                          )
-                        }
-                        className="cursor-pointer"
-                      />
-                    ) : (
-                      <ThumbUpAltOutlinedIcon
-                        fontSize="inherit"
-                        sx={{
-                          "&:hover": { color: "green" },
-                          fontSize: "16px",
-                          color: "inherit",
-                        }}
-                        onClick={() =>
-                          handleFeedback(
-                            message?.message_id,
-                            1,
-                            message?.user_feedback
-                          )
-                        }
-                        className="cursor-pointer"
-                      />
-                    )}
-                  </Tooltip>
-                  <Tooltip title="Bad response">
-                    {message?.user_feedback === 2 ? (
-                      <ThumbDownIcon
-                        fontSize="inherit"
-                        sx={{
-                          color: "red",
-                          fontSize: "16px",
-                        }}
-                        onClick={() =>
-                          handleFeedback(
-                            message?.message_id,
-                            2,
-                            message?.user_feedback
-                          )
-                        }
-                        className="cursor-pointer"
-                      />
-                    ) : (
-                      <ThumbDownOffAltOutlinedIcon
-                        fontSize="inherit"
-                        sx={{ "&:hover": { color: "red" }, fontSize: "16px" }}
-                        onClick={() =>
-                          handleFeedback(
-                            message?.message_id,
-                            2,
-                            message?.user_feedback
-                          )
-                        }
-                        className="cursor-pointer"
-                      />
-                    )}
-                  </Tooltip>
-                </>
-              )}
-            </Box>
-          )}
-        </Box>
+                      }
+                    />
+                  ) : (
+                    <ThumbUpAltOutlinedIcon
+                      fontSize="small"
+                      className="cursor-pointer text-green-500 opacity-70"
+                      onClick={() =>
+                        handleFeedback(
+                          message?.message_id,
+                          1,
+                          message?.user_feedback
+                        )
+                      }
+                    />
+                  )}
+                </Tooltip>
+                <Tooltip title="Bad response">
+                  {message?.user_feedback === 2 ? (
+                    <ThumbDownIcon
+                      fontSize="small"
+                      className="cursor-pointer text-red-500 "
+                      onClick={() =>
+                        handleFeedback(
+                          message?.message_id,
+                          2,
+                          message?.user_feedback
+                        )
+                      }
+                    />
+                  ) : (
+                    <ThumbDownOffAltOutlinedIcon
+                      fontSize="small"
+                      className="cursor-pointer text-red-500 opacity-70"
+                      onClick={() =>
+                        handleFeedback(
+                          message?.message_id,
+                          2,
+                          message?.user_feedback
+                        )
+                      }
+                    />
+                  )}
+                </Tooltip>
+              </>
+            )}
+          </div>
+        )}
         {message?.is_reset && <ResetHistoryLine />}
-      </Box>
+      </div>
     );
   }
 );
@@ -497,13 +307,12 @@ const HumanOrBotMessageCard = React.memo(
           <Box
             className="assistant-message-slide"
             sx={{
-              backgroundColor: theme.palette.background.default,
-              padding: "2px 10px",
+              backgroundColor: lighten(theme.palette.primary.main, 0.8),
+              padding: "4px 16px",
               boxSizing: "border-box",
               height: "fit-content",
               minWidth: "150px",
-              borderRadius: "10px 10px 10px 1px",
-              boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
+              borderRadius: "0px 8px 8px 8px",
               wordBreak: "break-word",
               overflowWrap: "break-word",
               maxWidth: "100%",

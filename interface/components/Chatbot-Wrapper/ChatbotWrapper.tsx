@@ -13,7 +13,6 @@ import { GetSessionStorageData } from "../../utils/InterfaceUtils";
 import InterfaceChatbot from "../Interface-Chatbot/InterfaceChatbot";
 
 function ChatbotWrapper({ interfaceId, loadInterface = true }) {
-  console.log("interfaceId:", interfaceId);
   const dispatch = useDispatch();
 
   useEffect(() => {

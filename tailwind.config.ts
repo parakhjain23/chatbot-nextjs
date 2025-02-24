@@ -5,6 +5,7 @@ export default {
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
     "./app/**/*.{js,ts,jsx,tsx,mdx}",
+    "./interface/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     extend: {
@@ -14,17 +15,19 @@ export default {
       },
     },
   },
-  plugins: [
-    require('daisyui'),
-
-  ],
+  plugins: [require("daisyui")],
   daisyui: {
-    themes: [{
-      mytheme: {
-        primary: "#000000",
-        "new-color": "#eff1ae", 
-        "primary-focus": "#570df8",
+    themes: [
+      {
+        mytheme: {
+          primary: "#000000",
+          "new-color": "#eff1ae",
+          "primary-focus": "#570df8",
+        },
       },
-    }, "light", "dark", "cupcake"],
+      "light",
+      "dark",
+      "cupcake",
+    ],
   },
 } satisfies Config;

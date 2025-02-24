@@ -40,7 +40,6 @@ export const reducers: ValidateSliceCaseReducers<
 > = {
   getInterfaceDataByIdStart(state, action: actionType<string>) {
     const { interfaceId } = action?.urlData;
-    console.log(interfaceId, "bystart");
     if (!state.interfaceData?.[interfaceId]) {
       state.interfaceData = {
         [interfaceId]: { ...sampleInterfaceData, isLoading: true },

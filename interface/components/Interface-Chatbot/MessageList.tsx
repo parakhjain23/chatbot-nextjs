@@ -1,5 +1,5 @@
 "use client";
-import { Box, LinearProgress, Typography } from "@mui/material";
+import { Box, LinearProgress, Typography, useTheme } from "@mui/material";
 import React, {
   useCallback,
   useContext,
@@ -17,8 +17,12 @@ import { MessageContext } from "./InterfaceChatbot";
 import Message from "./Message";
 import MoveToDownButton from "./MoveToDownButton";
 import Image from "next/image";
+import isColorLight from "@/utils/themeUtility";
 
 function MessageList() {
+  const theme = useTheme();
+  const isLightBackground = isColorLight(theme.palette.primary.main);
+  const textColor = isLightBackground ? "black" : "white";
   const containerRef = useRef<any>(null);
   const {
     fetchMoreData,
@@ -175,102 +179,68 @@ function MessageList() {
   }, []);
 
   return (IsHuman ? helloMessages?.length === 0 : messages?.length === 0) ? (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%",
-      }}
-    >
+    <div className="flex flex-col justify-center items-center h-full">
       <Image
         src={ChatBotGif}
         alt="Chatbot GIF"
-        style={{ display: showIcon ? "block" : "none" }}
+        className={showIcon ? "block" : "hidden"}
       />
-      <Typography
-        variant="h6"
-        color="black"
-        fontWeight="bold"
-        style={{ display: showIcon ? "block" : "none" }}
-      >
+      <p className={`font-bold text-lg ${showIcon ? "block" : "hidden"}`}>
         What can I help with?
-      </Typography>
+      </p>
 
       {starterQuestions?.length > 0 && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            marginTop: 2,
-          }}
-        >
+        <div className="flex flex-col items-center mt-2">
           {starterQuestions?.map((question, index) => (
-            <Box
+            <div
               key={index}
               onClick={() => addMessage(question)}
-              sx={{
-                cursor: "pointer",
-                marginBottom: 1,
-                padding: 1,
-                borderRadius: 2,
-                border: "0.5px solid gray",
-              }}
+              className={`cursor-pointer mb-1 p-2 rounded-md  border-[0.5px] border-[${theme.palette.primary.main}]`}
             >
-              <Typography variant="body1" color="text.primary">
+              <p className="text-[${theme.palette.primary.main}] text-base">
                 {question}
-              </Typography>
-            </Box>
+              </p>
+            </div>
           ))}
-        </Box>
+        </div>
       )}
-    </Box>
+    </div>
   ) : (
-    <Box
-      id="scrollableDiv"
-      sx={{
-        height: "100%",
-        overflowY: "auto",
-        display: "flex",
-        flexDirection: isInverse ? "column" : "column-reverse",
-        padding: 2,
-      }}
-      ref={containerRef}
-      onScroll={handleScroll}
-    >
-      <InfiniteScroll
-        dataLength={messages?.length}
-        next={fetchMoreData}
-        hasMore={hasMoreMessages}
-        inverse
-        loader={
-          currentPage > 1 && (
-            <Box sx={{ display: "flex", justifyContent: "center" }}>
-              <LinearProgress
-                color="secondary"
-                sx={{ height: 4, width: "80%", marginBottom: 2 }}
-              />
-            </Box>
-          )
-        }
-        scrollableTarget="scrollableDiv"
-        style={{
-          display: "flex",
-          // flexDirection: isInverse ? "column" : "column-reverse",
-          flexDirection: "column",
-        }}
-        scrollThreshold="230px"
+    <div className="flex justify-center h-full">
+      <div
+        id="scrollableDiv"
+        className={` h-full overflow-y-auto flex w-full max-w-[900px] ${
+          isInverse ? "flex-col" : "flex-col-reverse"
+        } p-2`}
+        ref={containerRef}
+        onScroll={handleScroll}
       >
-        {RenderMessages}
-      </InfiniteScroll>
+        <InfiniteScroll
+          dataLength={messages?.length}
+          next={fetchMoreData}
+          hasMore={hasMoreMessages}
+          inverse
+          loader={
+            currentPage > 1 && (
+              <div className="flex justify-center">
+                <div className="w-4/5 mb-2 h-1 bg-secondary animate-pulse" />
+              </div>
+            )
+          }
+          scrollableTarget="scrollableDiv"
+          style={{ display: "flex", flexDirection: "column" }}
+          scrollThreshold="230px"
+        >
+          {RenderMessages}
+        </InfiniteScroll>
 
-      <MoveToDownButton
-        movetoDown={movetoDown}
-        showScrollButton={showScrollButton}
-      />
-    </Box>
+        {/* MoveToDownButton inside relative container */}
+        <MoveToDownButton
+          movetoDown={movetoDown}
+          showScrollButton={showScrollButton}
+        />
+      </div>
+    </div>
   );
 }
 export default MessageList;

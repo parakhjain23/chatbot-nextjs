@@ -2,6 +2,7 @@
 import ChatIcon from "@mui/icons-material/Chat";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SyncIcon from "@mui/icons-material/Sync";
+import CreateIcon from "@mui/icons-material/Create";
 import {
   Box,
   Button,
@@ -21,7 +22,10 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import React, { useContext } from "react";
-import { performChatAction } from "../../../api/InterfaceApis/InterfaceApis";
+import {
+  performChatAction,
+  createNewThreadApi,
+} from "../../../api/InterfaceApis/InterfaceApis";
 import { ChatbotContext } from "../../../app/layout";
 import { successToast } from "../../../components/customToast";
 import { ParamsEnums } from "../../../enums";
@@ -32,84 +36,126 @@ import isColorLight from "../../../utils/themeUtility";
 import { GetSessionStorageData } from "../../utils/InterfaceUtils";
 import ChatbotDrawer from "./ChatbotDrawer";
 import OpenSidebarIcon from "../../../public/OpenSidebar";
+import { GridMoreVertIcon } from "@mui/x-data-grid";
+import { useDispatch } from "react-redux";
+import {
+  setThreadId,
+  setThreads,
+} from "../../../store/interface/interfaceSlice";
+import { X } from "lucide-react";
+
+const createRandomId = () => {
+  return Math.random().toString(36).substring(2, 15);
+};
+
+const previewNewThread = () => {
+  console.log("Previewing new thread before creation");
+};
 
 function ChatbotHeader({ setLoading, setChatsLoading }) {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const [open, setOpen] = React.useState(false);
+
   const {
-    chatbotConfig: { chatbotTitle, chatbotSubtitle },
+    chatbotConfig: { chatbotTitle, chatbotSubtitle, hideCloseButton },
+    toggleHideCloseButton,
   } = useContext<any>(ChatbotContext);
+
   const isLightBackground = isColorLight(theme.palette.primary.main);
   const textColor = isLightBackground ? "black" : "white";
+
+  const { reduxThreadId, reduxBridgeName } = useCustomSelector(
+    (state: $ReduxCoreType) => ({
+      reduxThreadId: state.Interface?.threadId || "",
+      reduxBridgeName:
+        GetSessionStorageData("bridgeName") ||
+        state.Interface?.bridgeName ||
+        "root",
+    })
+  );
+
+  const thread_id = GetSessionStorageData("threadId") || reduxThreadId;
+
+  const handleCreateNewSubThread = async () => {
+    previewNewThread();
+    const result = await createNewThreadApi({
+      threadId: thread_id,
+      subThreadId: createRandomId(),
+    });
+    if (result?.success) {
+      dispatch(
+        setThreads({
+          newThreadData: result.thread,
+          bridgeName: GetSessionStorageData("bridgeName") || reduxBridgeName,
+          threadId: thread_id,
+        }) as any
+      );
+      setOpen(false);
+    }
+  };
 
   const toggleDrawer = (newOpen: boolean) => () => {
     setOpen(newOpen);
   };
 
   return (
-    <Grid
-      item
-      xs={12}
-      sx={{
-        paddingX: 3,
-        paddingY: 2,
-        backgroundColor: theme.palette.primary.main,
-        borderRadius: 0,
-        boxShadow: `0 4px 10px rgba(0, 0, 0, 0.1)`,
-      }}
+    <div
+      className="px-4 py-4 shadow-lg"
+      style={{ background: theme.palette.primary.main }}
     >
-      <Box display="flex" flexDirection="column" alignItems="flex-start">
-        <Box display="flex" alignItems="center">
-          <Box
-            color="inherit"
-            sx={{
-              cursor: "pointer",
-              marginRight: 2,
-              transition: "transform 0.3s ease",
-              "&:hover": {
-                transform: "scale(1.1)",
-              },
-            }}
+      <div className="flex items-center justify-between w-full">
+        <div className="flex gap-2">
+          <div
+            className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
             onClick={toggleDrawer(true)}
           >
             <OpenSidebarIcon color={textColor} />
-          </Box>
-          <Typography
-            variant="h6"
-            sx={{
-              color: textColor,
-              fontWeight: 600,
-              fontSize: "1.25rem",
-              textTransform: "uppercase",
-            }}
+          </div>
+          <button
+            onClick={handleCreateNewSubThread}
+            className=""
+            style={{ color: textColor }}
           >
-            {chatbotTitle || "AI Assistant"}
-          </Typography>
-          <ResetChatOption
-            textColor={textColor}
-            setChatsLoading={setChatsLoading}
-          />
-        </Box>
-        {chatbotSubtitle && (
-          <Typography
-            variant="subtitle2"
-            sx={{
-              color: textColor,
-              fontWeight: 400,
-              marginTop: 0.5,
-              fontStyle: "italic",
-            }}
-          >
-            {chatbotSubtitle || "Do you have any questions? Ask us!"}
-          </Typography>
+            <CreateIcon className="text-sm" />
+          </button>
+        </div>
+        <h6
+          className="font-semibold text-xl uppercase flex-grow text-center"
+          style={{ color: textColor }}
+        >
+          {chatbotTitle || "AI Assistant"}
+        </h6>
+        <div className="flex">
+          <div className="flex justify-end">
+            <ResetChatOption
+              textColor={textColor}
+              setChatsLoading={setChatsLoading}
+            />
+          </div>
+        </div>
+        {!hideCloseButton && (
+          <div>
+            <X onClick={toggleHideCloseButton} color={textColor} />
+          </div>
         )}
-      </Box>
+      </div>
+
+      {/* {chatbotSubtitle && ( */}
+      <p
+        className="font-normal mt-1 italic text-center"
+        style={{ color: textColor }}
+      >
+        {chatbotSubtitle || "Do you have any questions? Ask us!"}
+      </p>
+      {/* )} */}
+
       <ChatbotDrawer
         open={open}
         toggleDrawer={toggleDrawer}
         setLoading={setLoading}
       />
-    </Grid>
+    </div>
   );
 }
 
@@ -121,45 +167,25 @@ export function ChatbotHeaderPreview() {
   const textColor = isLightBackground ? "black" : "white";
 
   return (
-    <Grid
-      item
-      xs={12}
-      sx={{
-        paddingX: 3,
-        paddingY: 2,
-        backgroundColor: theme.palette.primary.main,
-        borderRadius: 0,
-        boxShadow: `0 4px 10px rgba(0, 0, 0, 0.1)`,
-      }}
+    <div
+      className="px-3 py-2 shadow-md rounded-none w-full"
+      style={{ background: theme.palette.primary.main }}
     >
-      <Box display="flex" flexDirection="column" alignItems="flex-start">
-        <Box display="flex" alignItems="center">
-          <Typography
-            variant="h6"
-            sx={{
-              color: textColor,
-              fontWeight: 600,
-              fontSize: "1.25rem",
-              textTransform: "uppercase",
-            }}
+      <div className="flex flex-col items-start">
+        <div className="flex items-center">
+          <h6
+            className=" font-semibold text-xl uppercase"
+            style={{ color: textColor }}
           >
             AI Assistant
-          </Typography>
+          </h6>
           <ResetChatOption textColor={textColor} preview />
-        </Box>
-        <Typography
-          variant="subtitle2"
-          sx={{
-            color: textColor,
-            fontWeight: 400,
-            marginTop: 0.5,
-            fontStyle: "italic",
-          }}
-        >
+        </div>
+        <p className=" font-normal mt-1 italic" style={{ color: textColor }}>
           Do you have any questions? Ask us!
-        </Typography>
-      </Box>
-    </Grid>
+        </p>
+      </div>
+    </div>
   );
 }
 
@@ -209,12 +235,10 @@ const ResetChatOption = React.memo(
 
       return (
         <Box sx={{ marginLeft: 2, display: "flex", alignItems: "center" }}>
-          <KeyboardArrowDownIcon
+          <GridMoreVertIcon
             sx={{
               cursor: "pointer",
               color: textColor,
-              transform: open ? "rotate(180deg)" : "rotate(0deg)",
-              transition: "transform 0.3s ease",
             }}
             aria-controls={open ? "basic-menu" : undefined}
             aria-haspopup="true"
@@ -257,6 +281,12 @@ const ChatbotFeedbackForm = React.memo(function ChatbotFeedbackForm({
   open,
   setOpen,
 }: ChatbotFeedbackFormProps) {
+  const theme = useTheme();
+
+  const toggleDrawer = (newOpen: boolean) => () => {
+    setOpen(newOpen);
+  };
+
   const userId = GetSessionStorageData("interfaceUserId");
   const handleClose = () => {
     setOpen(false);
@@ -297,7 +327,6 @@ const ChatbotFeedbackForm = React.memo(function ChatbotFeedbackForm({
           onChange={(e) => setFeedback(e.target.value || "")}
           sx={{
             marginBottom: 2,
-            borderRadius: 1,
             "& .MuiOutlinedInput-root": {
               borderColor: theme.palette.grey[300],
             },

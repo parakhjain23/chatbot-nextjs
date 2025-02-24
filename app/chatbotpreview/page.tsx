@@ -43,11 +43,6 @@ function ChatbotPreview({ onThemeChange }) {
         sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
       >
         <MessageList dragRef={null} />
-        {/* <DefaultQuestions
-            defaultQuestion={defaultQuestion}
-            messageRef={messageRef}
-            onSend={onSend}
-          /> */}
       </Grid>
       <Grid
         item

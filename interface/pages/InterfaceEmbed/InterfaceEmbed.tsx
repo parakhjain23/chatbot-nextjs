@@ -29,7 +29,6 @@ export default function InterfaceEmbed({
     EmbedVerificationStatus.VERIFYING
   );
   const [details, setDetails] = useState({ chatbot_id: "" });
-  console.log(details, "details");
 
   useEffect(() => {
     if (token) authorizeUserAndSetDetails();

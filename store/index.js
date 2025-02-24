@@ -15,8 +15,6 @@ export const getInfoParametersFromUrl = () => {
   const params = window.location.pathname.slice(1)?.split("/");
   const urlParameters = {};
   if (params[0] === "i") urlParameters.interfaceId = params[1];
-
-  console.log(urlParameters, 232);
   return urlParameters;
 };
 
@@ -50,7 +48,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 const sagaMiddleware = createSagaMiddleware();
 export const store = configureStore({
   reducer: persistedReducer,
-  middleware: (getDefaultMiddleware) => 
+  middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ serializableCheck: false })
       .concat(customMiddleware)
       .concat(sagaMiddleware),

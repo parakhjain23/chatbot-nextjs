@@ -13,55 +13,66 @@ export const ChatbotContext = createContext({
   themeColor: "#000000",
   onConfigChange: (config: any) => {},
   handleThemeChange: (color: string) => {},
+  toggleHideCloseButton: () => {},
 });
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
-  const [themeColor, setThemeColor] = useState("#121212");
+}) {
+  const [themeColor, setThemeColor] = useState("#000000");
   const [chatbotConfig, setChatbotConfig] = useState({});
   const theme = generateTheme(themeColor);
 
   const onConfigChange = useCallback(
     (config) => {
-      if (!config) return; // Prevent unnecessary updates
+      if (!config) return;
+      console.log("Received config:", config);
 
       setThemeColor(config.themeColor || "#000000");
-      setChatbotConfig(config);
+      setChatbotConfig((prev) => ({
+        ...prev,
+        hideCloseButton: config.hideCloseButton ?? prev.hideCloseButton,
+      }));
     },
-    [setThemeColor, setChatbotConfig]
+    [chatbotConfig]
   );
 
   const handleThemeChange = useCallback((color) => {
     setThemeColor(color);
   }, []);
 
+  const toggleHideCloseButton = useCallback(() => {
+    console.log("adfdf");
+    setChatbotConfig((prev) => ({
+      ...prev,
+      hideCloseButton: !prev.hideCloseButton,
+    }));
+  }, []);
+
   return (
     <html lang="en">
-      <head>
-        {/* <script src="https://unpkg.com/@tailwindcss/browser@4"></script> */}
-      </head>
       <body>
         <Provider store={store}>
           <PersistGate loading={null} persistor={persistor}>
-            {/* <ThemeProvider theme={theme}> */}
-            <CssBaseline />
-            <ChatbotContext.Provider
-              value={useMemo(
-                () => ({
-                  chatbotConfig,
-                  themeColor,
-                  onConfigChange,
-                  handleThemeChange,
-                }),
-                [chatbotConfig, themeColor]
-              )}
-            >
-              {children}
-            </ChatbotContext.Provider>
-            {/* </ThemeProvider> */}
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <ChatbotContext.Provider
+                value={useMemo(
+                  () => ({
+                    chatbotConfig,
+                    themeColor,
+                    onConfigChange,
+                    handleThemeChange,
+                    toggleHideCloseButton,
+                  }),
+                  [chatbotConfig, themeColor]
+                )}
+              >
+                {children}
+              </ChatbotContext.Provider>
+            </ThemeProvider>
           </PersistGate>
         </Provider>
       </body>

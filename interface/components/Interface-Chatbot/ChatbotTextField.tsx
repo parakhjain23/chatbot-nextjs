@@ -1,5 +1,6 @@
 "use client";
 /* eslint-disable */
+import { FileUp, SendHorizontal, X } from "lucide-react";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import SendIcon from "@mui/icons-material/Send";
@@ -9,6 +10,7 @@ import {
   CircularProgress,
   IconButton,
   InputAdornment,
+  lighten,
   Popover,
   TextField,
   Tooltip,
@@ -51,7 +53,8 @@ function ChatbotTextField({
   const [isUploading, setIsUploading] = useState(false);
   const dispatch = useDispatch();
   const theme = useTheme();
-  const isLight = isColorLight(theme.palette.primary.main);
+  const isLightBackground = isColorLight(theme.palette.primary.main);
+  const textColor = isLightBackground ? "black" : "white";
   const [anchorEl, setAnchorEl] = useState(null);
   const isPopoverOpen = Boolean(anchorEl);
   const { IsHuman, mode } = useCustomSelector((state: $ReduxCoreType) => ({
@@ -138,306 +141,107 @@ function ChatbotTextField({
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
 
+  // const options = ["dddddddddddddddddddddddddddddddddd"];
   return (
-    <Box
-      sx={{ position: "relative", width: "100%" }}
-      className="border-2 h-[150px] shadow-md rounded-md"
+    <div
+      className={`w-full rounded-lg flex flex-col justify-center items-center min-h-fit`}
     >
-      {options && options.length > 0 && (
-        <Box
-          sx={{
-            display: "flex",
-            gap: theme.spacing(1),
-            flexWrap: "wrap",
-            padding: theme.spacing(1),
-            animation: "fadeIn 0.5s ease-in-out",
-            "@keyframes fadeIn": {
-              "0%": { opacity: 0 },
-              "100%": { opacity: 1 },
-            },
+      <div className="max-w-[900px] w-full flex items-start">
+        {options && options.length > 0 && (
+          <div className="flex flex-col items-start gap-3 pb-4 animate-[fadeIn_0.3s_ease-in-out_forwards] ">
+            {options.slice(0, 3).map((option, index) => (
+              <div
+                key={index}
+                onClick={() => addMessage(option)}
+                className={`flex items-center justify-center min-h-[32px] rounded-lg shadow-lg   text-center px-4 py-2 transition-all cursor-pointer`}
+                style={{ background: lighten(theme.palette.primary.main, 0.8) }}
+              >
+                <span className="text-lg">{option}</span>
+              </div>
+            ))}
+          </div>
+        )}
+        {images.length > 0 && (
+          <div className="flex mt-4 mb-2 flex-wrap gap-2">
+            {images.map((image, index) => (
+              <div
+                key={index}
+                className={`relative max-w-[20%] max-h-[50px] rounded flex items-center justify-center p-1`}
+              >
+                <Image
+                  src={image}
+                  alt={`Uploaded Preview ${index + 1}`}
+                  className="max-w-full max-h-full rounded"
+                />
+                <button
+                  className={`absolute top-[-2px] right-[-2px] bg-opacity-80 rounded-full cursor-pointer w-5 h-5 flex items-center justify-center`}
+                  onClick={() => handleRemoveImage(index)}
+                >
+                  <X color={theme.palette.primary.main} />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+      <div className="relative max-w-[900px] w-full rounded-lg">
+        <div
+          className="border-2 flex flex-col shadow-sm rounded-lg p-2"
+          style={{
+            border: `2px solid ${lighten(theme.palette.primary.main, 0.8)}`,
           }}
         >
-          {options?.slice(0, 3).map((option, index) => (
-            <Box
-              key={index}
-              onClick={() => addMessage(option)}
-              className="border-p5 p-2 cursor-pointer flex-center-center"
-              sx={{
-                borderRadius: 7,
-                boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <Typography variant="caption">{option}</Typography>
-            </Box>
-          ))}
-        </Box>
-      )}
-      <Box
-        sx={{
-          display: "flex",
-          marginTop: theme.spacing(2),
-          marginBottom: theme.spacing(1),
-          flexWrap: "wrap",
-          gap: theme.spacing(1),
-        }}
-      >
-        {images.map((image, index) => (
-          <Box
-            key={index}
-            sx={{
-              position: "relative",
-              maxWidth: "20%",
-              maxHeight: "50px",
-              borderRadius: "5px",
-              backgroundColor: "rgba(0, 0, 0, 0.1)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "2px",
-            }}
-          >
-            <Image
-              src={image}
-              alt={`Uploaded Preview ${index + 1}`}
-              style={{
-                maxWidth: "100%",
-                maxHeight: "100%",
-                borderRadius: "5px",
-              }}
+          <div className="flex items-center">
+            <Image src={AiIcon} width="32" height="32" alt="AI" />
+            <textarea
+              ref={messageRef}
+              className={`w-full bg-transparent rounded-lg text-lg p-2 resize-none focus:outline-none`}
+              rows={2}
+              onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Enter your message..."
+              disabled={disabled}
             />
-            <Box
-              sx={{
-                position: "absolute",
-                top: -2,
-                right: -2,
-                backgroundColor: "rgba(255, 255, 255, 0.8)",
-                borderRadius: "50%",
-                cursor: "pointer",
-              }}
-              onClick={() => handleRemoveImage(index)}
+          </div>
+          <div className="flex items-center gap-2 ml-auto">
+            {(reduxIsVision?.vision && mode?.includes("human")) ||
+            (reduxIsVision?.vision && !mode?.includes("human")) ? (
+              <>
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  className="hidden"
+                  id="upload-image"
+                  multiple
+                />
+                <label htmlFor="upload-image" className="cursor-pointer">
+                  <FileUp
+                    color={theme.palette.primary.main}
+                    className={`text-xl ${
+                      isUploading || loading ? "opacity-50" : ""
+                    }`}
+                  />
+                </label>
+              </>
+            ) : null}
+            <button
+              onClick={() =>
+                !loading && !isUploading
+                  ? onSend({ Message: message, images: images })
+                  : null
+              }
+              className={`text-xl ${
+                loading || isUploading ? "opacity-50" : ""
+              }`}
+              style={{ color: textColor }}
             >
-              <Typography
-                variant="caption"
-                sx={{
-                  fontWeight: "bold",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "20px",
-                  height: "20px",
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                ✕
-              </Typography>
-            </Box>
-          </Box>
-        ))}
-      </Box>
-
-      <TextField
-        inputRef={messageRef}
-        className="input-field"
-        multiline
-        maxRows={8}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Enter your message"
-        fullWidth
-        focused
-        disabled={disabled}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Box
-                sx={{
-                  display: "flex",
-                  position: "relative",
-                  marginLeft: theme.spacing(
-                    (reduxIsVision?.vision && mode?.includes("human")) ||
-                      (reduxIsVision?.vision && !mode?.includes("human"))
-                      ? 5
-                      : 1
-                  ),
-                }}
-              >
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: "28px",
-                    height: "28px",
-                    "& > *": {
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      transition: "opacity 0.2s ease-in-out",
-                    },
-                    ...(isHelloAssistantEnabled && {
-                      "& > .icon-visible": {
-                        opacity: 1,
-                      },
-                      "& > .icon-hidden": {
-                        opacity: 0,
-                      },
-                      "&:hover > .icon-visible": {
-                        opacity: 0,
-                      },
-                      "&:hover > .icon-hidden": {
-                        opacity: 1,
-                      },
-                    }),
-                  }}
-                  onClick={isHelloAssistantEnabled ? handlePopoverOpen : null}
-                >
-                  <Image
-                    src={IsHuman ? UserAssistant : AiIcon}
-                    width="28"
-                    height="28"
-                    alt="AI"
-                    className="icon-visible"
-                    style={{
-                      cursor: "pointer",
-                      filter: !IsHuman ? "drop-shadow(0 0 5px pink)" : "",
-                    }}
-                  />
-                  {isHelloAssistantEnabled && (
-                    <ExpandLessIcon
-                      className="icon-hidden"
-                      sx={{ fontSize: "28px", cursor: "pointer" }}
-                    />
-                  )}
-                </Box>
-                <Popover
-                  open={isPopoverOpen}
-                  anchorEl={anchorEl}
-                  onClose={handlePopoverClose}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  transformOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  sx={{
-                    "& .MuiPopover-paper": {
-                      display: "flex",
-                      flexDirection: "column",
-                      padding: 2,
-                    },
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      EnableAI();
-                      handlePopoverClose();
-                    }}
-                    sx={{ justifyContent: "flex-start" }}
-                  >
-                    <Image
-                      src={AiIcon}
-                      width="30"
-                      height="30"
-                      alt="AI Icon"
-                      style={{
-                        marginRight: 8,
-                        filter: "drop-shadow(0 0 5px pink)",
-                      }}
-                    />
-                    <Typography variant="body1" color="black">
-                      AI
-                    </Typography>
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      EnableHumanAgent();
-                      handlePopoverClose();
-                    }}
-                    sx={{ justifyContent: "flex-start" }}
-                  >
-                    <Image
-                      src={UserAssistant}
-                      width="30"
-                      height="30"
-                      alt="AI Icon"
-                      style={{ marginRight: 8 }}
-                    />
-                    <Typography variant="body1" color="black">
-                      Human Agent
-                    </Typography>
-                  </Button>
-                </Popover>
-              </Box>
-            </InputAdornment>
-          ),
-        }}
-        sx={{
-          backgroundColor: "#f5f5f5",
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              border: "none",
-            },
-          },
-        }}
-      />
-      {((reduxIsVision?.vision && mode?.includes("human")) ||
-        (reduxIsVision?.vision && !mode?.includes("human"))) && (
-        <>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleImageUpload}
-            style={{ display: "none" }}
-            id="upload-image"
-            multiple
-          />
-          <label htmlFor="upload-image">
-            <Tooltip title="Upload Image" placement="top">
-              <IconButton
-                component="span"
-                sx={{
-                  position: "absolute",
-                  bottom: theme.spacing(1),
-                  left: theme.spacing(1),
-                  backgroundColor: theme.palette.primary.main,
-                  padding: theme.spacing(1),
-                }}
-                disableRipple
-                disabled={isUploading || loading}
-              >
-                {isUploading ? (
-                  <CircularProgress
-                    size={24}
-                    sx={{ color: theme.palette.primary.main }}
-                  />
-                ) : (
-                  <UploadFileIcon sx={{ color: isLight ? "black" : "white" }} />
-                )}
-              </IconButton>
-            </Tooltip>
-          </label>
-        </>
-      )}
-      <IconButton
-        onClick={() =>
-          !loading && !isUploading
-            ? onSend({ Message: message, images: images })
-            : null
-        }
-        sx={{
-          position: "absolute",
-          bottom: theme.spacing(1),
-          right: theme.spacing(1),
-          opacity: loading || isUploading ? 0.5 : 1,
-          backgroundColor: theme.palette.primary.main,
-          padding: theme.spacing(1),
-        }}
-        disableRipple
-      >
-        <SendIcon sx={{ color: isLight ? "black" : "white" }} />
-      </IconButton>
-    </Box>
+              <SendHorizontal color={theme.palette.primary.main} size={28} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 

@@ -27,7 +27,7 @@ interface ComponentRendererProps {
   componentId: string;
   dragRef?: any;
   inpreview?: boolean;
-  interfaceId: string;
+  chatbotId: string;
 }
 ComponentRenderer.defaultProps = {
   id: "",
@@ -100,5 +100,5 @@ function ComponentRenderer({
 }
 
 export default React.memo(
-  addUrlDataHoc(React.memo(ComponentRenderer), [ParamsEnums?.interfaceId])
+  addUrlDataHoc(React.memo(ComponentRenderer), [ParamsEnums?.chatbotId])
 );

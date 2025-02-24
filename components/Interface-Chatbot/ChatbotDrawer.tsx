@@ -38,7 +38,7 @@ const createRandomId = () => {
   return Math.random().toString(36).substring(2, 15);
 };
 
-function ChatbotDrawer({ setLoading, open, toggleDrawer, interfaceId }) {
+function ChatbotDrawer({ setLoading, open, toggleDrawer, chatbotId }) {
   const theme = useTheme();
   const isLightBackground = isColorLight(theme.palette.primary.main);
   const textColor = isLightBackground ? "black" : "white";
@@ -52,7 +52,7 @@ function ChatbotDrawer({ setLoading, open, toggleDrawer, interfaceId }) {
         state.Interface?.bridgeName ||
         "root", // Get bridgeName
       subThreadList:
-        state.Interface?.interfaceContext?.[interfaceId]?.[
+        state.Interface?.interfaceContext?.[chatbotId]?.[
           GetSessionStorageData("bridgeName") ||
             state.Interface?.bridgeName ||
             "root"
@@ -179,5 +179,5 @@ function ChatbotDrawer({ setLoading, open, toggleDrawer, interfaceId }) {
 }
 
 export default React.memo(
-  addUrlDataHoc(React.memo(ChatbotDrawer), [ParamsEnums.interfaceId])
+  addUrlDataHoc(React.memo(ChatbotDrawer), [ParamsEnums.chatbotId])
 );

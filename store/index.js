@@ -1,20 +1,28 @@
-import { configureStore } from "@reduxjs/toolkit";
-import { combineReducers } from 'redux';
-import persistReducer from "redux-persist/es/persistReducer";
-import persistStore from "redux-persist/es/persistStore";
-import createWebStorage from 'redux-persist/lib/storage/createWebStorage';
+"use client";
+import { persistReducer, persistStore } from "redux-persist";
 import createSagaMiddleware from "redux-saga";
-import helloReducer from "./hello/helloSlice.ts";
-import InterfaceReducer from "./interface/interfaceSlice.ts";
+import rootReducer from "./combineReducer";
 import rootSaga from "./rootSaga.ts";
+import createWebStorage from "redux-persist/es/storage/createWebStorage";
+import { configureStore, getDefaultMiddleware } from "@reduxjs/toolkit";
+// import { getInfoParametersFromUrl } from "../utils/utilities";
 
-export const getInfoParamtersFromUrl = () => {
+export const getInfoParametersFromUrl = () => {
+  if (typeof window === "undefined") {
+    return {}; // Return an empty object if window is not available (server-side)
+  }
+
   const params = window.location.pathname.slice(1)?.split("/");
   const urlParameters = {};
-  if (params[0] === "i") urlParameters.interfaceId = params[1];
+  if (params[0] === "chatbot") urlParameters.chatbotId = params[1];
+  if (params[0] === "chatbot") urlParameters.chatbotId = params[1];
   return urlParameters;
 };
 
+const customMiddleware = () => (next) => (action) => {
+  action.urlData = getInfoParametersFromUrl();
+  return next(action);
+};
 
 const createNoopStorage = () => {
   return {
@@ -30,39 +38,21 @@ const createNoopStorage = () => {
   };
 };
 
-const storage = typeof window !== "undefined" ? createWebStorage("local") : createNoopStorage();
+const storage =
+  typeof window !== "undefined"
+    ? createWebStorage("local")
+    : createNoopStorage();
 
-const customMiddleware = () => (next) => (action) => {
-  action.urlData = getInfoParamtersFromUrl();
-  return next(action);
-};
-
-const persistConfig = {
-  key: 'root',
-  storage,
-  version: 1,
-  blacklist: ["appInfo"]
-};
-
-const rootReducer = combineReducers({
-  // Import your reducers here
-  Interface: InterfaceReducer,
-  Hello: helloReducer,
-});
+const persistConfig = { key: "root", storage, version: 1 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 const sagaMiddleware = createSagaMiddleware();
-
 export const store = configureStore({
   reducer: persistedReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({
-      serializableCheck: {
-        ignoredActions: ['persist/PERSIST'],
-        ignoredPaths: ['register'],
-      },
-    }).concat(customMiddleware, sagaMiddleware),
+    getDefaultMiddleware({ serializableCheck: false })
+      .concat(customMiddleware)
+      .concat(sagaMiddleware),
 });
-
 sagaMiddleware.run(rootSaga);
 export const persistor = persistStore(store);

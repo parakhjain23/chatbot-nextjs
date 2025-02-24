@@ -18,11 +18,11 @@ export default function InterfaceEmbed({
     const { chatbot_id, userId, token, config } = JSON.parse(
         new URLSearchParams(search).get("interfaceDetails") || "{}"
     );
-    useEffect(() => {
-        if (config) {
-            onConfigChange(config); // update the chatbot configuration
-        }
-    }, [config]);
+    // useEffect(() => {
+    //     if (config) {
+    //         onConfigChange(config); // update the chatbot configuration
+    //     }
+    // }, [config]);
 
     const [verifiedState, setVerifiedState] = useState(
         EmbedVerificationStatus.VERIFYING

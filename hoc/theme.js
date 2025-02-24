@@ -1,6 +1,6 @@
 import { createTheme } from "@mui/material/styles";
 
-const generateTheme = (colorHex) => {
+export const generateTheme = (colorHex) => {
   return createTheme({
     palette: {
       primary: {
@@ -61,5 +61,3 @@ const generateTheme = (colorHex) => {
     },
   });
 };
-
-export default generateTheme;

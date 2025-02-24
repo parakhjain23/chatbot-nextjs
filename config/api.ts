@@ -4,8 +4,8 @@ import { InterFaceDataType } from "@/types/interface/InterfaceReduxType";
 import { UrlDataType } from "@/types/utility";
 import axios from "@/utils/interceptor";
 
-const URL = process.env.REACT_APP_API_BASE_URL;
-const PYTHON_URL = process.env.REACT_APP_PYTHON_API_BASE_URL;
+const URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+const PYTHON_URL = process.env.NEXT_PUBLIC_PYTHON_API_BASE_URL;
 let currentController: AbortController | null = null;
 
 export async function getAllInterfaceApi(
@@ -41,9 +41,9 @@ export async function updateInterfaceApi(
     data: InterFaceDataType,
     urlData: UrlDataType
 ): Promise<{ [key: string]: any }[]> {
-    const { orgId, projectId, interfaceId } = urlData;
+    const { orgId, projectId, chatbotId } = urlData;
     const response = await axios.put(
-        `${URL}/projects/${projectId}/interfaces/${interfaceId}/update`,
+        `${URL}/projects/${projectId}/interfaces/${chatbotId}/update`,
         {
             ...data,
             org_id: orgId,
@@ -57,9 +57,9 @@ export async function updateInterfaceActionsApi(
     data: InterFaceDataType,
     urlData: UrlDataType
 ): Promise<{ [key: string]: any }[]> {
-    const { orgId, projectId, interfaceId } = urlData;
+    const { orgId, projectId, chatbotId } = urlData;
     const response = await axios.put(
-        `${URL}/projects/${projectId}/interfaces/${interfaceId}/updateAction`,
+        `${URL}/projects/${projectId}/interfaces/${chatbotId}/updateAction`,
         {
             ...data,
             org_id: orgId,
@@ -73,10 +73,10 @@ export async function updateInterfaceDetailsApi(
     urlData: UrlDataType
 ): Promise<{ [key: string]: any }[]> {
     const { projectId } = urlData;
-    const { interfaceId: dataInterfaceId, ...dataToSend } = data; // Renamed to avoid variable shadowing
-    const interfaceId = dataInterfaceId || urlData.interfaceId;
+    const { chatbotId: datachatbotId, ...dataToSend } = data; // Renamed to avoid variable shadowing
+    const chatbotId = datachatbotId || urlData.chatbotId;
     const response = await axios.put(
-        `${URL}/projects/${projectId}/interfaces/${interfaceId}/updateInterfaceDetails`,
+        `${URL}/projects/${projectId}/interfaces/${chatbotId}/updateInterfaceDetails`,
         dataToSend
     );
     return response?.data?.data;
@@ -87,22 +87,22 @@ export async function deleteInterfaceApi(
     urlData: UrlDataType
 ): Promise<{ [key: string]: any }[]> {
     const { projectId } = urlData;
-    const { interfaceId } = data;
+    const { chatbotId } = data;
     const response = await axios.delete(
-        `${URL}/projects/${projectId}/interfaces/${interfaceId}`
+        `${URL}/projects/${projectId}/interfaces/${chatbotId}`
     );
     return response?.data?.data;
 }
 
 export async function getInterfaceByIdApi(
-    interfaceId: string
+    chatbotId: string
 ): Promise<{ [key: string]: any }[]> {
-    const response = await axios.get(`${URL}/chatbot/${interfaceId}/getchatbot`);
+    const response = await axios.get(`${URL}/chatbot/${chatbotId}/getchatbot`);
     return response?.data;
 }
 
 export async function deleteComponentOrGridApi(
-    interfaceId: string,
+    chatbotId: string,
     gridId: string,
     componentId: string,
     urlData: UrlDataType
@@ -112,7 +112,7 @@ export async function deleteComponentOrGridApi(
         componentId: componentId,
     };
     const response = await axios.delete(
-        `${URL}/projects/${projectId}/interfaces/${interfaceId}/grid/${gridId}`,
+        `${URL}/projects/${projectId}/interfaces/${chatbotId}/grid/${gridId}`,
         {
             data: requestBody,
         }
@@ -289,7 +289,6 @@ export const createScripts = async (data: any, type = "flow") => {
     } catch (error: any) {
         console.error(error);
         errorToast(error?.response?.data?.message || "Something went wrong!");
-        throw new Error(error);
     }
 };
 
@@ -302,12 +301,11 @@ export const getAllThreadsApi = async ({ threadId = "" }) => {
         const response = await axios.get(`${URL}/thread/${threadId}`);
         return response?.data;
     } catch (error: any) {
-        console.error(error);
+        console.warn(error);
         errorToast(
             error?.response?.data?.message ||
             "Something went wrong While fetching Threads!"
         );
-        throw new Error(error);
     }
 };
 
@@ -324,7 +322,6 @@ export const createNewThreadApi = async ({
     } catch (error: any) {
         console.error(error);
         errorToast(error?.response?.data?.message || "Something went wrong!");
-        throw new Error(error);
     }
 };
 

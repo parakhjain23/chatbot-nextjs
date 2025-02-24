@@ -318,10 +318,3 @@ export const removeCookie = (cookieName) => {
   const domain = getDomain();
   document.cookie = `${cookieName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; domain=${domain};`;
 };
-
-export const getInfoParamtersFromUrl = () => {
-  const params = window.location.pathname.slice(1)?.split("/");
-  const urlParameters = {};
-  if (params[0] === "i") urlParameters.interfaceId = params[1];
-  return urlParameters;
-};

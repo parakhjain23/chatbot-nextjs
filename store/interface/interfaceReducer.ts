@@ -39,30 +39,30 @@ export const reducers: ValidateSliceCaseReducers<
   SliceCaseReducers<$InterfaceReduxType>
 > = {
   getInterfaceDataByIdStart(state, action: actionType<string>) {
-    const { interfaceId } = action?.urlData;
-    if (!state.interfaceData?.[interfaceId]) {
+    const { chatbotId } = action?.urlData;
+    if (!state.interfaceData?.[chatbotId]) {
       state.interfaceData = {
-        [interfaceId]: { ...sampleInterfaceData, isLoading: true },
+        [chatbotId]: { ...sampleInterfaceData, isLoading: true },
       };
     } else {
-      state.interfaceData[interfaceId].isLoading = true;
+      state.interfaceData[chatbotId].isLoading = true;
     }
   },
   getInterfaceDataByIdSuccess(state, action: actionType<InterFaceDataType>) {
-    const { interfaceId } = action?.urlData;
+    const { chatbotId } = action?.urlData;
     const tempData = { ...action.payload };
-    state.interfaceData[interfaceId] = { ...tempData, isLoading: false };
+    state.interfaceData[chatbotId] = { ...tempData, isLoading: false };
   },
   getInterfaceDataByIdError(state, action: actionType<any>) {
-    const { interfaceId } = action?.urlData;
-    state.interfaceData[interfaceId].isLoading = false;
+    const { chatbotId } = action?.urlData;
+    state.interfaceData[chatbotId].isLoading = false;
   },
 
   updateComponentProps(state, action: actionType<any>) {
-    const { interfaceId } = action.urlData;
+    const { chatbotId } = action.urlData;
     const { data, gridId, componentId } = action.payload;
-    state.interfaceData[interfaceId].components[gridId][componentId].props = {
-      ...state.interfaceData[interfaceId].components[gridId][componentId].props,
+    state.interfaceData[chatbotId].components[gridId][componentId].props = {
+      ...state.interfaceData[chatbotId].components[gridId][componentId].props,
       ...data,
     };
   },
@@ -99,16 +99,16 @@ export const reducers: ValidateSliceCaseReducers<
       value: string;
     }>
   ) {
-    const { interfaceId } = action.urlData;
+    const { chatbotId } = action.urlData;
     const { msgId = "", gridId } = action.payload;
     const newGridId = msgId?.length > 0 ? `${gridId}_${msgId}` : gridId;
 
-    state.interfaceContext[interfaceId] = {
-      ...state.interfaceContext[interfaceId],
+    state.interfaceContext[chatbotId] = {
+      ...state.interfaceContext[chatbotId],
       context: {
-        ...state.interfaceContext[interfaceId]?.context,
+        ...state.interfaceContext[chatbotId]?.context,
         [newGridId]: {
-          ...state.interfaceContext[interfaceId]?.context?.[newGridId],
+          ...state.interfaceContext[chatbotId]?.context?.[newGridId],
           [action.payload.componentId]: action.payload.value || "",
         },
       },
@@ -116,35 +116,35 @@ export const reducers: ValidateSliceCaseReducers<
   },
 
   addDefaultContext(state, action: actionType<any>) {
-    const { interfaceId } = action.urlData;
+    const { chatbotId } = action.urlData;
     const bridgeName = action.payload?.bridgeName || state.bridgeName || "root";
     const variables = action.payload?.variables;
 
-    // Ensure the interfaceId level is initialized if not already
-    if (!state.interfaceContext[interfaceId]) {
-      state.interfaceContext[interfaceId] = {};
+    // Ensure the chatbotId level is initialized if not already
+    if (!state.interfaceContext[chatbotId]) {
+      state.interfaceContext[chatbotId] = {};
     }
 
-    // Ensure the bridgeName level is initialized under the current interfaceId if not already
-    if (!state.interfaceContext[interfaceId][bridgeName]) {
-      state.interfaceContext[interfaceId][bridgeName] = {
+    // Ensure the bridgeName level is initialized under the current chatbotId if not already
+    if (!state.interfaceContext[chatbotId][bridgeName]) {
+      state.interfaceContext[chatbotId][bridgeName] = {
         interfaceData: {},
         threadList: {},
       };
     }
 
-    // Update the state with new data under the specific interfaceId and bridgeName
-    state.interfaceContext[interfaceId][bridgeName] = {
-      ...state.interfaceContext[interfaceId][bridgeName],
+    // Update the state with new data under the specific chatbotId and bridgeName
+    state.interfaceContext[chatbotId][bridgeName] = {
+      ...state.interfaceContext[chatbotId][bridgeName],
       interfaceData: {
-        ...state.interfaceContext[interfaceId][bridgeName].interfaceData,
+        ...state.interfaceContext[chatbotId][bridgeName].interfaceData,
         ...variables,
       },
     };
   },
 
   setThreads(state, action) {
-    const { interfaceId } = action?.urlData || {};
+    const { chatbotId } = action?.urlData || {};
     const bridgeName = action.payload?.bridgeName || state.bridgeName || "root";
     const threadId = action.payload?.threadId || state.threadId;
     const threadData = action.payload?.newThreadData || {};
@@ -153,34 +153,34 @@ export const reducers: ValidateSliceCaseReducers<
     // Create a local copy of the interfaceContext
     const updatedInterfaceContext = { ...state.interfaceContext };
 
-    // Ensure the interfaceId level is initialized if not already
-    if (!updatedInterfaceContext[interfaceId]) {
-      updatedInterfaceContext[interfaceId] = {};
+    // Ensure the chatbotId level is initialized if not already
+    if (!updatedInterfaceContext[chatbotId]) {
+      updatedInterfaceContext[chatbotId] = {};
     }
 
-    // Ensure the bridgeName level is initialized under the current interfaceId if not already
-    if (!updatedInterfaceContext[interfaceId][bridgeName]) {
-      updatedInterfaceContext[interfaceId][bridgeName] = {
+    // Ensure the bridgeName level is initialized under the current chatbotId if not already
+    if (!updatedInterfaceContext[chatbotId][bridgeName]) {
+      updatedInterfaceContext[chatbotId][bridgeName] = {
         interfaceData: {},
         threadList: {},
       };
     }
 
-    if (!updatedInterfaceContext[interfaceId][bridgeName].threadList) {
-      updatedInterfaceContext[interfaceId][bridgeName].threadList = {}; // Initialize threadList if it doesn't exist
+    if (!updatedInterfaceContext[chatbotId][bridgeName].threadList) {
+      updatedInterfaceContext[chatbotId][bridgeName].threadList = {}; // Initialize threadList if it doesn't exist
     }
     // Ensure threadList exists for the given threadId
     if (
-      !updatedInterfaceContext[interfaceId][bridgeName]?.threadList?.[threadId]
+      !updatedInterfaceContext[chatbotId][bridgeName]?.threadList?.[threadId]
     ) {
-      updatedInterfaceContext[interfaceId][bridgeName].threadList[threadId] =
+      updatedInterfaceContext[chatbotId][bridgeName].threadList[threadId] =
         [];
     }
 
     // If threadList is provided, replace the existing threadList
     if (!(Object.keys(threadData || {}).length > 0)) {
       // Replace thread list with the new list
-      updatedInterfaceContext[interfaceId][bridgeName].threadList[threadId] =
+      updatedInterfaceContext[chatbotId][bridgeName].threadList[threadId] =
         allThreadList;
       if (state.threadId) {
         const selectedThread = allThreadList.find(
@@ -197,7 +197,7 @@ export const reducers: ValidateSliceCaseReducers<
         }
       }
       if (allThreadList?.length === 0) {
-        updatedInterfaceContext[interfaceId][bridgeName].threadList[
+        updatedInterfaceContext[chatbotId][bridgeName].threadList[
           threadId
         ].push({
           thread_id: threadId,
@@ -208,7 +208,7 @@ export const reducers: ValidateSliceCaseReducers<
       }
     } else {
       // Otherwise, push the new threadData to the thread list
-      updatedInterfaceContext[interfaceId][bridgeName].threadList[
+      updatedInterfaceContext[chatbotId][bridgeName].threadList[
         threadId
       ].push(threadData);
       state.subThreadId = threadData?.sub_thread_id || ""; // Store in reducer state

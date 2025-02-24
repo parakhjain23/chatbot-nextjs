@@ -6,10 +6,10 @@ export interface $InterfaceReduxType {
   version_id?: string | null;
   bridgeName: string;
   interfaceData: {
-    [interfaceId: string]: InterFaceDataType;
+    [chatbotId: string]: InterFaceDataType;
   };
   interfaceContext: {
-    [interfaceId: string]: { [bridgeName: string]: any };
+    [chatbotId: string]: { [bridgeName: string]: any };
   };
   currentSelectedComponent: {
     [key: string]: any;

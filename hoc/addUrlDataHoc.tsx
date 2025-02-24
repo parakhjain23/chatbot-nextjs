@@ -11,7 +11,7 @@ export function addUrlDataHoc(
     const data: { [key: string]: string | boolean | undefined } = {};
     
     paramsToInject?.forEach((key: string) => {
-      data.interfaceId = params[key] || undefined;
+      data.chatbotId = params[key] || undefined;
     });
 
     return (

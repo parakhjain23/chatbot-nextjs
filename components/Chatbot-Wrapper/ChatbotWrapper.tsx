@@ -11,7 +11,7 @@ import { ParamsEnums } from "@/utils/enums";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-function ChatbotWrapper({ interfaceId, loadInterface = true }) {
+function ChatbotWrapper({ chatbotId, loadInterface = true }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -23,8 +23,8 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
       // const interfaceToken = intefaceGetLocalStorage("interfaceToken");
       const interfaceToken = GetSessionStorageData("interfaceToken");
       if (
-        interfaceId &&
-        interfaceId !== "preview" &&
+        chatbotId &&
+        chatbotId !== "preview" &&
         interfaceToken &&
         loadInterface
       ) {
@@ -80,11 +80,11 @@ function ChatbotWrapper({ interfaceId, loadInterface = true }) {
         window.removeEventListener("message", handleMessage);
       }
     };
-  }, [dispatch, interfaceId, loadInterface]);
+  }, [dispatch, chatbotId, loadInterface]);
 
   return <InterfaceChatbot />;
 }
 
 export default React.memo(
-  addUrlDataHoc(React.memo(ChatbotWrapper), [ParamsEnums.interfaceId])
+  addUrlDataHoc(React.memo(ChatbotWrapper), [ParamsEnums.chatbotId])
 );

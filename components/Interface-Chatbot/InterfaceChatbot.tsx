@@ -41,7 +41,7 @@ const client = WebSocketClient("lyvSfW7uPPolwax0BHMC", "DprvynUwAdFwkE91V5Jj");
 interface InterfaceChatbotProps {
   props: any;
   inpreview: boolean;
-  interfaceId: string;
+  chatbotId: string;
   componentId: string;
   gridId: string;
   dragRef: any;
@@ -79,10 +79,10 @@ export const MessageContext = createContext<{
 function InterfaceChatbot({
   props,
   inpreview = true,
-  interfaceId,
+  chatbotId,
 }: InterfaceChatbotProps) {
   const theme = useTheme(); // Hook to access the theme
-
+  console.log(chatbotId,23123123)
   const {
     interfaceContextData,
     reduxThreadId,
@@ -100,7 +100,7 @@ function InterfaceChatbot({
     mode,
   } = useCustomSelector((state: $ReduxCoreType) => ({
     interfaceContextData:
-      state.Interface?.interfaceContext?.[interfaceId]?.[
+      state.Interface?.interfaceContext?.[chatbotId]?.[
         state.Interface?.bridgeName || "root"
       ]?.interfaceData,
     reduxThreadId: state.Interface?.threadId || "",
@@ -218,7 +218,7 @@ function InterfaceChatbot({
         setHasMoreMessages(false); // No more messages to load
       }
     } catch (error) {
-      console.error("Error fetching more messages:", error);
+      console.warn("Error fetching more messages:", error);
       errorToast("Failed to load more messages.");
     } finally {
       setIsFetching(false);
@@ -319,7 +319,7 @@ function InterfaceChatbot({
   };
 
   const getallPreviousHistory = async () => {
-    if (threadId && interfaceId) {
+    if (threadId && chatbotId) {
       setChatsLoading(true);
       try {
         const { previousChats, starterQuestion } = await getPreviousMessage(
@@ -335,13 +335,13 @@ function InterfaceChatbot({
         } else {
           setMessages([]);
           setHasMoreMessages(false);
-          console.error("previousChats is not an array");
+          console.warn("previousChats is not an array");
         }
         if (Array.isArray(starterQuestion)) {
           setStarterQuestions(starterQuestion.slice(0, 4));
         }
       } catch (error) {
-        console.error("Error fetching previous chats:", error);
+        console.warn("Error fetching previous chats:", error);
         setMessages([]);
         setHasMoreMessages(false);
       } finally {
@@ -379,7 +379,7 @@ function InterfaceChatbot({
         .reverse();
       setHelloMessages(filterChats);
     } else {
-      console.error("helloChats is not an array or empty");
+      console.warn("helloChats is not an array or empty");
     }
   };
 
@@ -419,7 +419,7 @@ function InterfaceChatbot({
 
   useEffect(() => {
     const newChannelId = (
-      interfaceId +
+      chatbotId +
       (threadId || userId) +
       (subThreadId || userId)
     ).replace(/ /g, "_");
@@ -488,7 +488,7 @@ function InterfaceChatbot({
         ]);
         clearTimeout(timeoutIdRef.current);
       } else {
-        console.error("Some error occurred in the message", parsedMessage);
+        console.warn("Some error occurred in the message", parsedMessage);
       }
     };
 
@@ -503,7 +503,7 @@ function InterfaceChatbot({
       clearTimeout(timeoutIdRef.current);
     };
     // }
-  }, [interfaceId, userId, threadId, subThreadId]);
+  }, [chatbotId, userId, threadId, subThreadId]);
 
   const sendMessage = async (
     message: string,
@@ -520,7 +520,7 @@ function InterfaceChatbot({
       threadId: thread || threadId,
       subThreadId: subThreadId,
       slugName: bridge || bridgeName,
-      chatBotId: interfaceId,
+      chatBotId: chatbotId,
       version_id: bridgeVersionId,
     });
     if (!response?.success) {
@@ -683,5 +683,5 @@ function InterfaceChatbot({
 }
 
 export default React.memo(
-  addUrlDataHoc(React.memo(InterfaceChatbot), [ParamsEnums.interfaceId])
+  addUrlDataHoc(React.memo(InterfaceChatbot), [ParamsEnums.chatbotId])
 );

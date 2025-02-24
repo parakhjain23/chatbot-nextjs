@@ -26,5 +26,5 @@ function Viewonlygrid({ dragRef }) {
   );
 }
 export default React.memo(
-  addUrlDataHoc(React.memo(Viewonlygrid), [ParamsEnums?.interfaceId])
+  addUrlDataHoc(React.memo(Viewonlygrid), [ParamsEnums?.chatbotId])
 );

@@ -10,16 +10,8 @@ import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import SendIcon from "@mui/icons-material/Send";
 import UploadFileIcon from "@mui/icons-material/UploadFile";
 import {
-  Box,
-  Button,
-  CircularProgress,
-  IconButton,
-  InputAdornment,
   Popover,
-  TextField,
-  Tooltip,
-  Typography,
-  useTheme,
+  useTheme
 } from "@mui/material";
 
 // App imports
@@ -143,305 +135,161 @@ function ChatbotTextField({
   const handleRemoveImage = (index: number) => {
     setImages((prevImages) => prevImages.filter((_, i) => i !== index));
   };
-
   return (
-    <Box sx={{ position: "relative", width: "100%" }}>
+    <div className="relative w-full">
       {options && options.length > 0 && (
-        <Box
-          sx={{
-            display: "flex",
-            gap: theme.spacing(1),
-            flexWrap: "wrap",
-            padding: theme.spacing(1),
-            animation: "fadeIn 0.5s ease-in-out",
-            "@keyframes fadeIn": {
-              "0%": { opacity: 0 },
-              "100%": { opacity: 1 },
-            },
-          }}
-        >
+        <div className="flex flex-wrap gap-2 p-2 animate-fadeIn">
           {options?.slice(0, 3).map((option, index) => (
-            <Box
+            <button
               key={index}
               onClick={() => addMessage(option)}
-              className="border-p5 p-2 cursor-pointer flex-center-center"
-              sx={{
-                borderRadius: 7,
-                boxShadow: "0 2px 2px rgba(0, 0, 0, 0.1)",
-              }}
+              className="px-4 py-2 text-sm rounded-lg shadow-sm bg-white hover:bg-gray-50 border border-gray-200 transition-colors duration-200"
             >
-              <Typography variant="caption">{option}</Typography>
-            </Box>
+              {option}
+            </button>
           ))}
-        </Box>
+        </div>
       )}
-      <Box
-        sx={{
-          display: "flex",
-          marginTop: theme.spacing(2),
-          marginBottom: theme.spacing(1),
-          flexWrap: "wrap",
-          gap: theme.spacing(1),
-        }}
-      >
-        {images.map((image, index) => (
-          <Box
-            key={index}
-            sx={{
-              position: "relative",
-              maxWidth: "20%",
-              maxHeight: "50px",
-              borderRadius: "5px",
-              backgroundColor: "rgba(0, 0, 0, 0.1)", // Adding background
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              padding: "2px",
-            }}
+
+      {images.length > 0 && (
+        <div className="flex flex-wrap gap-2 my-4">
+          {images.map((image, index) => (
+            <div key={index} className="relative max-w-[20%] h-12 rounded-lg bg-gray-100 flex items-center justify-center p-0.5">
+              <img
+                src={image}
+                alt={`Uploaded Preview ${index + 1}`}
+                className="max-w-full max-h-full rounded-lg object-cover"
+              />
+              <button
+                onClick={() => handleRemoveImage(index)}
+                className="absolute -top-1 -right-1 w-5 h-5 rounded-full bg-white shadow-md flex items-center justify-center hover:bg-gray-100 transition-colors"
+              >
+                <span className="text-xs font-bold">✕</span>
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="relative flex items-end">
+        <div className="absolute left-3 bottom-3 z-10">
+          <div 
+            className="relative w-7 h-7 cursor-pointer"
+            onClick={isHelloAssistantEnabled ? handlePopoverOpen : null}
           >
             <img
-              src={image} // Assuming images now contain URLs
-              alt={`Uploaded Preview ${index + 1}`}
-              style={{
-                maxWidth: "100%",
-                maxHeight: "100%",
-                borderRadius: "5px",
-              }}
+              src={IsHuman ? UserAssistant : AiIcon}
+              width="28"
+              height="28" 
+              alt="AI"
+              className={`absolute transition-opacity duration-200 ${!IsHuman ? 'filter drop-shadow-pink' : ''}`}
             />
-            <Box
-              sx={{
-                position: "absolute",
-                top: -2,
-                right: -2,
-                backgroundColor: "rgba(255, 255, 255, 0.8)",
-                borderRadius: "50%",
-                cursor: "pointer",
-                // padding: "2px",
-              }}
-              onClick={() => handleRemoveImage(index)} // Assuming a function to handle image removal
-            >
-              <Typography
-                variant="caption"
-                sx={{
-                  fontWeight: "bold",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "20px",
-                  height: "20px",
-                  borderRadius: "50%",
-                  backgroundColor: "rgba(0, 0, 0, 0.1)",
-                }}
-              >
-                ✕
-              </Typography>
-            </Box>
-          </Box>
-        ))}
-      </Box>
+            {isHelloAssistantEnabled && (
+              <ExpandLessIcon className="absolute w-7 h-7 opacity-0 hover:opacity-100 transition-opacity" />
+            )}
+          </div>
+        </div>
 
-      <TextField
-        inputRef={messageRef}
-        className="input-field"
-        multiline // Todo: need to un comment this code
-        maxRows={8}
-        onChange={(e) => setMessage(e.target.value)}
-        onKeyDown={handleKeyDown}
-        placeholder="Enter your message"
-        fullWidth
-        focused
-        disabled={disabled}
-        InputProps={{
-          startAdornment: (
-            <InputAdornment position="start">
-              <Box
-                sx={{
-                  display: "flex",
-                  position: "relative",
-                  marginLeft: theme.spacing(
-                    (reduxIsVision?.vision && mode?.includes("human")) ||
-                      (reduxIsVision?.vision && !mode?.includes("human"))
-                      ? 5
-                      : 1
-                  ),
-                }}
-              >
-                <Box
-                  sx={{
-                    position: "relative",
-                    width: "28px",
-                    height: "28px",
-                    "& > *": {
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      transition: "opacity 0.2s ease-in-out",
-                    },
-                    ...(isHelloAssistantEnabled && {
-                      "& > .icon-visible": {
-                        opacity: 1,
-                      },
-                      "& > .icon-hidden": {
-                        opacity: 0,
-                      },
-                      "&:hover > .icon-visible": {
-                        opacity: 0,
-                      },
-                      "&:hover > .icon-hidden": {
-                        opacity: 1,
-                      },
-                    }),
-                  }}
-                  onClick={isHelloAssistantEnabled ? handlePopoverOpen : null}
-                >
-                  <img
-                    src={IsHuman ? UserAssistant : AiIcon}
-                    width="28"
-                    height="28"
-                    alt="AI"
-                    className="icon-visible"
-                    style={{
-                      cursor: "pointer",
-                      filter: !IsHuman ? "drop-shadow(0 0 5px pink)" : "",
-                    }}
-                  />
-                  {isHelloAssistantEnabled && (
-                    <ExpandLessIcon
-                      className="icon-hidden"
-                      sx={{ fontSize: "28px", cursor: "pointer" }}
-                    />
-                  )}
-                </Box>
-                <Popover
-                  open={isPopoverOpen}
-                  anchorEl={anchorEl}
-                  onClose={handlePopoverClose}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "left",
-                  }}
-                  transformOrigin={{
-                    vertical: "bottom",
-                    horizontal: "left",
-                  }}
-                  sx={{
-                    "& .MuiPopover-paper": {
-                      display: "flex",
-                      flexDirection: "column",
-                      padding: 2,
-                    },
-                  }}
-                >
-                  <Button
-                    onClick={() => {
-                      EnableAI();
-                      handlePopoverClose();
-                    }}
-                    sx={{ justifyContent: "flex-start" }}
-                  >
-                    <img
-                      src={AiIcon}
-                      width="30"
-                      height="30"
-                      alt="AI Icon"
-                      style={{
-                        marginRight: 8,
-                        filter: "drop-shadow(0 0 5px pink)",
-                      }}
-                    />
-                    <Typography variant="body1" color="black">
-                      AI
-                    </Typography>
-                  </Button>
-                  <Button
-                    onClick={() => {
-                      EnableHumanAgent();
-                      handlePopoverClose();
-                    }}
-                    sx={{ justifyContent: "flex-start" }}
-                  >
-                    <img
-                      src={UserAssistant}
-                      width="30"
-                      height="30"
-                      alt="AI Icon"
-                      style={{ marginRight: 8 }}
-                    />
-                    <Typography variant="body1" color="black">
-                      Human Agent
-                    </Typography>
-                  </Button>
-                </Popover>
-              </Box>
-            </InputAdornment>
-          ),
-        }}
-        sx={{
-          backgroundColor: "#f5f5f5",
-          "& .MuiOutlinedInput-root": {
-            "& fieldset": {
-              border: "none",
-            },
-          },
-        }}
-      />
-      {((reduxIsVision?.vision && mode?.includes("human")) ||
-        (reduxIsVision?.vision && !mode?.includes("human"))) && (
-          <>
+        <input
+          ref={messageRef}
+          onChange={(e) => setMessage(e.target.value)}
+          onKeyDown={handleKeyDown}
+          placeholder="Enter your message"
+          disabled={disabled}
+          className="textarea textarea-bordered w-full pl-12 pr-12 min-h-[50px] max-h-[200px] resize-none focus:outline-none disabled:bg-gray-100 disabled:cursor-not-allowed"
+          rows={1}
+        />
+
+        {((reduxIsVision?.vision && mode?.includes("human")) ||
+          (reduxIsVision?.vision && !mode?.includes("human"))) && (
+          <div className="absolute left-3 bottom-3">
             <input
               type="file"
               accept="image/*"
               onChange={handleImageUpload}
-              style={{ display: "none" }}
+              className="hidden"
               id="upload-image"
               multiple
             />
             <label htmlFor="upload-image">
-              <Tooltip title="Upload Image" placement="top">
-                <IconButton
-                  component="span"
-                  sx={{
-                    position: "absolute",
-                    bottom: theme.spacing(1),
-                    left: theme.spacing(1),
-                    backgroundColor: theme.palette.secondary.main,
-                    padding: theme.spacing(1),
-                  }}
-                  disableRipple
-                  disabled={isUploading || loading}
-                >
-                  {isUploading ? (
-                    <CircularProgress
-                      size={24}
-                      sx={{ color: theme.palette.primary.main }}
-                    />
-                  ) : (
-                    <UploadFileIcon sx={{ color: isLight ? "black" : "white" }} />
-                  )}
-                </IconButton>
-              </Tooltip>
+              <button
+                className={`p-2 rounded-full bg-purple-500 hover:bg-purple-600 transition-colors ${
+                  isUploading || loading ? 'opacity-50 cursor-not-allowed' : ''
+                }`}
+                disabled={isUploading || loading}
+              >
+                {isUploading ? (
+                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <UploadFileIcon className={`w-6 h-6 ${isLight ? 'text-black' : 'text-white'}`} />
+                )}
+              </button>
             </label>
-          </>
+          </div>
         )}
-      <IconButton
-        onClick={() =>
-          !loading && !isUploading
-            ? onSend({ Message: message, images: images })
-            : null
-        }
-        sx={{
-          position: "absolute",
-          bottom: theme.spacing(1),
-          right: theme.spacing(1),
-          opacity: loading || isUploading ? 0.5 : 1,
-          backgroundColor: theme.palette.primary.main,
-          padding: theme.spacing(1),
+
+        <button
+          onClick={() => !loading && !isUploading ? onSend({ Message: message, images: images }) : null}
+          className={`absolute right-3 bottom-3 p-2 rounded-full bg-blue-500 hover:bg-blue-600 transition-colors ${
+            loading || isUploading ? 'opacity-50 cursor-not-allowed' : ''
+          }`}
+          disabled={loading || isUploading}
+        >
+          <SendIcon className={`w-6 h-6 ${isLight ? 'text-black' : 'text-white'}`} />
+        </button>
+      </div>
+
+      <Popover
+        open={isPopoverOpen}
+        anchorEl={anchorEl}
+        onClose={handlePopoverClose}
+        anchorOrigin={{
+          vertical: 'top',
+          horizontal: 'left',
         }}
-        disableRipple
+        transformOrigin={{
+          vertical: 'bottom',
+          horizontal: 'left',
+        }}
+        className="mt-2"
       >
-        <SendIcon sx={{ color: isLight ? "black" : "white" }} />
-      </IconButton>
-    </Box>
+        <div className="flex flex-col p-2 min-w-[200px]">
+          <button
+            onClick={() => {
+              EnableAI();
+              handlePopoverClose();
+            }}
+            className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <img
+              src={AiIcon}
+              width="30"
+              height="30"
+              alt="AI Icon"
+              className="mr-3 filter drop-shadow-pink"
+            />
+            <span className="text-gray-900">AI</span>
+          </button>
+          
+          <button
+            onClick={() => {
+              EnableHumanAgent();
+              handlePopoverClose();
+            }}
+            className="flex items-center px-4 py-2 hover:bg-gray-100 rounded-lg transition-colors"
+          >
+            <img
+              src={UserAssistant}
+              width="30"
+              height="30"
+              alt="Human Agent"
+              className="mr-3"
+            />
+            <span className="text-gray-900">Human Agent</span>
+          </button>
+        </div>
+      </Popover>
+    </div>
   );
 }
 

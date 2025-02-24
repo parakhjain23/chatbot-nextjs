@@ -23,7 +23,7 @@ const ParamsEnums = {
   isPublishedTab: "isPublishedTab",
   versionId: "versionId",
   isTemplate: "isTemplate",
-  interfaceId: "interfaceId",
+  chatbotId: "chatbotId",
   isConfiguration: "isConfiguration",
   isLogs: "isLogs",
   isSetup: "isSetup",

@@ -6,7 +6,7 @@ import { perFormAction } from "@/utils/ChatbotUtility";
 
 interface InterfaceButtonProps {
   props: ButtonProps | any;
-  interfaceId: string;
+  chatbotId: string;
   gridId: string;
   componentId: string;
   inpreview: boolean;
@@ -44,5 +44,5 @@ function InterfaceButton({ props, action }: InterfaceButtonProps): JSX.Element {
   );
 }
 export default React.memo(
-  addUrlDataHoc(React.memo(InterfaceButton), [ParamsEnums?.interfaceId])
+  addUrlDataHoc(React.memo(InterfaceButton), [ParamsEnums?.chatbotId])
 );

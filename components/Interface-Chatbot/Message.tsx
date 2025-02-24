@@ -28,6 +28,8 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "./Message.css";
+import Image from "next/image";
+import { AlertCircle, Check, Copy, Maximize2, ThumbsDown, ThumbsUp } from "lucide-react";
 
 const ResetHistoryLine = ({ text = "" }) => {
   return (
@@ -44,83 +46,35 @@ const ResetHistoryLine = ({ text = "" }) => {
 const UserMessageCard = React.memo(({ message, theme, textColor }: any) => {
   return (
     <>
-      <Stack
-        className="user-message-slide"
-        sx={{
-          alignItems: "flex-end",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          width: "100%",
-          justifyContent: "flex-end",
-          "@media(max-width:479px)": {
-            height: "fit-content",
-            columnGap: "5px",
-          },
-          marginBottom: "10px",
-        }}
-        direction="row"
-      >
+      <div className="flex flex-col gap-2.5 items-end w-full mb-2.5 animate-slide-left">
         {Array.isArray(message?.urls) && message.urls.length > 0 && (
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "row-reverse",
-              flexWrap: "wrap",
-              gap: "10px",
-              maxWidth: "80%",
-              padding: "10px",
-              boxSizing: "border-box",
-              borderRadius: "10px 10px 1px 10px",
-            }}
-          >
-            {message.urls.map((url, index) => (
+          <div className="flex flex-row-reverse flex-wrap gap-2.5 max-w-[80%] p-2.5 rounded-[10px_10px_1px_10px]">
+            {message.urls.map((url: string, index: number) => (
               <img
                 key={index}
                 src={url}
                 alt={`Image ${index + 1}`}
-                style={{
-                  display: "block",
-                  maxWidth: "40%",
-                  height: "auto",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                }}
+                className="block max-w-[40%] h-auto rounded-md cursor-pointer hover:opacity-90 transition-opacity"
                 onClick={() => window.open(url, "_blank")}
               />
             ))}
-          </Box>
+          </div>
         )}
-        <Box
-          sx={{
+        <div
+          className="p-2.5 min-w-[150px] max-w-[80%] rounded-[10px_10px_1px_10px] break-words"
+          style={{
             backgroundColor: theme.palette.primary.main,
-            padding: "10px",
-            boxSizing: "border-box",
-            height: "fit-content",
-            minWidth: "150px",
-            borderRadius: "10px 10px 1px 10px",
-            wordBreak: "break-word",
-            whiteSpace: "normal",
-            overflowWrap: "break-word",
-            maxWidth: "80%",
-            //  boxShadow: "0 4px 2px rgba(0, 0, 0, 0.1)",
+            color: textColor
           }}
         >
-          <Typography
-            variant="body1"
-            sx={{
-              // fontFamily: "var(--theme-font-family)",
-              color: textColor,
-              whiteSpace: "pre-wrap",
-              // fontSize: "15px",
-              // "@media(max-width:991px)": { fontSize: "14px" },
-              // "@media(max-width:479px)": { fontSize: "12px" },
-            }}
-          >
-            {message?.content}
-          </Typography>
-        </Box>
-      </Stack>
+          <div className="card-body p-0">
+            <p className="whitespace-pre-wrap text-sm md:text-base">
+              {message?.content}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {message?.is_reset && <ResetHistoryLine />}
     </>
   );
@@ -148,104 +102,60 @@ const AssistantMessageCard = React.memo(
     };
 
     return (
-      <Box className="assistant_message_card">
-        <Stack
-          className="assistant-message-slide"
-          sx={{
-            alignItems: "flex-end",
-            gap: "10px",
-            maxWidth: "90%",
-            "@media(max-width:479px)": {
-              height: "fit-content",
-              columnGap: "5px",
-            },
-            marginBottom: "10px",
-          }}
-          direction="row"
-        >
-          <Stack
-            sx={{
-              alignItems: "center",
-              width: "30px",
-              justifyContent: "flex-end",
-              "@media(max-width:479px)": { width: "30px" },
-            }}
-            spacing="5px"
-          >
-            <img
-              src={AiIcon}
-              width="28"
-              height="28"
-              alt="AI"
-              style={{ color: "red" }}
-            />
-          </Stack>
-          {message?.wait && (
-            <div className="w-100">
-              <Typography variant="subtitle2">{message?.content}</Typography>
+      <div className="flex flex-col gap-2">
+        <div className="flex items-end gap-2.5 max-w-[90%] mb-2.5 animate-slide-left">
+          <div className="flex flex-col items-center justify-end w-8">
+            <div className="w-8 h8 rounded-full bg-primary/10 flex items-center justify-center">
+              <Image
+                src={AiIcon}
+                width="28"
+                height="28"
+                alt="AI"
+                style={{ color: "red" }}
+              />
+            </div>
+          </div>
+
+          {message?.wait ? (
+            <div className="w-full">
+              <p className="text-sm">{message?.content}</p>
+              {/* <div className="flex gap-1 mt-2">
+                <div className="w-2 h-2 rounded-full bg-primary/60 animate-bounce"></div>
+                <div className="w-2 h-2 rounded-full bg-primary/60 animate-bounce delay-100"></div>
+                <div className="w-2 h-2 rounded-full bg-primary/60 animate-bounce delay-200"></div>
+              </div> */}
               <div className="loading-indicator" style={themePalette}>
                 <div className="loading-bar"></div>
                 <div className="loading-bar"></div>
                 <div className="loading-bar"></div>
               </div>
             </div>
-          )}
-          {!message?.wait && (
-            <Box
-              className="assistant-message-slide"
-              sx={{
-                backgroundColor: theme.palette.background.default,
-                padding: "2px 10px",
-                boxSizing: "border-box",
-                height: "fit-content",
-                minWidth: "150px",
-                borderRadius: "10px 10px 10px 1px",
-                boxShadow: "0 2px 1px rgba(0, 0, 0, 0.1)",
-                wordBreak: "break-word",
-                overflowWrap: "break-word",
-                maxWidth: "100%",
-                color: "black",
-                whiteSpace: "pre-wrap",
-              }}
-            >
+          ) : (
+            <div className="min-w-[150px] max-w-full bg-white dark:bg-gray-800 rounded-lg shadow-sm p-3" style={{ backgroundColor: theme.palette.background.default, }}>
               {message?.timeOut ? (
-                <Box className="flex-start-center w-100 gap-5 p-1">
-                  <Typography variant="body1">
-                    Timeout reached. Please try again later.
-                  </Typography>
-                </Box>
+                <div className="flex items-center gap-2 text-error">
+                  <AlertCircle className="w-4 h-4" />
+                  <p>Timeout reached. Please try again later.</p>
+                </div>
               ) : message.image_url ? (
-                <Box className="assistant-message-slide">
-                  <div>
-                    <img
-                      src={message.image_url}
-                      alt="Message Image"
-                      style={{
-                        maxWidth: "100%",
-                        minWidth: "150px",
-                        maxHeight: "400px",
-                        minHeight: "100px",
-                        borderRadius: "10px",
-                      }}
-                    />
-                    <Button
-                      href={message.image_url}
-                      target="_blank"
-                      download
-                      variant="text"
-                      sx={{
-                        display: "block",
-                        textAlign: "center",
-                        color: theme.palette.primary.main,
-                        textDecoration: "none",
-                      }}
-                    >
-                      Full screen image
-                    </Button>
-                  </div>
-                </Box>
+                <div className="space-y-2">
+                  <img
+                    src={message.image_url}
+                    alt="Message Image"
+                    className="w-full max-h-[400px] min-h-[100px] rounded-lg object-cover"
+                  />
+                  <a
+                    href={message.image_url}
+                    target="_blank"
+                    rel="noopener"
+                    className="btn btn-ghost btn-sm w-full text-primary"
+                  >
+                    <Maximize2 className="w-4 h-4 mr-2" />
+                    View Full Image
+                  </a>
+                </div>
               ) : (
-                <Box className="assistant-message-slide">
+                <div className="prose dark:prose-invert max-w-none">
                   {(() => {
                     const parsedContent = isJSONString(
                       isError
@@ -258,6 +168,7 @@ const AssistantMessageCard = React.memo(
                           : message?.chatbot_message || message?.content
                       )
                       : null;
+
                     if (
                       parsedContent &&
                       (parsedContent.hasOwnProperty("isMarkdown") ||
@@ -278,20 +189,19 @@ const AssistantMessageCard = React.memo(
                               JSON.stringify(parsedContent?.response)}
                           </ReactMarkdown>
                           {parsedContent?.options && (
-                            <Box className="flex flex-col gap-1">
+                            <div className="flex flex-col gap-2 mt-4">
                               {parsedContent.options.map(
                                 (option: any, index: number) => (
-                                  <Button
+                                  <button
                                     key={index}
-                                    className="option-button mr-2 cursor-pointer"
-                                    variant="outlined"
                                     onClick={() => addMessage(option)}
+                                    className="btn btn-outline btn-sm"
                                   >
                                     {option}
-                                  </Button>
+                                  </button>
                                 )
                               )}
-                            </Box>
+                            </div>
                           )}
                         </>
                       ) : (
@@ -319,117 +229,66 @@ const AssistantMessageCard = React.memo(
                       </ReactMarkdown>
                     );
                   })()}
-                </Box>
+                </div>
               )}
-            </Box>
+            </div>
           )}
-        </Stack>
-        <Box className="flex flex-row">
-          <Box
-            sx={{
-              alignItems: "center",
-              width: "30px",
-              justifyContent: "flex-end",
-              "@media(max-width:479px)": { width: "30px" },
-            }}
-          ></Box>
-          {/* Icon box that will show on hover of the message card */}
+        </div>
+
+        <div className="flex items-center gap-2 ml-10">
           {!message?.wait && !message?.timeOut && !message?.error && (
-            <Box className="icon-box flex flex-row ml-2 gap-1 hover-and-see">
-              <Tooltip title="Copy">
-                {!isCopied ? (
-                  <ContentCopyIcon
-                    fontSize="inherit"
-                    sx={{ fontSize: "16px" }}
-                    onClick={handleCopy}
-                    className="cursor-pointer"
-                  />
+            <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400">
+              <button
+                className="btn btn-ghost btn-xs tooltip"
+                data-tip={isCopied ? "Copied!" : "Copy"}
+                onClick={handleCopy}
+              >
+                {isCopied ? (
+                  <Check className="w-4 h-4 text-success" />
                 ) : (
-                  <FileDownloadDoneIcon
-                    fontSize="inherit"
-                    sx={{ fontSize: "16px" }}
-                    color="success"
-                    className="cursor-pointer"
-                  />
+                  <Copy className="w-4 h-4" />
                 )}
-              </Tooltip>
+              </button>
+
               {message?.message_id && (
                 <>
-                  <Tooltip title="Good response">
-                    {message?.user_feedback === 1 ? (
-                      <ThumbUpIcon
-                        fontSize="inherit"
-                        sx={{
-                          fontSize: "16px",
-                          color: "green",
-                        }}
-                        onClick={() =>
-                          handleFeedback(
-                            message?.message_id,
-                            1,
-                            message?.user_feedback
-                          )
-                        }
-                        className="cursor-pointer"
-                      />
-                    ) : (
-                      <ThumbUpAltOutlinedIcon
-                        fontSize="inherit"
-                        sx={{
-                          "&:hover": { color: "green" },
-                          fontSize: "16px",
-                          color: "inherit",
-                        }}
-                        onClick={() =>
-                          handleFeedback(
-                            message?.message_id,
-                            1,
-                            message?.user_feedback
-                          )
-                        }
-                        className="cursor-pointer"
-                      />
-                    )}
-                  </Tooltip>
-                  <Tooltip title="Bad response">
-                    {message?.user_feedback === 2 ? (
-                      <ThumbDownIcon
-                        fontSize="inherit"
-                        sx={{
-                          color: "red",
-                          fontSize: "16px",
-                        }}
-                        onClick={() =>
-                          handleFeedback(
-                            message?.message_id,
-                            2,
-                            message?.user_feedback
-                          )
-                        }
-                        className="cursor-pointer"
-                      />
-                    ) : (
-                      <ThumbDownOffAltOutlinedIcon
-                        fontSize="inherit"
-                        sx={{ "&:hover": { color: "red" }, fontSize: "16px" }}
-                        onClick={() =>
-                          handleFeedback(
-                            message?.message_id,
-                            2,
-                            message?.user_feedback
-                          )
-                        }
-                        className="cursor-pointer"
-                      />
-                    )}
-                  </Tooltip>
+                  <button
+                    className={`btn btn-ghost btn-xs tooltip ${message?.user_feedback === 1 ? "text-success" : ""
+                      }`}
+                    data-tip="Good response"
+                    onClick={() =>
+                      handleFeedback(
+                        message?.message_id,
+                        1,
+                        message?.user_feedback
+                      )
+                    }
+                  >
+                    <ThumbsUp className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    className={`btn btn-ghost btn-xs tooltip ${message?.user_feedback === 2 ? "text-error" : ""
+                      }`}
+                    data-tip="Bad response"
+                    onClick={() =>
+                      handleFeedback(
+                        message?.message_id,
+                        2,
+                        message?.user_feedback
+                      )
+                    }
+                  >
+                    <ThumbsDown className="w-4 h-4" />
+                  </button>
                 </>
               )}
-            </Box>
+            </div>
           )}
-        </Box>
+        </div>
+
         {message?.is_reset && <ResetHistoryLine />}
-      </Box>
+      </div>
     );
   }
 );

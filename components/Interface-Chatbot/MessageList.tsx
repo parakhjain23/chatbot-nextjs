@@ -22,6 +22,7 @@ import Message from "./Message";
 import MoveToDownButton from "./MoveToDownButton";
 import { ChatBotGif } from "@/assests/assestsIndex";
 import { sendFeedbackAction } from "@/config/api";
+import Image from "next/image";
 
 function MessageList() {
   const containerRef = useRef<any>(null);
@@ -187,10 +188,12 @@ function MessageList() {
         height: "100%",
       }}
     >
-      <img
+      <Image
         src={ChatBotGif}
         alt="Chatbot GIF"
         style={{ display: showIcon ? "block" : "none" }}
+        width={200}
+        height={200}
       />
       <Typography
         variant="h6"

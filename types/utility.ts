@@ -20,5 +20,5 @@ export interface UrlDataType {
   sectionIdOrScriptId: string;
   versionIdOrStepId: string;
   versionId: string;
-  interfaceId: string;
+  chatbotId: string;
 }

@@ -41,7 +41,7 @@
 //   setActionType = null,
 //   orgId,
 //   projectId,
-//   interfaceId,
+//   chatbotId,
 //   actionElement,
 //   actionKey,
 //   key,
@@ -53,7 +53,7 @@
 //   setActionType: any;
 //   orgId: string;
 //   projectId: string;
-//   interfaceId: string;
+//   chatbotId: string;
 //   actionElement: any;
 //   actionKey: string;
 //   key: string;
@@ -66,7 +66,7 @@
 //   const { gridId, componentType, componentId } = currentSelectedComponent || {};
 //   const actionData = useCustomSelector(
 //     (state: $ReduxCoreType) =>
-//       state?.Interface?.interfaceData?.[interfaceId]?.actions?.[gridId]?.[
+//       state?.Interface?.interfaceData?.[chatbotId]?.actions?.[gridId]?.[
 //         componentId
 //       ]
 //   );
@@ -543,6 +543,6 @@
 //   addUrlDataHoc(React.memo(ComponentToTakePropValue), [
 //     ParamsEnums?.orgId,
 //     ParamsEnums?.projectId,
-//     ParamsEnums?.interfaceId,
+//     ParamsEnums?.chatbotId,
 //   ])
 // );

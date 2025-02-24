@@ -1,20 +1,20 @@
 import { call, put } from "redux-saga/effects";
-import { getInterfaceByIdApi } from "../../api/InterfaceApis/InterfaceApis.ts";
-import { errorToast } from "../../components/customToast";
-import actionType from "../../types/utility.ts";
+import { getInterfaceByIdApi } from "@/config/api";
+import { errorToast } from "@/components/customToast";
+import { actionType } from "@/types/utility";
 import {
   getInterfaceDataByIdError,
   getInterfaceDataByIdSuccess,
-} from "./interfaceSlice.ts";
+} from "./interfaceSlice";
 
 export function* getInterfaceByIdSaga(
   action: actionType<{ gridId: string; componentId: string }>
 ): any {
   try {
-    const { interfaceId } = action.urlData;
+    const { chatbotId } = action.urlData;
     const response: { [key: string]: any }[] = yield call(
       getInterfaceByIdApi,
-      interfaceId
+      chatbotId
     );
     yield put(getInterfaceDataByIdSuccess(response));
   } catch (error) {

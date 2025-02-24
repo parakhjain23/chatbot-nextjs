@@ -35,6 +35,7 @@ import ChatbotHeaderTab from "./ChatbotHeaderTab";
 import ChatbotTextField from "./ChatbotTextField";
 import "./InterfaceChatbot.css";
 import MessageList from "./MessageList";
+import ChatbotDrawer from "./ChatbotDrawer";
 
 const client = WebSocketClient("lyvSfW7uPPolwax0BHMC", "DprvynUwAdFwkE91V5Jj");
 
@@ -82,7 +83,7 @@ function InterfaceChatbot({
   chatbotId,
 }: InterfaceChatbotProps) {
   const theme = useTheme(); // Hook to access the theme
-  console.log(chatbotId,23123123)
+  console.log(chatbotId, 23123123)
   const {
     interfaceContextData,
     reduxThreadId,
@@ -624,60 +625,50 @@ function InterfaceChatbot({
       }}
     >
       <FormComponent open={open} setOpen={setOpen} />
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          height: "100vh",
-          overflow: "hidden",
-          position: "relative",
-        }}
-      >
-        <ChatbotHeader
-          setLoading={setLoading}
-          setChatsLoading={setChatsLoading}
-        />
-        <ChatbotHeaderTab />
-        {chatsLoading && (
-          <LinearProgress
-            variant="indeterminate"
-            color="secondary"
-            sx={{ height: 4 }}
-          />
-        )}
-        <Grid
-          item
-          xs
-          className="second-grid"
-          sx={{ paddingX: 0.2, paddingBottom: 0.2 }}
-        >
-          <MessageList />
-        </Grid>
-        <Grid
-          item
-          xs={12}
-          className="third-grid"
-          sx={{
-            paddingX: theme.spacing(3),
-            display: "flex",
-            alignItems: "end",
-            marginBottom: theme.spacing(2),
-          }}
-        >
-          <ChatbotTextField
-            loading={loading}
-            options={options}
+      <div className="flex h-screen w-full overflow-hidden">
+        {/* Sidebar - always visible on large screens */}
+        <div className="hidden lg:block w-64 bg-base-100 border-r">
+          <ChatbotDrawer toggleDrawer={()=>{}}  />
+        </div>
+
+        {/* Main content area */}
+        <div className="flex flex-col flex-1">
+          {/* Mobile header - hidden on large screens */}
+          <div className="lg:hidden">
+          </div>
+          <ChatbotHeader
+            setLoading={setLoading}
             setChatsLoading={setChatsLoading}
-            onSend={() => {
-              IsHuman ? onSendHello() : onSend();
-            }}
-            messageRef={messageRef}
-            setImages={setImages}
-            images={images}
           />
-        </Grid>
-      </Box>
+          <ChatbotHeaderTab />
+
+          {chatsLoading && (
+            <div className="h-1 bg-secondary animate-pulse" />
+          )}
+
+          {/* Messages container - centered on large screens */}
+          <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full px-4">
+            <div className="flex-grow overflow-y-auto" style={{height: 'calc(100vh - 300px)'}}>
+              <MessageList />
+            </div>
+
+            {/* Text input - sticky at bottom */}
+            <div className="sticky bottom-2 py-2 border-t">
+              <ChatbotTextField
+                loading={loading}
+                options={options}
+                setChatsLoading={setChatsLoading}
+                onSend={() => {
+                  IsHuman ? onSendHello() : onSend();
+                }}
+                messageRef={messageRef}
+                setImages={setImages}
+                images={images}
+              />
+            </div>
+          </div>
+        </div>
+      </div>
     </MessageContext.Provider>
   );
 }

@@ -54,10 +54,10 @@ function ChatbotDrawer({ setLoading, open, toggleDrawer, chatbotId }) {
       subThreadList:
         state.Interface?.interfaceContext?.[chatbotId]?.[
           GetSessionStorageData("bridgeName") ||
-            state.Interface?.bridgeName ||
-            "root"
+          state.Interface?.bridgeName ||
+          "root"
         ]?.threadList?.[
-          GetSessionStorageData("threadId") || state.Interface?.threadId
+        GetSessionStorageData("threadId") || state.Interface?.threadId
         ] || [],
     }));
 
@@ -122,7 +122,7 @@ function ChatbotDrawer({ setLoading, open, toggleDrawer, chatbotId }) {
                 <ListItemText
                   primary={
                     (thread?.display_name || thread?.sub_thread_id)?.length >
-                    30 ? (
+                      30 ? (
                       <Tooltip
                         title={thread?.display_name || thread?.sub_thread_id}
                         placement="top"

@@ -215,7 +215,7 @@ function MessageList() {
     <div className="flex justify-center h-full">
       <div
         id="scrollableDiv"
-        className={` h-full overflow-y-auto flex w-full max-w-[900px] ${
+        className={` h-full overflow-y-auto flex w-full max-w-[900px] scrollbar-hide ${
           isInverse ? "flex-col" : "flex-col-reverse"
         } p-2`}
         ref={containerRef}

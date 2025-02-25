@@ -16,6 +16,7 @@ import { $ReduxCoreType } from "../../../types/reduxCore";
 import { useCustomSelector } from "../../../utils/deepCheckSelector";
 import isColorLight from "../../../utils/themeUtility";
 import { GetSessionStorageData } from "../../utils/InterfaceUtils";
+import { PanelRightOpen, SquarePen } from "lucide-react";
 
 const createRandomId = () => {
   return Math.random().toString(36).substring(2, 15);
@@ -100,12 +101,15 @@ function ChatbotDrawer({
                 style={{
                   ...(thread?.sub_thread_id === selectedSubThreadId
                     ? {
-                        backgroundColor: theme.palette.primary.main,
-                        color: textColor,
+                        backgroundColor: lighten(
+                          theme.palette.primary.main,
+                          0.8
+                        ),
+                        color: "black",
                       }
                     : {
                         backgroundColor: "transparent",
-                        color: "black",
+                        color: textColor,
                       }),
                 }}
                 onClick={() => handleChangeSubThread(thread?.sub_thread_id)}
@@ -129,12 +133,12 @@ function ChatbotDrawer({
       className={`fixed top-0 left-0 w-[280px] h-full shadow-lg transform transition-transform z-50 ${
         open ? "translate-x-0" : "-translate-x-full"
       }`}
-      style={{ background: lighten(theme.palette.primary.main, 0.5) }}
+      style={{ background: theme.palette.primary.main }}
     >
       <div className="h-full flex flex-col">
         <div className="px-4 py-2 flex items-center justify-between">
           <button onClick={toggleDrawer(false)} className="p-1">
-            <CloseSidebarIcon color={textColor} />
+            <PanelRightOpen color={textColor} />
           </button>
           <p className="text-lg font-bold" style={{ color: textColor }}>
             Chat History
@@ -144,7 +148,7 @@ function ChatbotDrawer({
             className="p-1"
             style={{ color: textColor }}
           >
-            <CreateIcon className="text-sm" />
+            <SquarePen className="text-sm" />
           </button>
         </div>
         <hr className="border-t border-gray-300" />

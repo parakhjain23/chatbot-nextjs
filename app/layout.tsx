@@ -13,7 +13,6 @@ export const ChatbotContext = createContext({
   themeColor: "#000000",
   onConfigChange: (config: any) => {},
   handleThemeChange: (color: string) => {},
-  toggleHideCloseButton: () => {},
 });
 
 export default function RootLayout({
@@ -43,14 +42,6 @@ export default function RootLayout({
     setThemeColor(color);
   }, []);
 
-  const toggleHideCloseButton = useCallback(() => {
-    console.log("adfdf");
-    setChatbotConfig((prev) => ({
-      ...prev,
-      hideCloseButton: !prev.hideCloseButton,
-    }));
-  }, []);
-
   return (
     <html lang="en">
       <body>
@@ -65,7 +56,6 @@ export default function RootLayout({
                     themeColor,
                     onConfigChange,
                     handleThemeChange,
-                    toggleHideCloseButton,
                   }),
                   [chatbotConfig, themeColor]
                 )}

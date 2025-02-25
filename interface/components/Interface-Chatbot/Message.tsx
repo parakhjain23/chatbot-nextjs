@@ -117,7 +117,7 @@ const AssistantMessageCard = React.memo(
               {[0, 1, 2].map((i) => (
                 <div
                   key={i}
-                  className="w-[20px] h-[20px] rounded-full animate-pulse"
+                  className="w-[12px] h-[12px] rounded-full animate-pulse"
                   style={{
                     animationDelay: `${i * 0.2}s`,
                     backgroundColor: theme.palette.primary.main,
@@ -126,7 +126,7 @@ const AssistantMessageCard = React.memo(
               ))}
             </div>
           ) : (
-            <div className="p-2 min-w-[150px] rounded-lg break-words max-w-full text-lg shadow-sm text-black whitespace-pre-wrap">
+            <div className="p-2 min-w-[150px] rounded-lg break-words max-w-full text-lg  text-black whitespace-pre-wrap">
               {message?.timeOut ? (
                 <div className="flex items-start w-full gap-2 p-1">
                   <p>Timeout reached. Please try again later.</p>

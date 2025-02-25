@@ -42,7 +42,7 @@ import {
   setThreadId,
   setThreads,
 } from "../../../store/interface/interfaceSlice";
-import { X } from "lucide-react";
+import { EllipsisVertical, PanelLeftOpen, SquarePen, X } from "lucide-react";
 
 const createRandomId = () => {
   return Math.random().toString(36).substring(2, 15);
@@ -59,7 +59,6 @@ function ChatbotHeader({ setLoading, setChatsLoading }) {
 
   const {
     chatbotConfig: { chatbotTitle, chatbotSubtitle, hideCloseButton },
-    toggleHideCloseButton,
   } = useContext<any>(ChatbotContext);
 
   const isLightBackground = isColorLight(theme.palette.primary.main);
@@ -104,20 +103,20 @@ function ChatbotHeader({ setLoading, setChatsLoading }) {
       className="px-4 py-4 shadow-lg"
       style={{ background: theme.palette.primary.main }}
     >
-      <div className="flex items-center justify-between w-full">
+      <div className="flex items-center justify-between w-full gap-4">
         <div className="flex gap-2">
           <div
             className="cursor-pointer transition-transform duration-300 ease-in-out hover:scale-110"
             onClick={toggleDrawer(true)}
           >
-            <OpenSidebarIcon color={textColor} />
+            <PanelLeftOpen color={textColor} />
           </div>
           <button
             onClick={handleCreateNewSubThread}
             className=""
             style={{ color: textColor }}
           >
-            <CreateIcon className="text-sm" />
+            <SquarePen className="text-sm" />
           </button>
         </div>
         <h6
@@ -136,19 +135,19 @@ function ChatbotHeader({ setLoading, setChatsLoading }) {
         </div>
         {!hideCloseButton && (
           <div>
-            <X onClick={toggleHideCloseButton} color={textColor} />
+            <X color={textColor} />
           </div>
         )}
       </div>
 
-      {/* {chatbotSubtitle && ( */}
-      <p
-        className="font-normal mt-1 italic text-center"
-        style={{ color: textColor }}
-      >
-        {chatbotSubtitle || "Do you have any questions? Ask us!"}
-      </p>
-      {/* )} */}
+      {chatbotSubtitle && (
+        <p
+          className="font-normal mt-1 italic text-center"
+          style={{ color: textColor }}
+        >
+          {chatbotSubtitle || "Do you have any questions? Ask us!"}
+        </p>
+      )}
 
       <ChatbotDrawer
         open={open}
@@ -235,11 +234,9 @@ const ResetChatOption = React.memo(
 
       return (
         <Box sx={{ marginLeft: 2, display: "flex", alignItems: "center" }}>
-          <GridMoreVertIcon
-            sx={{
-              cursor: "pointer",
-              color: textColor,
-            }}
+          <EllipsisVertical
+            className="cursor-pointer"
+            style={{ color: textColor }}
             aria-controls={open ? "basic-menu" : undefined}
             aria-haspopup="true"
             aria-expanded={open ? "true" : undefined}

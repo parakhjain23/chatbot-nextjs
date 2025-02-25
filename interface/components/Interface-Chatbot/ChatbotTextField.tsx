@@ -191,8 +191,14 @@ function ChatbotTextField({
             border: `2px solid ${lighten(theme.palette.primary.main, 0.8)}`,
           }}
         >
-          <div className="flex items-center">
-            <Image src={AiIcon} width="32" height="32" alt="AI" />
+          <div className="flex items-start ">
+            <Image
+              src={AiIcon}
+              width="32"
+              height="32"
+              alt="AI"
+              className="pt-1"
+            />
             <textarea
               ref={messageRef}
               className={`w-full bg-transparent rounded-lg text-lg p-2 resize-none focus:outline-none`}

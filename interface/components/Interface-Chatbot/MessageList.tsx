@@ -1,5 +1,11 @@
 "use client";
-import { Box, LinearProgress, Typography, useTheme } from "@mui/material";
+import {
+  Box,
+  lighten,
+  LinearProgress,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import React, {
   useCallback,
   useContext,
@@ -30,7 +36,7 @@ function MessageList() {
     setNewMessage,
     newMessage,
     currentPage,
-    starterQuestions,
+    // starterQuestions,
   } = useContext(MessageContext);
   const MessagesList: any = useContext(MessageContext);
   const {
@@ -178,6 +184,7 @@ function MessageList() {
     return () => clearTimeout(timer);
   }, []);
 
+  const starterQuestions = ["daaaafsssssssssssssssss"];
   return (IsHuman ? helloMessages?.length === 0 : messages?.length === 0) ? (
     <div className="flex flex-col justify-center items-center h-full">
       <Image
@@ -195,11 +202,10 @@ function MessageList() {
             <div
               key={index}
               onClick={() => addMessage(question)}
-              className={`cursor-pointer mb-1 p-2 rounded-md  border-[0.5px] border-[${theme.palette.primary.main}]`}
+              className={`cursor-pointer mb-1 px-4 py-2 rounded-md shadow-lg`}
+              style={{ background: lighten(theme.palette.primary.main, 0.8) }}
             >
-              <p className="text-[${theme.palette.primary.main}] text-base">
-                {question}
-              </p>
+              <p className="text-base">{question}</p>
             </div>
           ))}
         </div>

@@ -114,7 +114,7 @@ function ChatbotTextField({
           }
         }
         if (filesArray.length > 4) {
-          errorToast.warn("You have uploaded more than 4 images.");
+            errorToast.warn("You have uploaded more than 4 images.");
         }
       } catch (error) {
         console.error("Error uploading images:", error);
@@ -129,7 +129,7 @@ function ChatbotTextField({
   };
 
   return (
-    <div className="relative w-full">
+    <div className="relative w-full bg-base-200 rounded-lg shadow-sm">
       {options && options.length > 0 && (
         <div className="flex flex-wrap gap-2 p-2 animate-fadeIn">
           {options?.slice(0, 3).map((option, index) => (
@@ -145,11 +145,11 @@ function ChatbotTextField({
       )}
 
       {images.length > 0 && (
-        <div className="flex flex-wrap gap-2 my-4">
+        <div className="flex flex-wrap gap-2 my-4 px-4">
           {images.map((image, index) => (
-            <div key={index} className="relative max-w-[20%] h-12 rounded-lg bg-base-200 flex items-center justify-center p-0.5">
+            <div key={index} className="relative max-w-[20%] md:max-w-[15%] h-8 rounded-lg bg-base-200 flex items-center justify-center p-0.5">
               <Image
-                src={image}
+                src={image as string}
                 alt={`Uploaded Preview ${index + 1}`}
                 className="max-w-full max-h-full rounded-lg object-cover"
                 width={48}
@@ -167,7 +167,7 @@ function ChatbotTextField({
       )}
 
       <div className="relative flex items-end">
-        <div className="absolute left-3 top-2 z-10">
+        <div className="absolute left-3 top-4 z-10">
           <div
             className="relative w-7 h-7 cursor-pointer"
             onClick={isHelloAssistantEnabled ? () => handlePopoverOpen : undefined}
@@ -190,10 +190,10 @@ function ChatbotTextField({
             ref={messageRef}
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Enter your message"
+            placeholder="Message AI Assistant..."
             disabled={disabled}
-            className="textarea textarea-bordered w-full pl-12 pr-12 min-h-[100px] max-h-[200px] resize-none focus:outline-none disabled:bg-base-200 disabled:cursor-not-allowed"
-            rows={2}
+            className="textarea w-full pl-12 pr-12 min-h-[120px] max-h-[300px] md:min-h-[100px] resize-none focus:outline-none disabled:bg-base-200 disabled:cursor-not-allowed rounded-xl border border-gray-300 shadow-inner bg-white/90 backdrop-blur-sm transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20 py-4"
+            rows={3}
           />
 
           {((reduxIsVision?.vision && mode?.includes("human")) ||
@@ -207,31 +207,33 @@ function ChatbotTextField({
                   id="upload-image"
                   multiple
                 />
-                <label htmlFor="upload-image">
-                  <button
-                    className={`btn btn-circle ${isUploading || loading ? 'btn-disabled' : 'btn-primary'
-                      }`}
-                    disabled={isUploading || loading}
-                  >
+                <label htmlFor="upload-image" className="cursor-pointer">
+                  <div className="flex items-center gap-2 px-3 py-2 rounded-full border border-gray-300 bg-white/90 shadow-sm backdrop-blur-md hover:bg-gray-100 transition-all duration-200 group">
                     {isUploading ? (
-                      <span className="loading loading-spinner" />
+                      <div className="flex items-center gap-2">
+                        <span className="loading loading-spinner loading-xs text-primary" />
+                        <span className="text-xs font-medium text-gray-600">Uploading...</span>
+                      </div>
                     ) : (
-                      <Upload className={`w-5 h-5 ${isLight ? 'text-base-100' : 'text-base-content'}`} />
+                      <div className="flex items-center gap-2">
+                        <Upload className={`w-4 h-4 text-primary group-hover:scale-110 transition-transform duration-200`} />
+                        <span className="text-xs font-medium text-gray-700">Upload Image</span>
+                      </div>
                     )}
-                  </button>
+                  </div>
                 </label>
               </div>
             )}
 
           <button
             onClick={() => !loading && !isUploading ? onSend({ Message: message, images: images }) : null}
-            className={`btn btn-circle absolute right-3 bottom-3 ${loading || isUploading ? 'btn-disabled' : ''}`}
+            className={`btn btn-circle md:btn-sm absolute right-3 bottom-3 ${loading || isUploading ? 'btn-disabled' : ''} hover:scale-105 transition-transform duration-200`}
             disabled={loading || isUploading}
             style={{
               backgroundColor: loading || isUploading ? undefined : theme.palette.primary.main
             }}
           >
-            <Send className={`w-5 h-5 ${isLight ? 'text-black' : 'text-white'}`} />
+            <Send className={`w-5 h-5 md:w-4 md:h-4 ${isLight ? 'text-black' : 'text-white'}`} />
           </button>
         </div>
       </div>
@@ -250,20 +252,20 @@ function ChatbotTextField({
         }}
         className="mt-2"
       >
-        <div className="flex flex-col p-2 min-w-[200px]">
+        <div className="flex flex-col p-2 min-w-[200px] md:min-w-[180px] rounded-lg shadow-lg">
           <button
             onClick={() => {
               EnableAI();
               handlePopoverClose();
             }}
-            className="btn btn-ghost justify-start normal-case"
+            className="btn btn-ghost justify-start normal-case md:btn-sm hover:bg-gray-100"
           >
             <Image
               src={AiIcon}
               width={30}
               height={30}
               alt="AI Icon"
-              className="mr-3 filter drop-shadow-pink"
+              className="mr-3 filter drop-shadow-pink md:w-6 md:h-6"
             />
             <span>AI</span>
           </button>
@@ -273,14 +275,14 @@ function ChatbotTextField({
               EnableHumanAgent();
               handlePopoverClose();
             }}
-            className="btn btn-ghost justify-start normal-case"
+            className="btn btn-ghost justify-start normal-case md:btn-sm hover:bg-gray-100"
           >
             <Image
               src={UserAssistant}
               width={30}
               height={30}
               alt="Human Agent"
-              className="mr-3"
+              className="mr-3 md:w-6 md:h-6"
             />
             <span>Human Agent</span>
           </button>

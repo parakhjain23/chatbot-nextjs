@@ -18,7 +18,7 @@ import { $ReduxCoreType } from "@/types/reduxCore";
 import { GetSessionStorageData } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
 import { ParamsEnums } from "@/utils/enums";
-import { Box, Grid, LinearProgress, useTheme } from "@mui/material";
+import { useTheme } from "@mui/material";
 import axios from "axios";
 import React, {
   createContext,
@@ -130,6 +130,7 @@ function InterfaceChatbot({
   const socket = useSocket();
   const channelIdRef = useRef<string | null>(null);
   const listenerRef = useRef<string | null>(null);
+  const [isToggledrawer, setToggleDrawer] = useState<boolean>(true);
 
   const [threadId, setThreadId] = useState(
     GetSessionStorageData("threadId") || reduxThreadId
@@ -625,11 +626,11 @@ function InterfaceChatbot({
       }}
     >
       <FormComponent open={open} setOpen={setOpen} />
-      <div className="flex h-screen w-full overflow-hidden">
+      <div className="flex h-screen w-full">
         {/* Sidebar - always visible on large screens */}
-        {/* <div className="hidden lg:block w-64 bg-base-100 border-r"> */}
-        <ChatbotDrawer toggleDrawer={() => { }} />
-        {/* </div> */}
+        <div className={`hidden lg:block bg-base-100 border-r overflow-y-auto transition-all duration-300 ease-in-out ${isToggledrawer ? ' w-64' : 'w-0'}`}>
+          <ChatbotDrawer setToggleDrawer={setToggleDrawer} isToggledrawer={isToggledrawer} />
+        </div>
 
         {/* Main content area */}
         <div className="flex flex-col flex-1">
@@ -639,6 +640,8 @@ function InterfaceChatbot({
           <ChatbotHeader
             setLoading={setLoading}
             setChatsLoading={setChatsLoading}
+            setToggleDrawer={setToggleDrawer} 
+            isToggledrawer={isToggledrawer} 
           />
           <ChatbotHeaderTab />
 
@@ -646,25 +649,32 @@ function InterfaceChatbot({
             <div className="h-1 bg-secondary animate-pulse" />
           )}
 
-          {/* Messages container - centered on large screens */}
-          <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full px-4">
-            <div className="flex-grow overflow-y-auto" style={{ height: 'calc(100vh - 300px)' }}>
-              <MessageList />
+          {/* Messages container - full width with auto-scroll to bottom */}
+          <div className="flex-1 flex flex-col w-full relative">
+            <div 
+              className="absolute inset-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+              id="message-container"
+            >
+              <div className="w-full max-w-5xl mx-auto mb-52">
+                <MessageList />
+              </div>
             </div>
 
-            {/* Text input - sticky at bottom */}
-            <div className="sticky bottom-2 py-2 border-t">
-              <ChatbotTextField
-                loading={loading}
-                options={options}
-                setChatsLoading={setChatsLoading}
-                onSend={() => {
-                  IsHuman ? onSendHello() : onSend();
-                }}
-                messageRef={messageRef}
-                setImages={setImages}
-                images={images}
-              />
+            {/* Text input - fixed at bottom */}
+            <div className="absolute bottom-0 left-0 right-0 py-2 border-t bg-base-200">
+              <div className="max-w-5xl mx-auto px-4">
+                <ChatbotTextField
+                  loading={loading}
+                  options={options}
+                  setChatsLoading={setChatsLoading}
+                  onSend={() => {
+                    IsHuman ? onSendHello() : onSend();
+                  }}
+                  messageRef={messageRef}
+                  setImages={setImages}
+                  images={images}
+                />
+              </div>
             </div>
           </div>
         </div>

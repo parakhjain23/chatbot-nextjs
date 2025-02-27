@@ -1,7 +1,7 @@
 import React from "react";
 import { PrismLight as SyntaxHighlighter } from "react-syntax-highlighter";
 import {
-  prism,
+  oneLight,
   vscDarkPlus,
 } from "react-syntax-highlighter/dist/esm/styles/prism";
 
@@ -32,7 +32,7 @@ export function CodeBlock({
   inline = false,
   className = "",
   children,
-  isDark = false,
+  isDark = true,
   ...props
 }: {
   inline?: boolean;
@@ -42,17 +42,30 @@ export function CodeBlock({
 }) {
   const match = /language-(\w+)/.exec(className || "");
   const language = match ? match[1] : "text";
+  
+  // Always use dark theme
+  const codeStyle = vscDarkPlus;
 
   return !inline ? (
-    <div className="text-sm m-0 rounded-sm w-full">
+    <div className="text-sm m-0 w-full">
       <SyntaxHighlighter
-        style={isDark ? vscDarkPlus : prism}
-        customStyle={isDark ? {} : { backgroundColor: "transparent" }}
-        className="bg-white outline-none border-0 m-0"
+        style={codeStyle}
+        customStyle={{
+          backgroundColor: "#1E1E1E",
+          margin: 0,
+          padding: "1rem",
+          borderRadius: "0 0 0.375rem 0.375rem",
+          border: "1px solid",
+          borderColor: "#333",
+        }}
         language={language}
         wrapLongLines
         codeTagProps={{
-          style: { whiteSpace: "pre-wrap", backgroundColor: "transparent" },
+          style: { 
+            whiteSpace: "pre-wrap", 
+            fontFamily: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace",
+            fontSize: "0.9em",
+          },
         }}
         PreTag="div"
         {...props}
@@ -61,7 +74,20 @@ export function CodeBlock({
       </SyntaxHighlighter>
     </div>
   ) : (
-    <code className={className} {...props}>
+    <code 
+      className={`${className} inline-code`}
+      style={{ 
+        backgroundColor: "#1E1E1E",
+        color: "#D4D4D4",
+        padding: "0.2em 0.4em",
+        borderRadius: "3px",
+        fontSize: "85%",
+        fontFamily: "Consolas, Monaco, 'Andale Mono', 'Ubuntu Mono', monospace",
+        border: "1px solid",
+        borderColor: "#333",
+      }}
+      {...props}
+    >
       {children}
     </code>
   );

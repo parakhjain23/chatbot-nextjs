@@ -28,36 +28,56 @@ export const Code = ({
   const match = /language-(\w+)/.exec(className || "");
   return !inline && match ? (
     <div className="m-0">
-      <p
-        className="m-0 flex-end-center cursor-pointer p-1 pr-2"
+      <div
+        className="flex justify-between items-center cursor-pointer py-2 px-3"
         style={{
-          backgroundColor: "#DCDCDC",
+          backgroundColor: "#e5e7eb",
           borderTopRightRadius: 8,
           borderTopLeftRadius: 8,
+          borderBottom: "1px solid #d1d5db"
         }}
-        onClick={() => handlecopyfunction(children)}
       >
-        {!tipForCopy ? (
-          <>
-            <ContentCopyIcon
-              fontSize="inherit"
-              sx={{ height: 20 }}
-              className="mr-1"
-            />
-            <Typography variant="body2">Copy code</Typography>
-          </>
-        ) : (
-          <>
-            <DoneIcon
-              fontSize="inherit"
-              sx={{ height: 20, width: 20 }}
-              className="mr-1"
-              color="success"
-            />
-            <Typography variant="body2">Copied!</Typography>
-          </>
-        )}
-      </p>
+        <Typography 
+          variant="caption" 
+          sx={{ 
+            fontWeight: 500, 
+            color: "#4b5563",
+            textTransform: "uppercase",
+            letterSpacing: "0.05em",
+            fontSize: "0.7rem"
+          }}
+        >
+          {match[1]}
+        </Typography>
+        <button
+          onClick={() => handlecopyfunction(children)}
+          className="flex items-center gap-1.5 text-xs font-medium transition-all duration-200 hover:opacity-80 rounded-md px-2.5 py-1"
+          style={{
+            backgroundColor: tipForCopy ? "rgba(34, 197, 94, 0.1)" : "rgba(75, 85, 99, 0.2)",
+            color: tipForCopy ? "#16a34a" : "#374151",
+            border: tipForCopy ? "1px solid rgba(34, 197, 94, 0.2)" : "1px solid rgba(75, 85, 99, 0.3)"
+          }}
+        >
+          {!tipForCopy ? (
+            <>
+              <ContentCopyIcon
+                fontSize="inherit"
+                sx={{ height: 16, width: 16 }}
+              />
+              <Typography variant="caption" sx={{ fontWeight: 500 }}>Copy code</Typography>
+            </>
+          ) : (
+            <>
+              <DoneIcon
+                fontSize="inherit"
+                sx={{ height: 16, width: 16 }}
+                color="success"
+              />
+              <Typography variant="caption" sx={{ fontWeight: 500 }}>Copied!</Typography>
+            </>
+          )}
+        </button>
+      </div>
       <CodeBlock inline={inline} className={className} {...props}>
         {children}
       </CodeBlock>

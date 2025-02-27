@@ -255,8 +255,15 @@ function MessageList() {
           currentPage > 1 && (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <LinearProgress
-                color="secondary"
-                sx={{ height: 4, width: "80%", marginBottom: 2 }}
+                sx={{ 
+                  height: 4, 
+                  width: "80%", 
+                  marginBottom: 2,
+                  backgroundColor: '#e0e0e0',
+                  '& .MuiLinearProgress-bar': {
+                    backgroundColor: 'black'
+                  }
+                }}
               />
             </Box>
           )

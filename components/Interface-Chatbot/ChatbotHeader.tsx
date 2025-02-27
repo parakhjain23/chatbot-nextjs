@@ -4,9 +4,7 @@ import ChatIcon from "@mui/icons-material/Chat";
 import SyncIcon from "@mui/icons-material/Sync";
 
 // MUI Components
-import {
-  useTheme
-} from "@mui/material";
+import { useTheme } from "@mui/material";
 
 // Third-party libraries
 import axios from "axios";
@@ -27,56 +25,62 @@ import ChatbotDrawer from "./ChatbotDrawer";
 import { ChevronDown } from "lucide-react";
 import { ChatbotContext } from "../AppWrapper";
 import "./InterfaceChatbot.css";
+import CloseSidebarIcon from "@/assests/CloseSidebar";
 
-function ChatbotHeader({ setLoading, setChatsLoading }) {
+interface ChatbotHeaderProps {
+  setLoading: (loading: boolean) => void;
+  setChatsLoading: (loading: boolean) => void;
+  setToggleDrawer: (isOpen: boolean) => void;
+  isToggledrawer: boolean;
+}
+
+const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoading, setToggleDrawer, isToggledrawer }) => {
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const {
-    chatbotConfig: { chatbotTitle, chatbotSubtitle },
-  } = useContext<any>(ChatbotContext);
-  const isLightBackground = isColorLight(theme.palette.primary.main);
+  const { chatbotConfig: { chatbotTitle, chatbotSubtitle } } = useContext<any>(ChatbotContext);
+  const isLightBackground = theme.palette.mode === "light";
   const textColor = isLightBackground ? "black" : "white";
 
-  const toggleDrawer = (newOpen: boolean) => () => {
-    // setOpen(newOpen);
-    toggleSidebar("main-sidebar")
-  };
-
   return (
-    <div className="navbar shadow-lg" style={{ background: theme.palette.primary.main }}>
-      <div className="flex-1">
+    <div className="bg-gray-50 border-b border-gray-200 px-2 py-4 h-18 w-full">
+      <div className="flex items-center w-full">
         <button
-          className="btn btn-ghost btn-circle"
-          onClick={toggleDrawer(true)}
-          style={{ color: textColor }}
+          className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+          onClick={() => setToggleDrawer(!isToggledrawer)}
         >
-          <OpenSidebarIcon color={textColor} />
+          {isToggledrawer ? <CloseSidebarIcon color={textColor} /> : <OpenSidebarIcon color={textColor} />}
         </button>
-        <div className="flex flex-col" style={{ color: textColor }}>
-          <h2 className="text-xl font-bold" style={{ color: textColor }}>
-            {chatbotTitle || "AI Assistant"}
-          </h2>
-          {chatbotSubtitle && (
-            <p className="text-sm opacity-75" style={{ color: textColor }}>
+        
+        <div className="flex-1 flex justify-center">
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center gap-2">
+              <ChatIcon className="text-gray-600" />
+              <h2 className="text-lg font-semibold text-gray-800 text-center">
+                {chatbotTitle || "AI Assistant"}
+              </h2>
+            </div>
+            <p className="text-sm opacity-75 text-center">
               {chatbotSubtitle || "Do you have any questions? Ask us!"}
             </p>
-          )}
+          </div>
+        </div>
+
+        <div className="ml-auto">
+          <ResetChatOption
+            textColor={textColor}
+            setChatsLoading={setChatsLoading}
+          />
         </div>
       </div>
-      <div className="flex-none">
-        <ResetChatOption
-          textColor={textColor}
-          setChatsLoading={setChatsLoading}
-        />
-      </div>
-      {/* <ChatbotDrawer
-        open={open}
-        toggleDrawer={toggleDrawer}
+
+      <ChatbotDrawer
         setLoading={setLoading}
-      /> */}
+        chatbotId="chatbotId"
+        isToggledrawer={isToggledrawer}
+        setToggleDrawer={setToggleDrawer}
+      />
     </div>
   );
-}
+};
 
 export default ChatbotHeader;
 
@@ -124,6 +128,7 @@ const ResetChatOption = React.memo(
       const open = Boolean(anchorEl);
 
       const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation(); // Prevent event bubbling
         setAnchorEl(event.currentTarget);
       };
 
@@ -147,7 +152,7 @@ const ResetChatOption = React.memo(
       };
 
       return (
-        <div className="dropdown dropdown-end">
+        <div className="dropdown dropdown-end z-[99999]" onClick={(e) => e.stopPropagation()}>
           <button className="btn btn-ghost btn-circle" onClick={handleClick}>
             <ChevronDown className="h-5 w-5" color={textColor} />
           </button>
@@ -164,7 +169,10 @@ const ResetChatOption = React.memo(
             </li>
             <li>
               <button
-                onClick={() => setModalOpen(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setModalOpen(true);
+                }}
                 className="flex items-center gap-2"
               >
                 <ChatIcon className="h-4 w-4" />

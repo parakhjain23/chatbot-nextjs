@@ -17,7 +17,7 @@ import { successToast } from "@/components/customToast";
 import { performChatAction } from "@/config/api";
 import { addUrlDataHoc } from "@/hoc/addUrlDataHoc";
 import { $ReduxCoreType } from "@/types/reduxCore";
-import { GetSessionStorageData } from "@/utils/ChatbotUtility";
+import { GetSessionStorageData, toggleSidebar } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
 import { ParamsEnums } from "@/utils/enums";
 import { isColorLight } from "@/utils/themeUtility";
@@ -38,7 +38,8 @@ function ChatbotHeader({ setLoading, setChatsLoading }) {
   const textColor = isLightBackground ? "black" : "white";
 
   const toggleDrawer = (newOpen: boolean) => () => {
-    setOpen(newOpen);
+    // setOpen(newOpen);
+    toggleSidebar("main-sidebar")
   };
 
   return (
@@ -68,11 +69,11 @@ function ChatbotHeader({ setLoading, setChatsLoading }) {
           setChatsLoading={setChatsLoading}
         />
       </div>
-      <ChatbotDrawer
+      {/* <ChatbotDrawer
         open={open}
         toggleDrawer={toggleDrawer}
         setLoading={setLoading}
-      />
+      /> */}
     </div>
   );
 }

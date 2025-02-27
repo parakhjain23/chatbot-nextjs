@@ -627,9 +627,9 @@ function InterfaceChatbot({
       <FormComponent open={open} setOpen={setOpen} />
       <div className="flex h-screen w-full overflow-hidden">
         {/* Sidebar - always visible on large screens */}
-        <div className="hidden lg:block w-64 bg-base-100 border-r">
-          <ChatbotDrawer toggleDrawer={()=>{}}  />
-        </div>
+        {/* <div className="hidden lg:block w-64 bg-base-100 border-r"> */}
+        <ChatbotDrawer toggleDrawer={() => { }} />
+        {/* </div> */}
 
         {/* Main content area */}
         <div className="flex flex-col flex-1">
@@ -648,7 +648,7 @@ function InterfaceChatbot({
 
           {/* Messages container - centered on large screens */}
           <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full px-4">
-            <div className="flex-grow overflow-y-auto" style={{height: 'calc(100vh - 300px)'}}>
+            <div className="flex-grow overflow-y-auto" style={{ height: 'calc(100vh - 300px)' }}>
               <MessageList />
             </div>
 

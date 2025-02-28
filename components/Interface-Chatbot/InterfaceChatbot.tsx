@@ -18,7 +18,7 @@ import { $ReduxCoreType } from "@/types/reduxCore";
 import { GetSessionStorageData } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
 import { ParamsEnums } from "@/utils/enums";
-import { useTheme } from "@mui/material";
+import { lighten, useTheme } from "@mui/material";
 import axios from "axios";
 import React, {
   createContext,
@@ -82,8 +82,7 @@ function InterfaceChatbot({
   inpreview = true,
   chatbotId,
 }: InterfaceChatbotProps) {
-  const theme = useTheme(); // Hook to access the theme
-  console.log(chatbotId, 23123123)
+  const theme = useTheme();
   const {
     interfaceContextData,
     reduxThreadId,
@@ -131,6 +130,11 @@ function InterfaceChatbot({
   const channelIdRef = useRef<string | null>(null);
   const listenerRef = useRef<string | null>(null);
   const [isToggledrawer, setToggleDrawer] = useState<boolean>(true);
+  const containerRef = useRef<any>(null);
+  const themePalette = {
+    "--primary-main": lighten(theme.palette.secondary.main, 0.4),
+  };
+
 
   const [threadId, setThreadId] = useState(
     GetSessionStorageData("threadId") || reduxThreadId
@@ -203,7 +207,7 @@ function InterfaceChatbot({
     setIsFetching(true);
     try {
       const nextPage = currentPage + 1;
-      const previousChats = await getPreviousMessage(
+      const {previousChats} = await getPreviousMessage(
         threadId,
         bridgeName,
         nextPage
@@ -226,6 +230,7 @@ function InterfaceChatbot({
       setIsFetching(false);
     }
   };
+
 
   const addMessage = (message: string) => {
     onSend(message);
@@ -642,26 +647,29 @@ function InterfaceChatbot({
             setChatsLoading={setChatsLoading}
             setToggleDrawer={setToggleDrawer} 
             isToggledrawer={isToggledrawer} 
+            threadId = {threadId}
+            reduxBridgeName = {reduxBridgeName}
           />
           <ChatbotHeaderTab />
 
           {chatsLoading && (
-            <div className="h-1 bg-secondary animate-pulse" />
+            <div className="h-1 animate-pulse" style={{ backgroundColor: theme.palette.background.default }} />
           )}
 
-          {/* Messages container - full width with auto-scroll to bottom */}
-          <div className="flex-1 flex flex-col w-full relative">
+          {/* Messages container with flex layout */}
+          <div className="flex-1 flex flex-col min-h-0">
             <div 
-              className="absolute inset-0 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
+              className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
               id="message-container"
+              ref={containerRef}
             >
-              <div className="w-full max-w-5xl mx-auto mb-52">
-                <MessageList />
+              <div className="w-full max-w-5xl mx-auto pb-4">
+                <MessageList containerRef={containerRef}/>
               </div>
             </div>
 
-            {/* Text input - fixed at bottom */}
-            <div className="absolute bottom-0 left-0 right-0 py-2 border-t bg-base-200">
+            {/* Text input at bottom */}
+            <div className="flex-shrink-0 py-2 border-t bg-base-200">
               <div className="max-w-5xl mx-auto px-4">
                 <ChatbotTextField
                   loading={loading}

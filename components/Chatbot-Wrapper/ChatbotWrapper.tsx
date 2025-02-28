@@ -3,6 +3,7 @@ import InterfaceChatbot from "@/components/Interface-Chatbot/InterfaceChatbot";
 import { addUrlDataHoc } from "@/hoc/addUrlDataHoc";
 import {
   addDefaultContext,
+  getInterfaceDataByIdStart,
   setConfig,
   setThreadId
 } from "@/store/interface/interfaceSlice";
@@ -28,7 +29,7 @@ function ChatbotWrapper({ chatbotId, loadInterface = true }) {
         interfaceToken &&
         loadInterface
       ) {
-        // dispatch(getInterfaceDataByIdStart({}));
+        dispatch(getInterfaceDataByIdStart({}));
       }
     })();
 

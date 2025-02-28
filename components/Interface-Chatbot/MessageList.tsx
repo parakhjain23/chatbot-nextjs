@@ -4,8 +4,8 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useRef,
   useState,
+  useRef,
 } from "react";
 
 // MUI Components
@@ -24,30 +24,32 @@ import { ChatBotGif } from "@/assests/assestsIndex";
 import { sendFeedbackAction } from "@/config/api";
 import Image from "next/image";
 
-function MessageList() {
-  const containerRef = useRef<any>(null);
+interface MessageListProps {
+  containerRef: React.RefObject<HTMLDivElement>;
+}
+
+function MessageList({ containerRef }: MessageListProps) {
   const {
     fetchMoreData,
-    hasMoreMessages,
+    hasMoreMessages = false,
     setNewMessage,
     newMessage,
-    currentPage,
-    starterQuestions,
+    currentPage = 1,
+    starterQuestions = [],
   } = useContext(MessageContext);
-  const MessagesList: any = useContext(MessageContext);
+  const MessagesList = useContext(MessageContext);
   const {
-    messages,
+    messages = [],
     setMessages,
     addMessage,
     helloMessages = [],
   } = MessagesList;
-  const [showScrollButton, setShowScrollButton] = useState(false); // State to control the visibility of the button
-  const [previousScrollHeight, setPreviousScrollHeight] = useState<
-    number | null
-  >(null);
+  const [showScrollButton, setShowScrollButton] = useState(false);
   const [shouldScroll, setShouldScroll] = useState(true);
   const [showIcon, setShowGif] = useState(false);
   const [isInverse, setIsInverse] = useState(false);
+  const scrollPositionRef = useRef<number>(0);
+  const prevMessagesLengthRef = useRef<number>(messages.length);
   const { IsHuman } = useCustomSelector((state: $ReduxCoreType) => ({
     IsHuman: state.Hello?.isHuman,
   }));
@@ -86,108 +88,74 @@ function MessageList() {
 
   const movetoDown = useCallback(() => {
     containerRef.current?.scrollTo({
-      top: containerRef?.current?.scrollHeight,
+      top: containerRef.current.scrollHeight,
       behavior: "smooth",
     });
   }, []);
 
   const handleScroll = useCallback(() => {
-    const currentContainer = containerRef?.current;
-    const scrollPosition = currentContainer?.scrollTop;
-    const maxScrollTop =
-      currentContainer?.scrollHeight - currentContainer?.clientHeight;
+    const currentContainer = containerRef.current;
+    if (!currentContainer) return;
 
-    // Show the button if scrolled up
-    if (scrollPosition < maxScrollTop - 150) {
-      setShowScrollButton(true);
+    const scrollPosition = currentContainer.scrollTop;
+    const maxScrollTop = currentContainer.scrollHeight - currentContainer.clientHeight;
+
+    // Save scroll position when scrolling up
+    if (scrollPosition < scrollPositionRef.current) {
+      scrollPositionRef.current = scrollPosition;
     }
 
-    // Hide the button if scrolled all the way to the bottom
-    if (maxScrollTop - scrollPosition < maxScrollTop + 250) {
-      setShowScrollButton(false);
+    setShowScrollButton(scrollPosition < maxScrollTop - 150);
+
+    // Trigger fetchMoreData when scrolled to top
+    if (scrollPosition === 0 && hasMoreMessages) {
+      fetchMoreData?.();
     }
-  }, []);
+  }, [containerRef, hasMoreMessages, fetchMoreData]);
 
   useEffect(() => {
-    if (shouldScroll || newMessage) {
-      movetoDown();
-    }
-    setNewMessage(false);
-    setShouldScroll(true);
-  }, [messages, movetoDown, helloMessages, IsHuman, newMessage]);
-
-  // Update scroll position when messages change
-  useEffect(() => {
-    const currentContainer = containerRef?.current;
-    if (currentContainer) {
-      const contentHeight = currentContainer?.scrollHeight;
-      const containerHeight = currentContainer?.clientHeight;
-
-      setIsInverse(contentHeight <= containerHeight);
-    }
-  }, [messages]);
-
-  useEffect(() => {
-    const currentContainer = containerRef?.current;
-    if (currentContainer) {
-      const newScrollHeight = currentContainer?.scrollHeight;
-      if (previousScrollHeight !== null) {
-        currentContainer.scrollTop += newScrollHeight - previousScrollHeight;
+    if (messages.length > prevMessagesLengthRef.current) {
+      // New messages added at bottom
+      if (shouldScroll || newMessage) {
+        movetoDown();
       }
-      setPreviousScrollHeight(newScrollHeight);
+    } else if (messages.length > 0 && containerRef.current) {
+      // Messages added at top (pagination)
+      const heightDiff = containerRef.current.scrollHeight - containerRef.current.clientHeight;
+      containerRef.current.scrollTop = heightDiff - scrollPositionRef.current;
     }
 
-    currentContainer?.addEventListener("scroll", handleScroll);
-    return () => {
-      currentContainer?.removeEventListener("scroll", handleScroll);
-    };
-  }, [messages, handleScroll]);
+    prevMessagesLengthRef.current = messages.length;
+    setNewMessage?.(false);
+  }, [helloMessages, IsHuman, newMessage, shouldScroll]);
+
+  useEffect(() => {
+    const currentContainer = containerRef.current;
+    if (currentContainer) {
+      currentContainer.addEventListener("scroll", handleScroll);
+      return () => currentContainer.removeEventListener("scroll", handleScroll);
+    }
+  }, [containerRef, handleScroll]);
 
   const RenderMessages = useMemo(() => {
-    if (IsHuman) {
-      return helloMessages?.map((message, index) => (
-        <Message
-          key={`${message?.message_id}-${index}`} // Combine message_id with index to ensure uniqueness
-          message={message}
-          handleFeedback={handleFeedback}
-          addMessage={addMessage}
-        />
-      ));
-    }
-    return messages?.map((message, index) => (
+    const targetMessages = IsHuman ? helloMessages : messages;
+    return targetMessages.map((message, index) => (
       <Message
-        key={`${message?.message_id}-${index}`} // Combine message_id with index to ensure uniqueness
+        key={`${message?.message_id}-${index}`}
         message={message}
         handleFeedback={handleFeedback}
         addMessage={addMessage}
       />
     ));
-  }, [messages, handleFeedback, addMessage, helloMessages, IsHuman]); // Include handleFeedback in dependencies
+  }, [messages, handleFeedback, addMessage, helloMessages, IsHuman]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowGif(true);
-    }, 4000);
-    return () => clearTimeout(timer);
-  }, []);
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowGif(true);
-    }, 4000);
+    const timer = setTimeout(() => setShowGif(true), 4000);
     return () => clearTimeout(timer);
   }, []);
 
   return (IsHuman ? helloMessages.length === 0 : messages.length === 0) ? (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        height: "100%",
-      }}
-    >
+    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%" }}>
       <Image
         src={ChatBotGif}
         alt="Chatbot GIF"
@@ -195,35 +163,17 @@ function MessageList() {
         width={200}
         height={200}
       />
-      <Typography
-        variant="h6"
-        color="black"
-        fontWeight="bold"
-        style={{ display: showIcon ? "block" : "none" }}
-      >
+      <Typography variant="h6" color="black" fontWeight="bold" style={{ display: showIcon ? "block" : "none" }}>
         What can I help with?
       </Typography>
 
       {starterQuestions.length > 0 && (
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            marginTop: 2,
-          }}
-        >
+        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 2 }}>
           {starterQuestions.map((question, index) => (
             <Box
               key={index}
               onClick={() => addMessage(question)}
-              sx={{
-                cursor: "pointer",
-                marginBottom: 1,
-                padding: 1,
-                borderRadius: 2,
-                border: "0.5px solid gray",
-              }}
+              sx={{ cursor: "pointer", marginBottom: 1, padding: 1, borderRadius: 2, border: "0.5px solid gray" }}
             >
               <Typography variant="body1" color="text.primary">
                 {question}
@@ -243,16 +193,14 @@ function MessageList() {
         flexDirection: isInverse ? "column" : "column-reverse",
         padding: 2,
       }}
-      ref={containerRef}
-      onScroll={handleScroll}
     >
       <InfiniteScroll
-        dataLength={messages?.length}
+        dataLength={messages.length}
         next={fetchMoreData}
         hasMore={hasMoreMessages}
-        inverse
+        inverse={!isInverse}
         loader={
-          currentPage > 1 && (
+          Number(currentPage) > 1 && (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <LinearProgress
                 sx={{ 
@@ -268,10 +216,9 @@ function MessageList() {
             </Box>
           )
         }
-        scrollableTarget="scrollableDiv"
+        scrollableTarget="message-container"
         style={{
           display: "flex",
-          // flexDirection: isInverse ? "column" : "column-reverse",
           flexDirection: "column",
         }}
         scrollThreshold="230px"

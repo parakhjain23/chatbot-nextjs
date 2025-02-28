@@ -47,6 +47,10 @@ export const KNOWLEDGE_BASE_CUSTOM_SECTION = [
   { value: "recursive", label: "Recursive Chunking" },
 ];
 
+export const  createRandomId = () => {
+  return Math.random().toString(36).substring(2, 15);
+};
+
 Object.freeze(EmbedVerificationStatus);
 Object.freeze(ParamsEnums);
 

@@ -29,7 +29,10 @@ function AppWrapper({
 }: AppWrapperProps) {
     const [themeColor, setThemeColor] = useState("#333333");
     const [chatbotConfig, setChatbotConfig] = useState({});
+
     const theme = generateTheme(themeColor);
+   
+    
 
 
     const onConfigChange = useCallback(
@@ -43,13 +46,12 @@ function AppWrapper({
         },
         [chatbotConfig]
     );
-
+console.log(chatbotConfig)
     const handleThemeChange = useCallback((color: string) => {
         setThemeColor(color);
     }, []);
 
     const toggleHideCloseButton = useCallback(() => {
-        console.log("adfdf");
         setChatbotConfig((prev) => ({
             ...prev,
             hideCloseButton: !prev.hideCloseButton,
@@ -71,7 +73,7 @@ function AppWrapper({
                                 handleThemeChange,
                                 toggleHideCloseButton,
                             }),
-                            [chatbotConfig, themeColor, children]
+                            []
                         )}
                     >
                         {children}

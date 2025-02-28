@@ -3,26 +3,28 @@ import { SetSessionStorage } from "@/utils/ChatbotUtility";
 import { EmbedVerificationStatus } from "@/utils/enums";
 import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
+import { ChatbotContext } from "@/components/AppWrapper";
 
 interface InterfaceEmbedProps {
     onConfigChange: (config: string) => void;
 }
 
 export default function InterfaceEmbed({
-    onConfigChange,
 }: InterfaceEmbedProps) {
     const search = useSearchParams();
+    const { onConfigChange } = useContext(ChatbotContext);
     const router = useRouter();
     const { chatbot_id, userId, token, config } = JSON.parse(
         new URLSearchParams(search).get("interfaceDetails") || "{}"
     );
-    // useEffect(() => {
-    //     if (config) {
-    //         onConfigChange(config); // update the chatbot configuration
-    //     }
-    // }, [config]);
+
+    useEffect(() => {
+        if (config) {
+            onConfigChange(config); // update the chatbot configuration
+        }
+    }, [config]); // Run only once on mount
 
     const [verifiedState, setVerifiedState] = useState(
         EmbedVerificationStatus.VERIFYING

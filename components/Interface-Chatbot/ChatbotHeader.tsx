@@ -2,6 +2,7 @@
 import OpenSidebarIcon from "@/assests/OpenSidebar";
 import ChatIcon from "@mui/icons-material/Chat";
 import SyncIcon from "@mui/icons-material/Sync";
+import { Plus, SquarePen } from "lucide-react";
 
 // MUI Components
 import { useTheme } from "@mui/material";
@@ -12,12 +13,12 @@ import React, { useContext } from "react";
 
 // App imports
 import { successToast } from "@/components/customToast";
-import { performChatAction } from "@/config/api";
+import { createNewThreadApi, performChatAction } from "@/config/api";
 import { addUrlDataHoc } from "@/hoc/addUrlDataHoc";
 import { $ReduxCoreType } from "@/types/reduxCore";
 import { GetSessionStorageData, toggleSidebar } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
-import { ParamsEnums } from "@/utils/enums";
+import { createRandomId, ParamsEnums } from "@/utils/enums";
 import { isColorLight } from "@/utils/themeUtility";
 import ChatbotDrawer from "./ChatbotDrawer";
 
@@ -26,6 +27,8 @@ import { ChevronDown } from "lucide-react";
 import { ChatbotContext } from "../AppWrapper";
 import "./InterfaceChatbot.css";
 import CloseSidebarIcon from "@/assests/CloseSidebar";
+import { setThreads } from "@/store/interface/interfaceSlice";
+import { useDispatch } from "react-redux";
 
 interface ChatbotHeaderProps {
   setLoading: (loading: boolean) => void;
@@ -34,21 +37,49 @@ interface ChatbotHeaderProps {
   isToggledrawer: boolean;
 }
 
-const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoading, setToggleDrawer, isToggledrawer }) => {
+const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoading, setToggleDrawer, isToggledrawer, threadId, reduxBridgeName }) => {
+  const dispatch = useDispatch();
   const theme = useTheme();
   const { chatbotConfig: { chatbotTitle, chatbotSubtitle } } = useContext<any>(ChatbotContext);
   const isLightBackground = theme.palette.mode === "light";
   const textColor = isLightBackground ? "black" : "white";
+  
+
+  const handleCreateNewSubThread = async () => {
+    const result = await createNewThreadApi({
+      threadId: threadId,
+      subThreadId: createRandomId(),
+    });
+    if (result?.success) {
+      dispatch(
+        setThreads({
+          newThreadData: result?.thread,
+          bridgeName: GetSessionStorageData("bridgeName") || reduxBridgeName,
+          threadId: threadId,
+        })
+      );
+    }
+  };
 
   return (
     <div className="bg-gray-50 border-b border-gray-200 px-2 py-4 h-18 w-full">
       <div className="flex items-center w-full">
-        <button
-          className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-          onClick={() => setToggleDrawer(!isToggledrawer)}
-        >
-          {isToggledrawer ? <CloseSidebarIcon color={textColor} /> : <OpenSidebarIcon color={textColor} />}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+            onClick={() => setToggleDrawer(!isToggledrawer)}
+          >
+            {isToggledrawer ? <CloseSidebarIcon color={textColor} /> : <OpenSidebarIcon color={textColor} />}
+          </button>
+          <div className="tooltip" data-tip="Create new sub thread">
+            <button
+              className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+              onClick={handleCreateNewSubThread}
+            >
+              <SquarePen size={18} color={textColor} />
+            </button>
+          </div>
+        </div>
         
         <div className="flex-1 flex justify-center">
           <div className="flex flex-col items-center gap-1">
@@ -57,18 +88,15 @@ const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoadi
               <h2 className="text-lg font-semibold text-gray-800 text-center">
                 {chatbotTitle || "AI Assistant"}
               </h2>
+              <ResetChatOption
+                textColor={textColor}
+                setChatsLoading={setChatsLoading}
+              />
             </div>
             <p className="text-sm opacity-75 text-center">
               {chatbotSubtitle || "Do you have any questions? Ask us!"}
             </p>
           </div>
-        </div>
-
-        <div className="ml-auto">
-          <ResetChatOption
-            textColor={textColor}
-            setChatsLoading={setChatsLoading}
-          />
         </div>
       </div>
 
@@ -92,15 +120,17 @@ export function ChatbotHeaderPreview() {
   return (
     <div className="navbar bg-base-100 shadow-lg rounded-box">
       <div className="flex-1">
-        <div className="flex flex-col">
-          <h2 className="text-xl font-bold">AI Assistant</h2>
-          <p className="text-sm opacity-75">
-            Do you have any questions? Ask us!
-          </p>
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold">AI Assistant</h2>
+              <ResetChatOption textColor={textColor} preview />
+            </div>
+            <p className="text-sm opacity-75">
+              Do you have any questions? Ask us!
+            </p>
+          </div>
         </div>
-      </div>
-      <div className="flex-none">
-        <ResetChatOption textColor={textColor} preview />
       </div>
     </div>
   );
@@ -152,11 +182,11 @@ const ResetChatOption = React.memo(
       };
 
       return (
-        <div className="dropdown dropdown-end z-[99999]" onClick={(e) => e.stopPropagation()}>
+        <div className="dropdown dropdown-end z-[99]" onClick={(e) => e.stopPropagation()}>
           <button className="btn btn-ghost btn-circle" onClick={handleClick}>
-            <ChevronDown className="h-5 w-5" color={textColor} />
+            <ChevronDown className="w-5" color={textColor} />
           </button>
-          <ul className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+          <ul className="dropdown-content menu shadow bg-base-100 rounded-box w-52">
             <li>
               <button
                 onClick={resetHistory}

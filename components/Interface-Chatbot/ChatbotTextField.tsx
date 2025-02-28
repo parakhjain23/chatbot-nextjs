@@ -192,7 +192,7 @@ function ChatbotTextField({
             onKeyDown={handleKeyDown}
             placeholder="Message AI Assistant..."
             disabled={disabled}
-            className="textarea w-full pl-12 pr-12 min-h-[120px] max-h-[300px] md:min-h-[100px] resize-none focus:outline-none disabled:bg-base-200 disabled:cursor-not-allowed rounded-xl border border-gray-300 shadow-inner bg-white/90 backdrop-blur-sm transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20 py-4"
+            className="textarea w-full pl-12 pr-12 min-h-[120px] max-h-[300px] md:min-h-[100px] resize-none focus:outline-black disabled:bg-base-200 disabled:cursor-not-allowed rounded-xl border border-gray-300 shadow-inner bg-white/90 transition-all duration-200"
             rows={3}
           />
 

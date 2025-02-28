@@ -1,6 +1,6 @@
 'use client';
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { addUrlDataHoc } from "@/hoc/addUrlDataHoc";
 import { setThreadId, setThreads } from "@/store/interface/interfaceSlice";
@@ -25,7 +25,7 @@ interface ChatbotDrawerProps {
 
 const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, setToggleDrawer, isToggledrawer }) => {
   const dispatch = useDispatch();
-  
+
   const { reduxThreadId, subThreadList, reduxSubThreadId, reduxBridgeName } =
     useCustomSelector((state: $ReduxCoreType) => ({
       reduxThreadId: state.Interface?.threadId || "",
@@ -44,6 +44,19 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
         ] || [],
     }));
 
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 1024) { // lg breakpoint
+        setToggleDrawer(false);
+      } else {
+        setToggleDrawer(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [setToggleDrawer]);
+
   const thread_id = GetSessionStorageData("threadId") || reduxThreadId;
   const selectedSubThreadId = reduxSubThreadId;
 
@@ -61,11 +74,13 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
         })
       );
     }
+    
   };
 
   const handleChangeSubThread = (sub_thread_id: string) => {
     setLoading(false);
     dispatch(setThreadId({ subThreadId: sub_thread_id }));
+    // setToggleDrawer(false)
   };
 
   const DrawerList = (
@@ -92,32 +107,33 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
   );
 
   return (
-    <div className="drawer z-[100000000]">
-      <input 
-        id="chatbot-drawer" 
-        type="checkbox" 
-        className="drawer-toggle lg:hidden" 
+    <div className="drawer z-[100]">
+      <input
+        id="chatbot-drawer"
+        type="checkbox"
+        className="drawer-toggle lg:hidden"
         checked={isToggledrawer}
         onChange={(e) => setToggleDrawer(e.target.checked)}
       />
-      
-     
-      <div className={`drawer-side max-w-[265px] ${isToggledrawer ? 'lg:translate-x-0' : 'lg:-translate-x-full'} transition-transform duration-300`}>
+
+      {/* Backdrop overlay for mobile */}
+      {isToggledrawer && (
+        <div 
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm lg:hidden" 
+          onClick={() => setToggleDrawer(false)}
+        />
+      )}
+
+      <div className={`drawer-side max-w-[265px] ${isToggledrawer ? 'lg:translate-x-0' : 'lg:-translate-x-full'} transition-transform duration-100`}>
         <div className="p-4 w-[265px] min-h-full bg-base-200 text-base-content relative">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold">History</h2>
             <div className="flex items-center gap-2">
-              <button 
-                className="btn btn-sm btn-circle"
-                onClick={handleCreateNewSubThread}
-              >
-<Plus />
-              </button>
-              <button 
+              <button
                 className="btn btn-sm btn-circle lg:hidden"
                 onClick={() => setToggleDrawer(false)}
               >
-<CircleX />
+                <CircleX />
               </button>
             </div>
           </div>

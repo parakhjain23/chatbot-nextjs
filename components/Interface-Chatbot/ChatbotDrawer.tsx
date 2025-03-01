@@ -9,7 +9,7 @@ import { GetSessionStorageData } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
 import { ParamsEnums } from "@/utils/enums";
 import { createNewThreadApi } from "@/config/api";
-import { CircleX, Plus } from "lucide-react";
+import { CircleX, SquarePen } from "lucide-react";
 
 
 const createRandomId = () => {
@@ -129,6 +129,16 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-bold">History</h2>
             <div className="flex items-center gap-2">
+            {isToggledrawer && (
+            <div className="tooltip" data-tip="Create new sub thread">
+              <button
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                onClick={handleCreateNewSubThread}
+              >
+                <SquarePen />
+              </button>
+            </div>
+          )}
               <button
                 className="btn btn-sm btn-circle lg:hidden"
                 onClick={() => setToggleDrawer(false)}

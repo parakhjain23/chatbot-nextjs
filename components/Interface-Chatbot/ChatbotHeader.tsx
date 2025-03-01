@@ -41,6 +41,7 @@ const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoadi
   const dispatch = useDispatch();
   const theme = useTheme();
   const { chatbotConfig: { chatbotTitle, chatbotSubtitle } } = useContext<any>(ChatbotContext);
+  console.log({ chatbotTitle, chatbotSubtitle });
   const isLightBackground = theme.palette.mode === "light";
   const textColor = isLightBackground ? "black" : "white";
   
@@ -71,14 +72,16 @@ const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoadi
           >
             {isToggledrawer ? <CloseSidebarIcon color={textColor} /> : <OpenSidebarIcon color={textColor} />}
           </button>
-          <div className="tooltip" data-tip="Create new sub thread">
-            <button
-              className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-              onClick={handleCreateNewSubThread}
-            >
-              <SquarePen size={18} color={textColor} />
-            </button>
-          </div>
+          {!isToggledrawer && (
+            <div className="tooltip" data-tip="Create new sub thread">
+              <button
+                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                onClick={handleCreateNewSubThread}
+              >
+                <SquarePen className="h-6 w-6" color={textColor} />
+              </button>
+            </div>
+          )}
         </div>
         
         <div className="flex-1 flex justify-center">

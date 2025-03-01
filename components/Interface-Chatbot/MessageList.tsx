@@ -28,7 +28,7 @@ interface MessageListProps {
   containerRef: React.RefObject<HTMLDivElement>;
 }
 
-function MessageList({ containerRef }: MessageListProps) {
+function MessageList({ containerRef, shouldScroll, setShouldScroll }: MessageListProps) {
   const {
     fetchMoreData,
     hasMoreMessages = false,
@@ -44,8 +44,7 @@ function MessageList({ containerRef }: MessageListProps) {
     addMessage,
     helloMessages = [],
   } = MessagesList;
-  const [showScrollButton, setShowScrollButton] = useState(false);
-  const [shouldScroll, setShouldScroll] = useState(true);
+  const [showScrollButton, setShowScrollButton] = useState(false)
   const [showIcon, setShowGif] = useState(false);
   const [isInverse, setIsInverse] = useState(false);
   const scrollPositionRef = useRef<number>(0);
@@ -93,6 +92,7 @@ function MessageList({ containerRef }: MessageListProps) {
     });
   }, []);
 
+
   const handleScroll = useCallback(() => {
     const currentContainer = containerRef.current;
     if (!currentContainer) return;
@@ -114,6 +114,7 @@ function MessageList({ containerRef }: MessageListProps) {
   }, [containerRef, hasMoreMessages, fetchMoreData]);
 
   useEffect(() => {
+    
     if (messages.length > prevMessagesLengthRef.current) {
       // New messages added at bottom
       if (shouldScroll || newMessage) {
@@ -124,10 +125,9 @@ function MessageList({ containerRef }: MessageListProps) {
       const heightDiff = containerRef.current.scrollHeight - containerRef.current.clientHeight;
       containerRef.current.scrollTop = heightDiff - scrollPositionRef.current;
     }
-
     prevMessagesLengthRef.current = messages.length;
     setNewMessage?.(false);
-  }, [helloMessages, IsHuman, newMessage, shouldScroll]);
+  }, [messages, IsHuman, newMessage, shouldScroll]);
 
   useEffect(() => {
     const currentContainer = containerRef.current;

@@ -134,6 +134,7 @@ function InterfaceChatbot({
   const themePalette = {
     "--primary-main": lighten(theme.palette.secondary.main, 0.4),
   };
+  const [shouldScroll, setShouldScroll] = useState(true);
 
 
   const [threadId, setThreadId] = useState(
@@ -203,7 +204,7 @@ function InterfaceChatbot({
 
   const fetchMoreData = async () => {
     if (isFetching || !hasMoreMessages) return;
-
+    setShouldScroll(false)
     setIsFetching(true);
     try {
       const nextPage = currentPage + 1;
@@ -664,7 +665,7 @@ function InterfaceChatbot({
               ref={containerRef}
             >
               <div className="w-full max-w-5xl mx-auto pb-4">
-                <MessageList containerRef={containerRef}/>
+                <MessageList containerRef={containerRef} setShouldScroll={setShouldScroll} shouldScroll={shouldScroll} />
               </div>
             </div>
 

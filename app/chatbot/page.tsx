@@ -1,30 +1,22 @@
 'use client';
 import { SetSessionStorage } from "@/utils/ChatbotUtility";
 import { EmbedVerificationStatus } from "@/utils/enums";
-import Box from "@mui/material/Box";
 import { useRouter } from "next/navigation";
 import { useContext, useEffect, useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { ChatbotContext } from "@/components/AppWrapper";
+import { ChatbotContext } from "./layout";
 
 interface InterfaceEmbedProps {
-    onConfigChange: (config: string) => void;
+    chatbot_id: string;
+    config: any;
+    token: string;
+    userId: string;
 }
 
-export default function InterfaceEmbed({
-}: InterfaceEmbedProps) {
-    const search = useSearchParams();
-    const { onConfigChange } = useContext(ChatbotContext);
+export default function InterfaceEmbed() {
+    const { chatbot_id, userId, token } = useContext(ChatbotContext);
     const router = useRouter();
-    const { chatbot_id, userId, token, config } = JSON.parse(
-        new URLSearchParams(search).get("interfaceDetails") || "{}"
-    );
 
-    useEffect(() => {
-        if (config) {
-            onConfigChange(config); // update the chatbot configuration
-        }
-    }, [config]); // Run only once on mount
+    // console.log('parakh', config)
 
     const [verifiedState, setVerifiedState] = useState(
         EmbedVerificationStatus.VERIFYING

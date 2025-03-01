@@ -632,7 +632,7 @@ function InterfaceChatbot({
       }}
     >
       <FormComponent open={open} setOpen={setOpen} />
-      <div className="flex h-screen w-full">
+      <div className="flex h-screen w-full overflow-hidden">
         {/* Sidebar - always visible on large screens */}
         <div className={`hidden lg:block bg-base-100 border-r overflow-y-auto transition-all duration-300 ease-in-out ${isToggledrawer ? ' w-64' : 'w-0'}`}>
           <ChatbotDrawer setToggleDrawer={setToggleDrawer} isToggledrawer={isToggledrawer} />
@@ -654,7 +654,7 @@ function InterfaceChatbot({
           <ChatbotHeaderTab />
 
           {chatsLoading && (
-            <div className="h-1 animate-pulse" style={{ backgroundColor: theme.palette.background.default }} />
+            <div className="h-[0.8] animate-pulse" style={{ backgroundColor: theme.palette.primary.main }} />
           )}
 
           {/* Messages container with flex layout */}
@@ -670,7 +670,7 @@ function InterfaceChatbot({
             </div>
 
             {/* Text input at bottom */}
-            <div className="flex-shrink-0 py-2 border-t bg-base-200">
+            <div className="flex-shrink-0 py-1">
               <div className="max-w-5xl mx-auto px-4">
                 <ChatbotTextField
                   loading={loading}

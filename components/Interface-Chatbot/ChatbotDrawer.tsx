@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { createNewThreadApi } from "@/config/api";
 import { addUrlDataHoc } from "@/hoc/addUrlDataHoc";
 import { setThreadId, setThreads } from "@/store/interface/interfaceSlice";
 import { $ReduxCoreType } from "@/types/reduxCore";
 import { GetSessionStorageData } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
 import { ParamsEnums } from "@/utils/enums";
-import { createNewThreadApi } from "@/config/api";
-import { CircleX, SquarePen } from "lucide-react";
+import { AlignLeft, ArrowLeftFromLine, CircleX, SquarePen } from "lucide-react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
 
 const createRandomId = () => {
@@ -74,7 +74,7 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
         })
       );
     }
-    
+
   };
 
   const handleChangeSubThread = (sub_thread_id: string) => {
@@ -84,7 +84,7 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
   };
 
   const DrawerList = (
-    <div className="menu p-4 w-full h-full bg-base-200 text-base-content">
+    <div className="menu p-0 w-full h-full bg-base-200 text-base-content">
       {(subThreadList || []).length === 0 ? (
         <div className="flex justify-center items-center mt-5">
           <span>No Threads</span>
@@ -107,7 +107,7 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
   );
 
   return (
-    <div className="drawer z-[100]">
+    <div className="drawer z-[10]">
       <input
         id="chatbot-drawer"
         type="checkbox"
@@ -118,27 +118,28 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
 
       {/* Backdrop overlay for mobile */}
       {isToggledrawer && (
-        <div 
-          className="fixed inset-0 bg-black/30 backdrop-blur-sm lg:hidden" 
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm lg:hidden"
           onClick={() => setToggleDrawer(false)}
         />
       )}
 
       <div className={`drawer-side max-w-[265px] ${isToggledrawer ? 'lg:translate-x-0' : 'lg:-translate-x-full'} transition-transform duration-100`}>
-        <div className="p-4 w-[265px] min-h-full bg-base-200 text-base-content relative">
+        <div className="p-4 w-full min-h-full text-base-content relative bg-base-200 border-r-base-300 border">
           <div className="flex items-center justify-between mb-4">
+            {isToggledrawer && <button onClick={() => { setToggleDrawer(!isToggledrawer) }}> <AlignLeft /></button>}
             <h2 className="text-lg font-bold">History</h2>
             <div className="flex items-center gap-2">
-            {isToggledrawer && (
-            <div className="tooltip" data-tip="Create new sub thread">
-              <button
-                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-                onClick={handleCreateNewSubThread}
-              >
-                <SquarePen />
-              </button>
-            </div>
-          )}
+              {isToggledrawer && (
+                <div className="tooltip tooltip-bottom z-[9999]" data-tip="New Chat">
+                  <button
+                    className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                    onClick={handleCreateNewSubThread}
+                  >
+                    <SquarePen />
+                  </button>
+                </div>
+              )}
               <button
                 className="btn btn-sm btn-circle lg:hidden"
                 onClick={() => setToggleDrawer(false)}

@@ -95,6 +95,8 @@ function ChatbotTextField({
     setChatsLoading(false);
   };
 
+  const color = theme.palette.primary.main;
+
   const handleImageUpload = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -114,7 +116,7 @@ function ChatbotTextField({
           }
         }
         if (filesArray.length > 4) {
-            errorToast.warn("You have uploaded more than 4 images.");
+          errorToast.warn("You have uploaded more than 4 images.");
         }
       } catch (error) {
         console.error("Error uploading images:", error);
@@ -129,7 +131,7 @@ function ChatbotTextField({
   };
 
   return (
-    <div className="relative w-full bg-base-200 rounded-lg shadow-sm">
+    <div className="relative w-full rounded-lg shadow-sm">
       {options && options.length > 0 && (
         <div className="flex flex-wrap gap-2 p-2 animate-fadeIn">
           {options?.slice(0, 3).map((option, index) => (
@@ -167,7 +169,7 @@ function ChatbotTextField({
       )}
 
       <div className="relative flex items-end">
-        <div className="absolute left-3 top-4 z-10">
+        <div className="absolute left-3 top-4 z-[2]">
           <div
             className="relative w-7 h-7 cursor-pointer"
             onClick={isHelloAssistantEnabled ? () => handlePopoverOpen : undefined}
@@ -192,8 +194,11 @@ function ChatbotTextField({
             onKeyDown={handleKeyDown}
             placeholder="Message AI Assistant..."
             disabled={disabled}
-            className="textarea w-full pl-12 pr-12 min-h-[120px] max-h-[300px] md:min-h-[100px] resize-none focus:outline-black disabled:bg-base-200 disabled:cursor-not-allowed rounded-xl border border-gray-300 shadow-inner bg-white/90 transition-all duration-200"
+            className={`textarea w-full pl-12 pr-12 min-h-[120px] max-h-[300px] md:min-h-[100px] resize-none focus:outline focus:outline-2 focus:outline-offset-0 disabled:bg-base-200 disabled:cursor-not-allowed rounded-xl border border-gray-200 shadow-inner bg-white/90 transition-all duration-200`}
             rows={3}
+            style={{
+              outlineColor: color
+            }}
           />
 
           {((reduxIsVision?.vision && mode?.includes("human")) ||

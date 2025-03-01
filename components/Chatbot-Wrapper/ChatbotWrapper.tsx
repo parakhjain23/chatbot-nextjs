@@ -29,7 +29,7 @@ function ChatbotWrapper({ chatbotId, loadInterface = true }) {
         interfaceToken &&
         loadInterface
       ) {
-        dispatch(getInterfaceDataByIdStart({}));
+        // dispatch(getInterfaceDataByIdStart({}));
       }
     })();
 

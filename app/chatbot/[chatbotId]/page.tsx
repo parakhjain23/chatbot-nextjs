@@ -1,11 +1,7 @@
 'use client';
-import { ChatbotContext } from '@/components/AppWrapper';
-import ChatbotWrapper from '@/components/Chatbot-Wrapper/ChatbotWrapper'
-import React, { useContext } from 'react'
+import ChatbotWrapper from '@/components/Chatbot-Wrapper/ChatbotWrapper';
 
 function Chatbot() {
-    const  chatbotConfig  = useContext(ChatbotContext); 
-    console.log(chatbotConfig,'parakh')
     return (
         <ChatbotWrapper />
     )

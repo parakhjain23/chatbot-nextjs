@@ -2,7 +2,7 @@
 import OpenSidebarIcon from "@/assests/OpenSidebar";
 import ChatIcon from "@mui/icons-material/Chat";
 import SyncIcon from "@mui/icons-material/Sync";
-import { Plus, SquarePen } from "lucide-react";
+import { AlignLeft, Plus, SquarePen } from "lucide-react";
 
 // MUI Components
 import { useTheme } from "@mui/material";
@@ -24,11 +24,12 @@ import ChatbotDrawer from "./ChatbotDrawer";
 
 // Styles
 import { ChevronDown } from "lucide-react";
-import { ChatbotContext } from "../AppWrapper";
 import "./InterfaceChatbot.css";
 import CloseSidebarIcon from "@/assests/CloseSidebar";
 import { setThreads } from "@/store/interface/interfaceSlice";
 import { useDispatch } from "react-redux";
+import { ChatbotContext } from "@/app/chatbot/layout";
+import Image from "next/image";
 
 interface ChatbotHeaderProps {
   setLoading: (loading: boolean) => void;
@@ -40,11 +41,10 @@ interface ChatbotHeaderProps {
 const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoading, setToggleDrawer, isToggledrawer, threadId, reduxBridgeName }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { chatbotConfig: { chatbotTitle, chatbotSubtitle } } = useContext<any>(ChatbotContext);
-  console.log({ chatbotTitle, chatbotSubtitle });
+  const { chatbotConfig: { chatbotTitle, chatbotSubtitle, headerImage='' } } = useContext<any>(ChatbotContext);
   const isLightBackground = theme.palette.mode === "light";
   const textColor = isLightBackground ? "black" : "white";
-  
+
 
   const handleCreateNewSubThread = async () => {
     const result = await createNewThreadApi({
@@ -63,31 +63,29 @@ const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoadi
   };
 
   return (
-    <div className="bg-gray-50 border-b border-gray-200 px-2 py-4 h-18 w-full">
+    <div className="bg-gray-50 border-b border-gray-200 px-2 py-2 w-full">
       <div className="flex items-center w-full">
         <div className="flex items-center gap-2">
           <button
             className="p-2 hover:bg-gray-200 rounded-full transition-colors"
             onClick={() => setToggleDrawer(!isToggledrawer)}
           >
-            {isToggledrawer ? <CloseSidebarIcon color={textColor} /> : <OpenSidebarIcon color={textColor} />}
+            {isToggledrawer ? null : <AlignLeft color={textColor} />}
           </button>
-          {!isToggledrawer && (
-            <div className="tooltip" data-tip="Create new sub thread">
-              <button
-                className="p-2 hover:bg-gray-200 rounded-full transition-colors"
-                onClick={handleCreateNewSubThread}
-              >
-                <SquarePen className="h-6 w-6" color={textColor} />
-              </button>
-            </div>
-          )}
+          <div className={`tooltip tooltip-right ${isToggledrawer ? 'hidden' : ''}`} data-tip="Create new thread">
+            <button
+              className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+              onClick={handleCreateNewSubThread}
+            >
+              <SquarePen className="h-6 w-6" color={textColor} />
+            </button>
+          </div>
         </div>
-        
+
         <div className="flex-1 flex justify-center">
           <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center gap-2">
-              <ChatIcon className="text-gray-600" />
+            <div className="flex items-center gap-2 justify-center">
+              {headerImage ? <img width={20} height={20} src={headerImage}/> : <ChatIcon className="text-gray-600" />}
               <h2 className="text-lg font-semibold text-gray-800 text-center">
                 {chatbotTitle || "AI Assistant"}
               </h2>
@@ -96,9 +94,9 @@ const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoadi
                 setChatsLoading={setChatsLoading}
               />
             </div>
-            <p className="text-sm opacity-75 text-center">
+            {chatbotSubtitle && <p className="text-sm opacity-75 text-center">
               {chatbotSubtitle || "Do you have any questions? Ask us!"}
-            </p>
+            </p>}
           </div>
         </div>
       </div>
@@ -185,8 +183,8 @@ const ResetChatOption = React.memo(
       };
 
       return (
-        <div className="dropdown dropdown-end z-[99]" onClick={(e) => e.stopPropagation()}>
-          <button className="btn btn-ghost btn-circle" onClick={handleClick}>
+        <div className="dropdown dropdown-end pt-2" onClick={(e) => e.stopPropagation()}>
+          <button className="" onClick={handleClick}>
             <ChevronDown className="w-5" color={textColor} />
           </button>
           <ul className="dropdown-content menu shadow bg-base-100 rounded-box w-52">

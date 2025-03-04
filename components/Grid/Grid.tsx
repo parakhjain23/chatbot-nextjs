@@ -53,7 +53,7 @@ function Grid({ componentJson, msgId, ...props }) {
     return { ...resolvedJson, msgId };
   }, [componentJson, msgId, resolvedJson]);
   return (
-    <GridContext.Provider value={gridContextValue}>
+    <GridContext.Provider value={{ gridContextValue, componentJson }}>
       <Box className="column h-100 w-100 box-sizing-border-box">
         <React.Suspense fallback={<div>Loading...</div>}>
           {/* {props?.projectId ? (

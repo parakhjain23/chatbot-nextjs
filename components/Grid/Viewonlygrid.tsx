@@ -1,22 +1,23 @@
+import ComponentRenderer from "@/components/ComponentRenderer";
+import { addUrlDataHoc } from "@/hoc/addUrlDataHoc";
+import { ParamsEnums } from "@/utils/enums";
 import { Box } from "@mui/material";
 import React, { useContext } from "react";
-import { ParamsEnums } from "@/utils/enums";
-import { addUrlDataHoc } from "@/hoc/addUrlDataHoc";
-import ComponentRenderer from "@/components/ComponentRenderer";
 import { GridContext } from "./Grid";
 
 function Viewonlygrid({ dragRef }) {
-  const responseTypeJson: any = useContext(GridContext);
+  const { gridContextValue: responseTypeJson }: any = useContext(GridContext);
   const components = responseTypeJson?.components || responseTypeJson;
 
   return (
-    <Box className="column grid_parent">
-      {Object.keys(components || {}).map((componentKey: string) => {
+    <Box className="w-full">
+      {(components || {}).map((component: { type: string }, index) => {
         return (
-          <div key={componentKey} className="grid-item column not_drag">
+          <div key={component?.type}>
             <ComponentRenderer
-              componentId={componentKey}
+              componentId={component}
               dragRef={dragRef}
+              index={index}
               inpreview
             />
           </div>

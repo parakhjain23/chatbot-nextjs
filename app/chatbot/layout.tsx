@@ -19,7 +19,6 @@ function chatbotLayout({ children }: any) {
     const { chatbot_id, userId, token, config } = JSON.parse(
         search.get("interfaceDetails") || "{}"
     );
-    console.log(chatbot_id, config, token, userId, 12312)
     const onConfigChange = useCallback((config: any) => {
         if (!config) return;
         handleThemeChange(config.themeColor || "#000000");
@@ -42,7 +41,6 @@ function chatbotLayout({ children }: any) {
         }));
     }, []);
 
-    console.log('walkover')
     return (
         <ChatbotContext.Provider
             value={{

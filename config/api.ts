@@ -144,9 +144,9 @@ export async function getPreviousMessage(
         };
     } catch (error) {
         if (error.name === "AbortError") {
-            console.log("Request aborted:", error.message);
+            console.warn("Request aborted:", error.message);
         } else {
-            console.error("Error fetching previous messages:", error);
+            console.warn("Error fetching previous messages:", error);
         }
         return [];
     }

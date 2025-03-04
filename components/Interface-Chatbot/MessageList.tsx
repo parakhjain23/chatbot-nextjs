@@ -115,7 +115,7 @@ function MessageList({ containerRef, shouldScroll, setShouldScroll }: MessageLis
   }, [containerRef, hasMoreMessages, fetchMoreData]);
 
   useEffect(() => {
-    
+
     if (messages.length > prevMessagesLengthRef.current) {
       // New messages added at bottom
       if (shouldScroll || newMessage) {
@@ -212,9 +212,9 @@ function MessageList({ containerRef, shouldScroll, setShouldScroll }: MessageLis
           Number(currentPage) > 1 && (
             <Box sx={{ display: "flex", justifyContent: "center" }}>
               <LinearProgress
-                sx={{ 
-                  height: 4, 
-                  width: "80%", 
+                sx={{
+                  height: 4,
+                  width: "80%",
                   marginBottom: 2,
                   backgroundColor: '#e0e0e0',
                   '& .MuiLinearProgress-bar': {

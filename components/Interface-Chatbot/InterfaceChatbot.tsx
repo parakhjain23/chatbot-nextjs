@@ -664,7 +664,7 @@ function InterfaceChatbot({
 
           {/* Messages container with flex layout */}
           <div
-            className={`overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent flex-1 relative ${messages.length === 0 ? 'flex items-center justify-center' : ''}`}
+            className={`overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent flex-1 ${messages.length === 0 ? 'flex items-center justify-center' : 'pb-10'}`}
             id="message-container"
             ref={containerRef}
           >
@@ -674,7 +674,7 @@ function InterfaceChatbot({
           </div>
 
           {/* Text input at bottom */}
-          <div className="max-w-5xl mx-auto px-4 py-3 w-full ">
+          <div className="max-w-5xl mx-auto px-4 py-3 w-full">
             <ChatbotTextField
               loading={loading}
               options={options}

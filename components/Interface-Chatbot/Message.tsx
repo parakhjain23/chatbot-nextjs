@@ -30,6 +30,7 @@ import remarkGfm from "remark-gfm";
 import "./Message.css";
 import Image from "next/image";
 import { AlertCircle, Check, Copy, Maximize2, ThumbsDown, ThumbsUp } from "lucide-react";
+import { emitEventToParent } from "@/utils/emitEventsToParent/emitEventsToParent";
 
 const ResetHistoryLine = ({ text = "" }) => {
   return (
@@ -101,8 +102,14 @@ const AssistantMessageCard = React.memo(
       "--primary-main": lighten(theme.palette.secondary.main, 0.4),
     };
 
+    const handleMessageClick = () =>{
+      if(window.parent.location.hostname?.includes('gtwy')){
+        emitEventToParent("MESSAGE_CLICK",message)
+      }
+    }
+    
     return (
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2" onClick={handleMessageClick}>
         <div className="flex items-end gap-2.5 max-w-[90%] mb-2.5 animate-slide-left">
           <div className="flex flex-col items-center justify-end w-8">
             <div className="w-8 h8 rounded-full bg-primary/10 flex items-center justify-center">

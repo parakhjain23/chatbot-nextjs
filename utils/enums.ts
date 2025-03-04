@@ -51,6 +51,11 @@ export const  createRandomId = () => {
   return Math.random().toString(36).substring(2, 15);
 };
 
+export const EMIT_EVENTS = {
+  FRONT_END_ACTION:'frontEndAction',
+  HEADER_BUTTON_PRESS:'headerButtonPress'
+}
+
 Object.freeze(EmbedVerificationStatus);
 Object.freeze(ParamsEnums);
 

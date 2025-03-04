@@ -23,6 +23,7 @@ import MoveToDownButton from "./MoveToDownButton";
 import { ChatBotGif } from "@/assests/assestsIndex";
 import { sendFeedbackAction } from "@/config/api";
 import Image from "next/image";
+import { Chat } from "@mui/icons-material";
 
 interface MessageListProps {
   containerRef: React.RefObject<HTMLDivElement>;
@@ -150,39 +151,47 @@ function MessageList({ containerRef, shouldScroll, setShouldScroll }: MessageLis
   }, [messages, handleFeedback, addMessage, helloMessages, IsHuman]);
 
   useEffect(() => {
-    const timer = setTimeout(() => setShowGif(true), 4000);
+    const timer = setTimeout(() => setShowGif(true), 500);
     return () => clearTimeout(timer);
   }, []);
 
   return (IsHuman ? helloMessages.length === 0 : messages.length === 0) ? (
-    <Box sx={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "100%" }}>
+    <div className="flex flex-col justify-center items-center mt-[150px]">
       <Image
         src={ChatBotGif}
         alt="Chatbot GIF"
-        style={{ display: showIcon ? "block" : "none" }}
-        width={200}
-        height={200}
+        className={`${showIcon ? 'block' : 'hidden'}`}
+        width={100}
+        height={100}
       />
-      <Typography variant="h6" color="black" fontWeight="bold" style={{ display: showIcon ? "block" : "none" }}>
+      <h2 className={`text-xl font-bold text-black ${showIcon ? 'block' : 'hidden'}`}>
         What can I help with?
-      </Typography>
+      </h2>
 
-      {starterQuestions.length > 0 && (
-        <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", marginTop: 2 }}>
+      {starterQuestions?.length > 0 && (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl w-full px-4 mt-8">
           {starterQuestions.map((question, index) => (
-            <Box
+            <div
               key={index}
               onClick={() => addMessage(question)}
-              sx={{ cursor: "pointer", marginBottom: 1, padding: 1, borderRadius: 2, border: "0.5px solid gray" }}
+              className="group relative overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm transition-all hover:shadow-lg hover:scale-[1.02] cursor-pointer"
             >
-              <Typography variant="body1" color="text.primary">
-                {question}
-              </Typography>
-            </Box>
+              <div className="p-5">
+                <div className="flex items-center gap-3">
+                  <div className="h-8 w-8 rounded-full bg-primary-100/20 flex items-center justify-center">
+                    <Chat className="h-4 w-4 text-primary-600" />
+                  </div>
+                  <p className="text-gray-700 font-medium line-clamp-2">
+                    {question}
+                  </p>
+                </div>
+                <div className="absolute bottom-0 left-0 h-1 w-full bg-gradient-to-r from-primary-500 to-primary-600 transform scale-x-0 transition-transform group-hover:scale-x-100" />
+              </div>
+            </div>
           ))}
-        </Box>
+        </div>
       )}
-    </Box>
+    </div>
   ) : (
     <Box
       id="scrollableDiv"

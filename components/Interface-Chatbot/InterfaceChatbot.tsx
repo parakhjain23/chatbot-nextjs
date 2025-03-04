@@ -658,20 +658,20 @@ function InterfaceChatbot({
           )}
 
           {/* Messages container with flex layout */}
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex flex-col h-full">
             <div 
               className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
               id="message-container"
               ref={containerRef}
             >
-              <div className="w-full max-w-5xl mx-auto pb-4">
+              <div className="w-full max-w-5xl mx-auto px-4">
                 <MessageList containerRef={containerRef} setShouldScroll={setShouldScroll} shouldScroll={shouldScroll} />
               </div>
             </div>
 
             {/* Text input at bottom */}
-            <div className="flex-shrink-0 py-1">
-              <div className="max-w-5xl mx-auto px-4">
+            <div className="w-full">
+              <div className="max-w-5xl mx-auto px-4 py-3">
                 <ChatbotTextField
                   loading={loading}
                   options={options}

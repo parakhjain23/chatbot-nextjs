@@ -49,5 +49,10 @@ export const {
   setThreadId,
   setThreads,
   setConfig,
+
+
+  // chat bot 
+  setHeaderActionButtons
+
 } = interfaceSlice.actions;
 export default interfaceSlice.reducer;

@@ -1,4 +1,7 @@
+export type HeaderButtonType = Array<{ type: 'history' | 'setting' }>;
+
 export interface $InterfaceReduxType {
+  headerButtons : HeaderButtonType
   isLoading: boolean;
   threadId: string;
   subThreadId?: string;

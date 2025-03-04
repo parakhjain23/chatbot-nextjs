@@ -18,7 +18,7 @@ import { $ReduxCoreType } from "@/types/reduxCore";
 import { GetSessionStorageData } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
 import { ParamsEnums } from "@/utils/enums";
-import { Box, Grid, LinearProgress, useTheme } from "@mui/material";
+import { lighten, useMediaQuery, useTheme } from "@mui/material";
 import axios from "axios";
 import React, {
   createContext,
@@ -36,6 +36,7 @@ import ChatbotTextField from "./ChatbotTextField";
 import "./InterfaceChatbot.css";
 import MessageList from "./MessageList";
 import ChatbotDrawer from "./ChatbotDrawer";
+import { HeaderButtonType } from "@/types/interface/InterfaceReduxType";
 
 const client = WebSocketClient("lyvSfW7uPPolwax0BHMC", "DprvynUwAdFwkE91V5Jj");
 
@@ -72,9 +73,11 @@ export const MessageContext = createContext<{
   newMessage?: boolean;
   currentPage?: Number;
   starterQuestions?: string[];
+  headerButtons?:HeaderButtonType
 }>({
   messages: [],
   helloMessages: [],
+  headerButtons:[]
 });
 
 function InterfaceChatbot({
@@ -82,8 +85,7 @@ function InterfaceChatbot({
   inpreview = true,
   chatbotId,
 }: InterfaceChatbotProps) {
-  const theme = useTheme(); // Hook to access the theme
-  console.log(chatbotId, 23123123)
+  const theme = useTheme();
   const {
     interfaceContextData,
     reduxThreadId,
@@ -99,6 +101,7 @@ function InterfaceChatbot({
     chat_id,
     channelId,
     mode,
+    reduxHeaderButtons
   } = useCustomSelector((state: $ReduxCoreType) => ({
     interfaceContextData:
       state.Interface?.interfaceContext?.[chatbotId]?.[
@@ -106,6 +109,7 @@ function InterfaceChatbot({
       ]?.interfaceData,
     reduxThreadId: state.Interface?.threadId || "",
     reduxSubThreadId: state.Interface?.subThreadId || "",
+    reduxHeaderButtons: state.Interface?.headerButtons || [],
     reduxBridgeName: state.Interface?.bridgeName || "root",
     reduxHelloId: state.Interface?.helloId || null,
     reduxBridgeVersionId: state.Interface?.version_id || null,
@@ -130,6 +134,19 @@ function InterfaceChatbot({
   const socket = useSocket();
   const channelIdRef = useRef<string | null>(null);
   const listenerRef = useRef<string | null>(null);
+  const containerRef = useRef<any>(null);
+  const themePalette = {
+    "--primary-main": lighten(theme.palette.secondary.main, 0.4),
+  };
+  const [shouldScroll, setShouldScroll] = useState(true);
+
+
+  const isLargeScreen = useMediaQuery('(max-width: 1024px)')
+  const [isToggledrawer, setToggleDrawer] = useState<boolean>(!isLargeScreen);
+
+  useEffect(() => {
+    setToggleDrawer(!isLargeScreen);
+  }, [isLargeScreen]);
 
   const [threadId, setThreadId] = useState(
     GetSessionStorageData("threadId") || reduxThreadId
@@ -145,6 +162,10 @@ function InterfaceChatbot({
     GetSessionStorageData("version_id") || reduxBridgeVersionId
   );
 
+  const [headerButtons, setHeaderButtons] = useState<HeaderButtonType>(
+    JSON.parse(GetSessionStorageData("headerButtons") || '[]') || reduxHeaderButtons
+  );
+
   useEffect(() => {
     setThreadId(GetSessionStorageData("threadId") || reduxThreadId);
   }, [reduxThreadId]);
@@ -156,6 +177,10 @@ function InterfaceChatbot({
   useEffect(() => {
     setBridgeName(GetSessionStorageData("bridgeName") || reduxBridgeName);
   }, [reduxBridgeName]);
+
+  useEffect(() => {
+    setHeaderButtons(JSON.parse(GetSessionStorageData("headerButtons") || '[]') || reduxHeaderButtons);
+  }, [reduxHeaderButtons]);
 
   useEffect(() => {
     setHelloId(GetSessionStorageData("helloId"));
@@ -198,11 +223,11 @@ function InterfaceChatbot({
 
   const fetchMoreData = async () => {
     if (isFetching || !hasMoreMessages) return;
-
+    setShouldScroll(false)
     setIsFetching(true);
     try {
       const nextPage = currentPage + 1;
-      const previousChats = await getPreviousMessage(
+      const { previousChats } = await getPreviousMessage(
         threadId,
         bridgeName,
         nextPage
@@ -225,6 +250,7 @@ function InterfaceChatbot({
       setIsFetching(false);
     }
   };
+
 
   const addMessage = (message: string) => {
     onSend(message);
@@ -622,50 +648,59 @@ function InterfaceChatbot({
         newMessage,
         currentPage,
         starterQuestions,
+        headerButtons
       }}
     >
       <FormComponent open={open} setOpen={setOpen} />
-      <div className="flex h-screen w-full overflow-hidden">
+      <div className="flex h-screen w-full overflow-hidden relative">
         {/* Sidebar - always visible on large screens */}
-        {/* <div className="hidden lg:block w-64 bg-base-100 border-r"> */}
-        <ChatbotDrawer toggleDrawer={() => { }} />
-        {/* </div> */}
+        <div className={`hidden lg:block bg-base-100 border-r overflow-y-auto transition-all duration-300 ease-in-out ${isToggledrawer ? ' w-64' : 'w-0'}`}>
+          <ChatbotDrawer setToggleDrawer={setToggleDrawer} isToggledrawer={isToggledrawer} />
+        </div>
 
         {/* Main content area */}
-        <div className="flex flex-col flex-1">
+
+        <div className="flex flex-col flex-1 w-full">
           {/* Mobile header - hidden on large screens */}
-          <div className="lg:hidden">
-          </div>
           <ChatbotHeader
             setLoading={setLoading}
             setChatsLoading={setChatsLoading}
+            setToggleDrawer={setToggleDrawer} 
+            isToggledrawer={isToggledrawer} 
+            threadId = {threadId}
+            reduxBridgeName = {reduxBridgeName}
+            headerButtons= {headerButtons}
           />
           <ChatbotHeaderTab />
 
           {chatsLoading && (
-            <div className="h-1 bg-secondary animate-pulse" />
+            <div className="h-[0.8] animate-pulse" style={{ backgroundColor: theme.palette.primary.main }} />
           )}
 
-          {/* Messages container - centered on large screens */}
-          <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full px-4">
-            <div className="flex-grow overflow-y-auto" style={{ height: 'calc(100vh - 300px)' }}>
-              <MessageList />
+          {/* Messages container with flex layout */}
+          <div
+            className={`overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent flex-1 ${messages.length === 0 ? 'flex items-center justify-center' : 'pb-10'}`}
+            id="message-container"
+            ref={containerRef}
+          >
+            <div className="w-full max-w-5xl mx-auto px-4">
+              <MessageList containerRef={containerRef} setShouldScroll={setShouldScroll} shouldScroll={shouldScroll} />
             </div>
+          </div>
 
-            {/* Text input - sticky at bottom */}
-            <div className="sticky bottom-2 py-2 border-t">
-              <ChatbotTextField
-                loading={loading}
-                options={options}
-                setChatsLoading={setChatsLoading}
-                onSend={() => {
-                  IsHuman ? onSendHello() : onSend();
-                }}
-                messageRef={messageRef}
-                setImages={setImages}
-                images={images}
-              />
-            </div>
+          {/* Text input at bottom */}
+          <div className="max-w-5xl mx-auto px-4 py-3 w-full">
+            <ChatbotTextField
+              loading={loading}
+              options={options}
+              setChatsLoading={setChatsLoading}
+              onSend={() => {
+                IsHuman ? onSendHello() : onSend();
+              }}
+              messageRef={messageRef}
+              setImages={setImages}
+              images={images}
+            />
           </div>
         </div>
       </div>

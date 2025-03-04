@@ -59,7 +59,6 @@ function FormComponent({ open, setOpen }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (validate()) {
-      console.log(formData);
       // Handle form submission
       await axios.put(
         "https://api.phone91.com/client/",

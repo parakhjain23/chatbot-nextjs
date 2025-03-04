@@ -22,7 +22,7 @@ axios.interceptors.request.use(
       config.headers["proxy_auth_token"] = sessionStorage.getItem("ragToken");
     } else {
       config.headers["Authorization"] =
-        sessionStorage.getItem("interfaceToken");
+      sessionStorage.getItem("interfaceToken")
     }
     return config;
   },

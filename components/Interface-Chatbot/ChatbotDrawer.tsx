@@ -7,6 +7,7 @@ import { $ReduxCoreType } from "@/types/reduxCore";
 import { GetSessionStorageData } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
 import { ParamsEnums } from "@/utils/enums";
+import { useMediaQuery } from "@mui/material";
 import { AlignLeft, ArrowLeftFromLine, CircleX, SquarePen } from "lucide-react";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
@@ -43,19 +44,6 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
         GetSessionStorageData("threadId") || state.Interface?.threadId
         ] || [],
     }));
-
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth < 1024) { // lg breakpoint
-        setToggleDrawer(false);
-      } else {
-        setToggleDrawer(true);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, [setToggleDrawer]);
 
   const thread_id = GetSessionStorageData("threadId") || reduxThreadId;
   const selectedSubThreadId = reduxSubThreadId;
@@ -127,7 +115,7 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
       <div className={`drawer-side max-w-[265px] ${isToggledrawer ? 'lg:translate-x-0' : 'lg:-translate-x-full'} transition-transform duration-100`}>
         <div className="p-4 w-full min-h-full text-base-content relative bg-base-200 border-r-base-300 border">
           <div className="flex items-center justify-between mb-4">
-            {isToggledrawer && <button onClick={() => { setToggleDrawer(!isToggledrawer) }}> <AlignLeft /></button>}
+            {isToggledrawer && <button className="p-2 hover:bg-gray-200 rounded-full transition-colors" onClick={() => { setToggleDrawer(!isToggledrawer) }}> <AlignLeft /></button>}
             <h2 className="text-lg font-bold">History</h2>
             <div className="flex items-center gap-2">
               {isToggledrawer && (
@@ -140,12 +128,6 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
                   </button>
                 </div>
               )}
-              <button
-                className="btn btn-sm btn-circle lg:hidden"
-                onClick={() => setToggleDrawer(false)}
-              >
-                <CircleX />
-              </button>
             </div>
           </div>
           {DrawerList}

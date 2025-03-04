@@ -156,7 +156,7 @@ function MessageList({ containerRef, shouldScroll, setShouldScroll }: MessageLis
   }, []);
 
   return (IsHuman ? helloMessages.length === 0 : messages.length === 0) ? (
-    <div className="flex flex-col justify-center items-center mt-[150px]">
+    <div className="flex flex-col items-center h-full w-full">
       <Image
         src={ChatBotGif}
         alt="Chatbot GIF"

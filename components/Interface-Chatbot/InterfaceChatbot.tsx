@@ -18,7 +18,7 @@ import { $ReduxCoreType } from "@/types/reduxCore";
 import { GetSessionStorageData } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
 import { ParamsEnums } from "@/utils/enums";
-import { lighten, useTheme } from "@mui/material";
+import { lighten, useMediaQuery, useTheme } from "@mui/material";
 import axios from "axios";
 import React, {
   createContext,
@@ -129,13 +129,19 @@ function InterfaceChatbot({
   const socket = useSocket();
   const channelIdRef = useRef<string | null>(null);
   const listenerRef = useRef<string | null>(null);
-  const [isToggledrawer, setToggleDrawer] = useState<boolean>(true);
   const containerRef = useRef<any>(null);
   const themePalette = {
     "--primary-main": lighten(theme.palette.secondary.main, 0.4),
   };
   const [shouldScroll, setShouldScroll] = useState(true);
 
+
+  const isLargeScreen = useMediaQuery('(max-width: 1024px)')
+  const [isToggledrawer, setToggleDrawer] = useState<boolean>(!isLargeScreen);
+
+  useEffect(() => {
+    setToggleDrawer(!isLargeScreen);
+  }, [isLargeScreen]);
 
   const [threadId, setThreadId] = useState(
     GetSessionStorageData("threadId") || reduxThreadId
@@ -208,7 +214,7 @@ function InterfaceChatbot({
     setIsFetching(true);
     try {
       const nextPage = currentPage + 1;
-      const {previousChats} = await getPreviousMessage(
+      const { previousChats } = await getPreviousMessage(
         threadId,
         bridgeName,
         nextPage
@@ -632,24 +638,23 @@ function InterfaceChatbot({
       }}
     >
       <FormComponent open={open} setOpen={setOpen} />
-      <div className="flex h-screen w-full overflow-hidden">
+      <div className="flex h-screen w-full overflow-hidden relative">
         {/* Sidebar - always visible on large screens */}
         <div className={`hidden lg:block bg-base-100 border-r overflow-y-auto transition-all duration-300 ease-in-out ${isToggledrawer ? ' w-64' : 'w-0'}`}>
           <ChatbotDrawer setToggleDrawer={setToggleDrawer} isToggledrawer={isToggledrawer} />
         </div>
 
         {/* Main content area */}
-        <div className="flex flex-col flex-1">
+
+        <div className="flex flex-col flex-1 w-full">
           {/* Mobile header - hidden on large screens */}
-          <div className="lg:hidden">
-          </div>
           <ChatbotHeader
             setLoading={setLoading}
             setChatsLoading={setChatsLoading}
-            setToggleDrawer={setToggleDrawer} 
-            isToggledrawer={isToggledrawer} 
-            threadId = {threadId}
-            reduxBridgeName = {reduxBridgeName}
+            setToggleDrawer={setToggleDrawer}
+            isToggledrawer={isToggledrawer}
+            threadId={threadId}
+            reduxBridgeName={reduxBridgeName}
           />
           <ChatbotHeaderTab />
 
@@ -658,33 +663,29 @@ function InterfaceChatbot({
           )}
 
           {/* Messages container with flex layout */}
-          <div className="flex flex-col h-full">
-            <div 
-              className="flex-1 overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent"
-              id="message-container"
-              ref={containerRef}
-            >
-              <div className="w-full max-w-5xl mx-auto px-4">
-                <MessageList containerRef={containerRef} setShouldScroll={setShouldScroll} shouldScroll={shouldScroll} />
-              </div>
+          <div
+            className={`overflow-y-auto scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent flex-1 relative ${messages.length === 0 ? 'flex items-center justify-center' : ''}`}
+            id="message-container"
+            ref={containerRef}
+          >
+            <div className="w-full max-w-5xl mx-auto px-4">
+              <MessageList containerRef={containerRef} setShouldScroll={setShouldScroll} shouldScroll={shouldScroll} />
             </div>
+          </div>
 
-            {/* Text input at bottom */}
-            <div className="w-full">
-              <div className="max-w-5xl mx-auto px-4 py-3">
-                <ChatbotTextField
-                  loading={loading}
-                  options={options}
-                  setChatsLoading={setChatsLoading}
-                  onSend={() => {
-                    IsHuman ? onSendHello() : onSend();
-                  }}
-                  messageRef={messageRef}
-                  setImages={setImages}
-                  images={images}
-                />
-              </div>
-            </div>
+          {/* Text input at bottom */}
+          <div className="max-w-5xl mx-auto px-4 py-3 w-full ">
+            <ChatbotTextField
+              loading={loading}
+              options={options}
+              setChatsLoading={setChatsLoading}
+              onSend={() => {
+                IsHuman ? onSendHello() : onSend();
+              }}
+              messageRef={messageRef}
+              setImages={setImages}
+              images={images}
+            />
           </div>
         </div>
       </div>

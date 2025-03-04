@@ -169,7 +169,7 @@ function ChatbotTextField({
       )}
 
       <div className="relative flex items-end">
-        <div className="absolute left-3 top-4 z-[2]">
+        <div className="absolute left-3 top-2 z-[2]">
           <div
             className="relative w-7 h-7 cursor-pointer"
             onClick={isHelloAssistantEnabled ? () => handlePopoverOpen : undefined}
@@ -194,7 +194,7 @@ function ChatbotTextField({
             onKeyDown={handleKeyDown}
             placeholder="Message AI Assistant..."
             disabled={disabled}
-            className={`textarea w-full pl-12 pr-12 min-h-[120px] max-h-[300px] md:min-h-[100px] resize-none focus:outline focus:outline-2 focus:outline-offset-0 disabled:bg-base-200 disabled:cursor-not-allowed rounded-xl border border-gray-200 shadow-inner bg-white/90 transition-all duration-200`}
+            className={`textarea w-full pl-12 pr-12 min-h-[120px] max-h-[300px] md:min-h-[100px] resize-none focus:outline focus:outline-2 focus:outline-offset-0 disabled:bg-base-200 disabled:cursor-not-allowed rounded-xl border border-gray-200 shadow-inner transition-all duration-200`}
             rows={3}
             style={{
               outlineColor: color

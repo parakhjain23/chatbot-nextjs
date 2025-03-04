@@ -64,8 +64,8 @@ const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoadi
 
   return (
     <div className="bg-gray-50 border-b border-gray-200 px-2 py-2 w-full">
-      <div className="flex items-center w-full">
-        <div className="flex items-center gap-2">
+      <div className="flex items-center w-full relative">
+        <div className="sm:absolute left-0 flex items-center gap-2">
           <button
             className="p-2 hover:bg-gray-200 rounded-full transition-colors"
             onClick={() => setToggleDrawer(!isToggledrawer)}
@@ -82,9 +82,9 @@ const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoadi
           </div>
         </div>
 
-        <div className="flex-1 flex justify-center">
+        <div className="flex-1 flex justify-center w-full">
           <div className="flex flex-col items-center gap-1">
-            <div className="flex items-center gap-2 justify-center">
+            <div className="flex items-center sm:gap-3 gap-1 justify-center">
               {headerImage ? <img width={20} height={20} src={headerImage}/> : <ChatIcon className="text-gray-600" />}
               <h2 className="text-lg font-semibold text-gray-800 text-center">
                 {chatbotTitle || "AI Assistant"}
@@ -183,7 +183,7 @@ const ResetChatOption = React.memo(
       };
 
       return (
-        <div className="dropdown dropdown-end pt-2" onClick={(e) => e.stopPropagation()}>
+        <div className="dropdown dropdown-end pt-2 z-[9]" onClick={(e) => e.stopPropagation()}>
           <button className="" onClick={handleClick}>
             <ChevronDown className="w-5" color={textColor} />
           </button>

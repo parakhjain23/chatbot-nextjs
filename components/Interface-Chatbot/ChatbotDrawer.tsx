@@ -1,57 +1,40 @@
 'use client';
 
-// React and Redux
-import React from "react";
-import { useDispatch } from "react-redux";
-
-// MUI Components and Icons
-import CreateIcon from "@mui/icons-material/Create";
-import {
-  Box,
-  Divider,
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemText,
-  Tooltip,
-  Typography,
-} from "@mui/material";
-import { lighten, useTheme } from "@mui/system";
-
-// App imports
-import CloseSidebarIcon from "@/assests/CloseSidebar";
 import { createNewThreadApi } from "@/config/api";
 import { addUrlDataHoc } from "@/hoc/addUrlDataHoc";
-import {
-  setThreadId,
-  setThreads,
-} from "@/store/interface/interfaceSlice";
+import { setThreadId, setThreads } from "@/store/interface/interfaceSlice";
 import { $ReduxCoreType } from "@/types/reduxCore";
-import { GetSessionStorageData, toggleSidebar } from "@/utils/ChatbotUtility";
+import { GetSessionStorageData } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
 import { ParamsEnums } from "@/utils/enums";
-import { isColorLight } from "@/utils/themeUtility";
-import { AlignJustify } from "lucide-react";
+import { useMediaQuery } from "@mui/material";
+import { AlignLeft, ArrowLeftFromLine, CircleX, SquarePen } from "lucide-react";
+import React, { useEffect } from "react";
+import { useDispatch } from "react-redux";
 
-// function to create random id for new thread
+
 const createRandomId = () => {
   return Math.random().toString(36).substring(2, 15);
 };
 
-function ChatbotDrawer({ setLoading, open, toggleDrawer, chatbotId }) {
-  const theme = useTheme();
-  const isLightBackground = isColorLight(theme.palette.primary.main);
-  const textColor = isLightBackground ? "black" : "white";
+interface ChatbotDrawerProps {
+  setLoading: (loading: boolean) => void;
+  chatbotId: string;
+  isToggledrawer: boolean;
+  setToggleDrawer: (isOpen: boolean) => void;
+}
+
+const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, setToggleDrawer, isToggledrawer }) => {
   const dispatch = useDispatch();
+
   const { reduxThreadId, subThreadList, reduxSubThreadId, reduxBridgeName } =
     useCustomSelector((state: $ReduxCoreType) => ({
       reduxThreadId: state.Interface?.threadId || "",
-      reduxSubThreadId: state.Interface?.subThreadId || "", // Get subThreadId from Redux
+      reduxSubThreadId: state.Interface?.subThreadId || "",
       reduxBridgeName:
         GetSessionStorageData("bridgeName") ||
         state.Interface?.bridgeName ||
-        "root", // Get bridgeName
+        "root",
       subThreadList:
         state.Interface?.interfaceContext?.[chatbotId]?.[
           GetSessionStorageData("bridgeName") ||
@@ -78,42 +61,31 @@ function ChatbotDrawer({ setLoading, open, toggleDrawer, chatbotId }) {
           threadId: thread_id,
         })
       );
-      toggleDrawer(false)();
     }
+
   };
 
   const handleChangeSubThread = (sub_thread_id: string) => {
     setLoading(false);
     dispatch(setThreadId({ subThreadId: sub_thread_id }));
+    // setToggleDrawer(false)
   };
 
   const DrawerList = (
-    <div className="w-[280px]" role="presentation" onClick={toggleDrawer(false)}>
+    <div className="menu p-0 w-full h-full bg-base-200 text-base-content">
       {(subThreadList || []).length === 0 ? (
-        <div className="flex items-center justify-center">
-          <p className="mt-5 text-base font-medium" style={{ color: textColor || 'black' }}>
-            No Threads
-          </p>
+        <div className="flex justify-center items-center mt-5">
+          <span>No Threads</span>
         </div>
       ) : (
-        <ul className="menu menu-compact">
-          {subThreadList.map((thread) => (
-            <li key={thread?._id} onClick={() => handleChangeSubThread(thread?.sub_thread_id)}>
+        <ul>
+          {subThreadList.map((thread: any) => (
+            <li key={thread?._id}>
               <a
-                className={`${thread?.sub_thread_id === selectedSubThreadId ? 'active' : ''
-                  }`}
+                className={`${thread?.sub_thread_id === selectedSubThreadId ? 'active' : ''}`}
+                onClick={() => handleChangeSubThread(thread?.sub_thread_id)}
               >
-                {(thread?.display_name || thread?.sub_thread_id)?.length > 30 ? (
-                  <div className="tooltip" data-tip={thread?.display_name || thread?.sub_thread_id}>
-                    <span style={{ color: textColor || 'black' }}>
-                      {`${(thread?.display_name || thread?.sub_thread_id)?.substring(0, 27)}...`}
-                    </span>
-                  </div>
-                ) : (
-                  <span style={{ color: textColor || 'black' }}>
-                    {thread?.display_name || thread?.sub_thread_id}
-                  </span>
-                )}
+                {thread?.display_name || thread?.sub_thread_id}
               </a>
             </li>
           ))}
@@ -121,63 +93,49 @@ function ChatbotDrawer({ setLoading, open, toggleDrawer, chatbotId }) {
       )}
     </div>
   );
-  const toggleMainSidebar = () => toggleSidebar("main-sidebar");
+
   return (
-    // <Drawer open={open} onClose={toggleDrawer(false)}>
-    //   <Box
-    //     sx={{
-    //       backgroundColor: lighten(theme.palette.primary.main, 0.2),
-    //       flex: 1,
-    //     }}
-    //   >
-    //     <Box className="flex-spaceBetween-center p-3 gap-2">
-    //       <Box onClick={toggleDrawer(false)} className="mr-2 cursor-pointer">
-    //         <CloseSidebarIcon color={textColor} />
-    //       </Box>
-    //       <Typography
-    //         variant="body1"
-    //         className="font-bold"
-    //         sx={{ color: textColor }}
-    //       >
-    //         History
-    //       </Typography>
-    //       <CreateIcon
-    //         className="cursor-pointer"
-    //         onClick={handleCreateNewSubThread}
-    //         color="inherit"
-    //         style={{ color: textColor || "black" }}
-    //       />
-    //     </Box>
-    //     <Divider sx={{ borderColor: textColor || "black" }} />
-    //     {DrawerList}
-    //   </Box>
-    // </Drawer>
-    <div className="relative" style={{ backgroundColor: lighten(theme.palette.primary.main, 0.2) }}>
-      <label htmlFor="my-drawer-2" className="drawer-button lg:hidden z-10 absolute top-3 left-1">
-        <AlignJustify size={24} onClick={toggleMainSidebar} style={{ color: textColor || "black" }} />
-      </label>
-      <div className={`drawer lg:drawer-open relative z-[101] lg:z-0`}>
-        <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-        <div className="drawer-content flex flex-col">
-        </div>
-        <div className="drawer-side h-screen">
-          <label htmlFor="my-drawer-2" className="drawer-overlay"></label>
-          <div className="menu p-4 w-80 min-h-full bg-base-200" style={{ backgroundColor: lighten(theme.palette.primary.main, 0.2) }}>
-            <div className="flex items-center justify-between mb-4">
-              <h1 className="font-bold" style={{ color: textColor }}>History</h1>
-              <CreateIcon
-                className="cursor-pointer"
-                onClick={handleCreateNewSubThread}
-                style={{ color: textColor || "black" }}
-              />
+    <div className="drawer z-[10]">
+      <input
+        id="chatbot-drawer"
+        type="checkbox"
+        className="drawer-toggle lg:hidden"
+        checked={isToggledrawer}
+        onChange={(e) => setToggleDrawer(e.target.checked)}
+      />
+
+      {/* Backdrop overlay for mobile */}
+      {isToggledrawer && (
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm lg:hidden"
+          onClick={() => setToggleDrawer(false)}
+        />
+      )}
+
+      <div className={`drawer-side max-w-[265px] ${isToggledrawer ? 'lg:translate-x-0' : 'lg:-translate-x-full'} transition-transform duration-100`}>
+        <div className="p-4 w-full min-h-full text-base-content relative bg-base-200 border-r-base-300 border">
+          <div className="flex items-center justify-between mb-4">
+            {isToggledrawer && <button className="p-2 hover:bg-gray-200 rounded-full transition-colors" onClick={() => { setToggleDrawer(!isToggledrawer) }}> <AlignLeft /></button>}
+            <h2 className="text-lg font-bold">History</h2>
+            <div className="flex items-center gap-2">
+              {isToggledrawer && (
+                <div className="tooltip tooltip-bottom z-[9999]" data-tip="New Chat">
+                  <button
+                    className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+                    onClick={handleCreateNewSubThread}
+                  >
+                    <SquarePen />
+                  </button>
+                </div>
+              )}
             </div>
-            {DrawerList}
           </div>
+          {DrawerList}
         </div>
       </div>
     </div>
   );
-}
+};
 
 export default React.memo(
   addUrlDataHoc(React.memo(ChatbotDrawer), [ParamsEnums.chatbotId])

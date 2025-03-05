@@ -1,5 +1,5 @@
-import ChatbotWrapper from '@/components/Chatbot-Wrapper/ChatbotWrapper'
-import React from 'react'
+'use client';
+import ChatbotWrapper from '@/components/Chatbot-Wrapper/ChatbotWrapper';
 
 function Chatbot() {
     return (

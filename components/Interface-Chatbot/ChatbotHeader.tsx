@@ -2,81 +2,123 @@
 import OpenSidebarIcon from "@/assests/OpenSidebar";
 import ChatIcon from "@mui/icons-material/Chat";
 import SyncIcon from "@mui/icons-material/Sync";
+import { AlignLeft, EllipsisVertical, History, Plus, Settings, SquarePen } from "lucide-react";
 
 // MUI Components
-import {
-  useTheme
-} from "@mui/material";
+import { useTheme } from "@mui/material";
 
 // Third-party libraries
 import axios from "axios";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 // App imports
 import { successToast } from "@/components/customToast";
-import { performChatAction } from "@/config/api";
+import { createNewThreadApi, performChatAction } from "@/config/api";
 import { addUrlDataHoc } from "@/hoc/addUrlDataHoc";
 import { $ReduxCoreType } from "@/types/reduxCore";
 import { GetSessionStorageData, toggleSidebar } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
-import { ParamsEnums } from "@/utils/enums";
+import { createRandomId, EMIT_EVENTS, ParamsEnums } from "@/utils/enums";
 import { isColorLight } from "@/utils/themeUtility";
 import ChatbotDrawer from "./ChatbotDrawer";
 
 // Styles
 import { ChevronDown } from "lucide-react";
-import { ChatbotContext } from "../AppWrapper";
 import "./InterfaceChatbot.css";
+import CloseSidebarIcon from "@/assests/CloseSidebar";
+import { setThreads } from "@/store/interface/interfaceSlice";
+import { useDispatch } from "react-redux";
+import { ChatbotContext } from "@/app/chatbot/layout";
+import Image from "next/image";
+import { HeaderButtonType } from "@/types/interface/InterfaceReduxType";
+import { emitEventToParent } from "@/utils/emitEventsToParent/emitEventsToParent";
 
-function ChatbotHeader({ setLoading, setChatsLoading }) {
+interface ChatbotHeaderProps {
+  setLoading: (loading: boolean) => void;
+  setChatsLoading: (loading: boolean) => void;
+  setToggleDrawer: (isOpen: boolean) => void;
+  isToggledrawer: boolean;
+  headerButtons: HeaderButtonType
+}
+
+const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoading, setToggleDrawer, isToggledrawer, threadId, reduxBridgeName, headerButtons }) => {
+  const dispatch = useDispatch();
   const theme = useTheme();
-  const [open, setOpen] = React.useState(false);
-  const {
-    chatbotConfig: { chatbotTitle, chatbotSubtitle },
-  } = useContext<any>(ChatbotContext);
-  const isLightBackground = isColorLight(theme.palette.primary.main);
+  const { chatbotConfig: { chatbotTitle, chatbotSubtitle, headerImage = '' } } = useContext<any>(ChatbotContext);
+  const isLightBackground = theme.palette.mode === "light";
   const textColor = isLightBackground ? "black" : "white";
 
-  const toggleDrawer = (newOpen: boolean) => () => {
-    // setOpen(newOpen);
-    toggleSidebar("main-sidebar")
+  const handleCreateNewSubThread = async () => {
+    const result = await createNewThreadApi({
+      threadId: threadId,
+      subThreadId: createRandomId(),
+    });
+    if (result?.success) {
+      dispatch(
+        setThreads({
+          newThreadData: result?.thread,
+          bridgeName: GetSessionStorageData("bridgeName") || reduxBridgeName,
+          threadId: threadId,
+        })
+      );
+    }
   };
 
   return (
-    <div className="navbar shadow-lg" style={{ background: theme.palette.primary.main }}>
-      <div className="flex-1">
-        <button
-          className="btn btn-ghost btn-circle"
-          onClick={toggleDrawer(true)}
-          style={{ color: textColor }}
-        >
-          <OpenSidebarIcon color={textColor} />
-        </button>
-        <div className="flex flex-col" style={{ color: textColor }}>
-          <h2 className="text-xl font-bold" style={{ color: textColor }}>
-            {chatbotTitle || "AI Assistant"}
-          </h2>
-          {chatbotSubtitle && (
-            <p className="text-sm opacity-75" style={{ color: textColor }}>
+    <div className="bg-gray-50 border-b border-gray-200 px-2 py-2 w-full">
+      <div className="flex items-center w-full relative">
+        <div className="sm:absolute left-0 flex items-center gap-2">
+          <button
+            className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+            onClick={() => setToggleDrawer(!isToggledrawer)}
+          >
+            {isToggledrawer ? null : <AlignLeft color={textColor} />}
+          </button>
+          <div className={`tooltip tooltip-right ${isToggledrawer ? 'hidden' : ''}`} data-tip="Create new thread">
+            <button
+              className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+              onClick={handleCreateNewSubThread}
+            >
+              <SquarePen className="h-6 w-6" color={textColor} />
+            </button>
+          </div>
+        </div>
+
+        <div className="flex-1 flex justify-center w-full">
+          <div className="flex flex-col items-center gap-1">
+            <div className="flex items-center sm:gap-3 gap-1 justify-center">
+              {headerImage ? <img width={20} height={20} src={headerImage}/> : <ChatIcon className="text-gray-600" />}
+              <h2 className="text-lg font-semibold text-gray-800 text-center">
+                {chatbotTitle || "AI Assistant"}
+              </h2>
+              <ResetChatOption
+                textColor={textColor}
+                setChatsLoading={setChatsLoading}
+              />
+            </div>
+            {chatbotSubtitle && <p className="text-sm opacity-75 text-center">
               {chatbotSubtitle || "Do you have any questions? Ask us!"}
-            </p>
-          )}
+            </p>}
+
+          </div>
+        </div>
+        <div className="flex justify-center">
+          {headerButtons?.map((item) => {
+            return renderIconsByType(item)
+          })}
         </div>
       </div>
-      <div className="flex-none">
-        <ResetChatOption
-          textColor={textColor}
-          setChatsLoading={setChatsLoading}
-        />
-      </div>
-      {/* <ChatbotDrawer
-        open={open}
-        toggleDrawer={toggleDrawer}
+
+      <ChatbotDrawer
         setLoading={setLoading}
-      /> */}
+        chatbotId="chatbotId"
+        isToggledrawer={isToggledrawer}
+        setToggleDrawer={setToggleDrawer}
+      />
+
     </div>
   );
-}
+};
 
 export default ChatbotHeader;
 
@@ -88,15 +130,17 @@ export function ChatbotHeaderPreview() {
   return (
     <div className="navbar bg-base-100 shadow-lg rounded-box">
       <div className="flex-1">
-        <div className="flex flex-col">
-          <h2 className="text-xl font-bold">AI Assistant</h2>
-          <p className="text-sm opacity-75">
-            Do you have any questions? Ask us!
-          </p>
+        <div className="flex items-center gap-4">
+          <div className="flex flex-col">
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-bold">AI Assistant</h2>
+              <ResetChatOption textColor={textColor} preview />
+            </div>
+            <p className="text-sm opacity-75">
+              Do you have any questions? Ask us!
+            </p>
+          </div>
         </div>
-      </div>
-      <div className="flex-none">
-        <ResetChatOption textColor={textColor} preview />
       </div>
     </div>
   );
@@ -124,6 +168,7 @@ const ResetChatOption = React.memo(
       const open = Boolean(anchorEl);
 
       const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+        event.stopPropagation(); // Prevent event bubbling
         setAnchorEl(event.currentTarget);
       };
 
@@ -147,11 +192,11 @@ const ResetChatOption = React.memo(
       };
 
       return (
-        <div className="dropdown dropdown-end">
-          <button className="btn btn-ghost btn-circle" onClick={handleClick}>
-            <ChevronDown className="h-5 w-5" color={textColor} />
+        <div className="dropdown dropdown-end pt-2 z-[9]" onClick={(e) => e.stopPropagation()}>
+          <button className="" onClick={handleClick}>
+            <ChevronDown className="w-5" color={textColor} />
           </button>
-          <ul className="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-52">
+          <ul className="dropdown-content menu shadow bg-base-100 rounded-box w-52">
             <li>
               <button
                 onClick={resetHistory}
@@ -164,7 +209,10 @@ const ResetChatOption = React.memo(
             </li>
             <li>
               <button
-                onClick={() => setModalOpen(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setModalOpen(true);
+                }}
                 className="flex items-center gap-2"
               >
                 <ChatIcon className="h-4 w-4" />
@@ -242,3 +290,24 @@ const ChatbotFeedbackForm = React.memo(function ChatbotFeedbackForm({
     </div>
   );
 });
+
+const renderIconsByType = (item) => {
+  const iconComponents = {
+    setting: <Settings />,
+    history: <History />,
+    verticalThreeDots: <EllipsisVertical />,
+  };
+
+  const IconComponent = iconComponents[item.type];
+
+  if (!IconComponent) return null;
+
+  return (
+    <button
+      className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+      onClick={() => emitEventToParent("HEADER_BUTTON_PRESS", item)}
+    >
+      {IconComponent}
+    </button>
+  );
+}

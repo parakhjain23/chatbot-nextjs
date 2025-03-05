@@ -3,7 +3,9 @@ import InterfaceChatbot from "@/components/Interface-Chatbot/InterfaceChatbot";
 import { addUrlDataHoc } from "@/hoc/addUrlDataHoc";
 import {
   addDefaultContext,
+  getInterfaceDataByIdStart,
   setConfig,
+  setHeaderActionButtons,
   setThreadId
 } from "@/store/interface/interfaceSlice";
 import { GetSessionStorageData } from "@/utils/ChatbotUtility";
@@ -42,7 +44,9 @@ function ChatbotWrapper({ chatbotId, loadInterface = true }) {
             vision = null,
             helloId = null,
             version_id = null,
+            headerButtons = []
           } = receivedData;
+          
           if (threadId) {
             dispatch(setThreadId({ threadId: threadId }));
           }
@@ -67,6 +71,9 @@ function ChatbotWrapper({ chatbotId, loadInterface = true }) {
             dispatch(
               addDefaultContext({ variables: { ...receivedData?.variables } })
             );
+          }
+          if(Array.isArray(headerButtons) && headerButtons?.length){
+            dispatch(setHeaderActionButtons(headerButtons))
           }
         }
       }

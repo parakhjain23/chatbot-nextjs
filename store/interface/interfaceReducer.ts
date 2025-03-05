@@ -3,6 +3,7 @@ import { SliceCaseReducers, ValidateSliceCaseReducers } from "@reduxjs/toolkit";
 // import { successToast } from '../../components/customToast'
 import {
   $InterfaceReduxType,
+  HeaderButtonType,
   InterFaceDataType,
 } from "../../types/interface/InterfaceReduxType.ts";
 import actionType from "../../types/utility.ts";
@@ -247,4 +248,8 @@ export const reducers: ValidateSliceCaseReducers<
     state.isVision = data;
     sessionStorage.setItem("config", JSON.stringify(state.isVision));
   },
+  setHeaderActionButtons(state,action:actionType<HeaderButtonType>){
+    state.headerButtons = action.payload
+    sessionStorage.setItem("headerButtons", JSON.stringify(action.payload));
+  }
 };

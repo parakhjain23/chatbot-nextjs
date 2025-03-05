@@ -449,7 +449,7 @@ function InterfaceChatbot({
       chatbotId +
       (threadId || userId) +
       (subThreadId || userId)
-    ).replace(/ /g, "_");
+    )?.replace(/ /g, "_");
 
     const handleMessageRTLayer = (message: string) => {
       // Parse the incoming message string into an object

@@ -4,33 +4,23 @@ import { AiIcon, UserAssistant } from "@/assests/assestsIndex";
 import InterfaceGrid from "@/components/Grid/Grid";
 import { Anchor, Code } from "@/components/Interface-Chatbot/Interface-Markdown/MarkdownUtitily";
 import { isJSONString } from "@/utils/ChatbotUtility";
+import { emitEventToParent } from "@/utils/emitEventsToParent/emitEventsToParent";
 import { isColorLight } from "@/utils/themeUtility";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import FileDownloadDoneIcon from "@mui/icons-material/FileDownloadDone";
-import ThumbDownIcon from "@mui/icons-material/ThumbDown";
-import ThumbDownOffAltOutlinedIcon from "@mui/icons-material/ThumbDownOffAltOutlined";
-import ThumbUpIcon from "@mui/icons-material/ThumbUp";
-import ThumbUpAltOutlinedIcon from "@mui/icons-material/ThumbUpAltOutlined";
 import {
   Box,
-  Button,
   Chip,
   Divider,
   lighten,
   Stack,
-  Tooltip,
-  Typography,
-  useTheme,
+  useTheme
 } from "@mui/material";
 import copy from "copy-to-clipboard";
+import { AlertCircle, Check, CircleCheckBig, Copy, Maximize2, ThumbsDown, ThumbsUp } from "lucide-react";
+import Image from "next/image";
 import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "./Message.css";
-import Image from "next/image";
-import { AlertCircle, Check, Copy, Maximize2, ThumbsDown, ThumbsUp } from "lucide-react";
-import { emitEventToParent } from "@/utils/emitEventsToParent/emitEventsToParent";
 
 const ResetHistoryLine = ({ text = "" }) => {
   return (
@@ -102,12 +92,12 @@ const AssistantMessageCard = React.memo(
       "--primary-main": lighten(theme.palette.secondary.main, 0.4),
     };
 
-    const handleMessageClick = () =>{
-      if(window.parent.location.hostname?.includes('gtwy')){
-        emitEventToParent("MESSAGE_CLICK",message)
+    const handleMessageClick = () => {
+      if (window.parent.location.hostname?.includes('gtwy')) {
+        emitEventToParent("MESSAGE_CLICK", message)
       }
     }
-    
+
     return (
       <div className="flex flex-col gap-2" onClick={handleMessageClick}>
         <div className="flex items-end gap-2.5 max-w-[90%] mb-2.5 animate-slide-left">
@@ -163,6 +153,14 @@ const AssistantMessageCard = React.memo(
                 </div>
               ) : (
                 <div className="prose dark:prose-invert max-w-none">
+                  {Object.keys(message?.tools_data || {})?.length > 0 && (
+                    <Box className="flex items-center gap-2 mb-2">
+                      <CircleCheckBig color="green" size={20} />
+                      <p className="text-base text-green-900">
+                        {Object.keys(message?.tools_data || {}).length} Functions executed
+                      </p>
+                    </Box>
+                  )}
                   {(() => {
                     const parsedContent = isJSONString(
                       isError
@@ -449,21 +447,13 @@ function Message({ message, handleFeedback, addMessage }: any) {
           addMessage={addMessage}
         />
       ) : message?.role === "tools_call" && Object.keys(message?.function) ? (
-        <Box className="flex gap-2 mb-2">
-          <Stack
-            sx={{
-              alignItems: "center",
-              width: "30px",
-              justifyContent: "flex-end",
-              "@media(max-width:479px)": { width: "30px" },
-            }}
-            spacing="5px"
-          ></Stack>
-          <CheckCircleIcon color="success" />
-          <Typography>
+        <div className="flex items-center gap-2 pl-3">
+          <div className="flex items-center justify-center w-[30px] sm:w-[30px]"></div>
+          <CircleCheckBig color="green" size={20} />
+          <p className="text-base text-green-900">
             {Object.keys(message?.function).length} Functions executed
-          </Typography>
-        </Box>
+          </p>
+        </div>
       ) : message?.role === "reset" ? (
         <ResetHistoryLine text={message?.mode ? "Talk to human" : ""} />
       ) : null}

@@ -95,7 +95,7 @@ function MessageList({ containerRef, shouldScroll, setShouldScroll }: MessageLis
 
 
   const handleScroll = useCallback(() => {
-    const currentContainer = containerRef.current;
+    const currentContainer = containerRef?.current;
     if (!currentContainer) return;
 
     const scrollPosition = currentContainer.scrollTop;
@@ -131,7 +131,7 @@ function MessageList({ containerRef, shouldScroll, setShouldScroll }: MessageLis
   }, [messages, IsHuman, newMessage, shouldScroll]);
 
   useEffect(() => {
-    const currentContainer = containerRef.current;
+    const currentContainer = containerRef?.current;
     if (currentContainer) {
       currentContainer.addEventListener("scroll", handleScroll);
       return () => currentContainer.removeEventListener("scroll", handleScroll);

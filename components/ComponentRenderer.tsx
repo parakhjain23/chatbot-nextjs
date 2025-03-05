@@ -28,6 +28,7 @@ interface ComponentRendererProps {
   dragRef?: any;
   inpreview?: boolean;
   chatbotId: string;
+  index: number;
 }
 ComponentRenderer.defaultProps = {
   id: "",
@@ -37,26 +38,26 @@ ComponentRenderer.defaultProps = {
 };
 
 const componentMap: any = {
-  Input: (data: any) => <InterfaceTextfield {...data} />,
-  TextField: (data: any) => <InterfaceTextfield {...data} />,
-  TextArea: (data: any) => <InterfaceTextfield {...data} />,
-  Button: (data: any) => <InterfaceButton {...data} />,
-  Select: (data: any) => <InterfaceDropdown {...data} />,
-  Divider: (data: any) => <InterfaceDivider {...data} />,
-  Text: (data: any) => <InterfaceText {...data} />,
-  Link: (data: any) => <InterfaceLink {...data} />,
-  Box: (data: any) => <InterfaceBox {...data} ingrid />,
-  Checkbox: (data: any) => <InterfaceCheckbox {...data} />,
-  Form: (data: any) => <InterfaceForm {...data} ingrid />,
-  ChatBot: (data: any) => <InterfaceChatbot {...data} />,
-  Typography: (data: any) => <InterfaceText {...data} />,
-  DatePicker: (data: any) => <Interfacedatepicker {...data} />,
-  Radio: (data: any) => <InterfaceRadio {...data} />,
-  Icon: (data: any) => <InterfaceIcon {...data} />,
-  Accordion: (data: any) => <InterfaceAccordion {...data} />,
-  Table: (data: any) => <InterfaceTable {...data} />,
-  Markdown: (data: any) => <InterfaceMarkdown {...data} />,
-  Card: (data: any) => <InterfaceCard {...data} />,
+  input: (data: any) => <InterfaceTextfield {...data} />,
+  textfield: (data: any) => <InterfaceTextfield {...data} />,
+  textarea: (data: any) => <InterfaceTextfield {...data} />,
+  button: (data: any) => <InterfaceButton {...data} />,
+  select: (data: any) => <InterfaceDropdown {...data} />,
+  divider: (data: any) => <InterfaceDivider {...data} />,
+  text: (data: any) => <InterfaceText {...data} />,
+  link: (data: any) => <InterfaceLink {...data} />,
+  box: (data: any) => <InterfaceBox {...data} ingrid />,
+  checkbox: (data: any) => <InterfaceCheckbox {...data} />,
+  form: (data: any) => <InterfaceForm {...data} ingrid />,
+  chatbot: (data: any) => <InterfaceChatbot {...data} />,
+  typography: (data: any) => <InterfaceText {...data} />,
+  datepicker: (data: any) => <Interfacedatepicker {...data} />,
+  radio: (data: any) => <InterfaceRadio {...data} />,
+  icon: (data: any) => <InterfaceIcon {...data} />,
+  accordion: (data: any) => <InterfaceAccordion {...data} />,
+  table: (data: any) => <InterfaceTable {...data} />,
+  markdown: (data: any) => <InterfaceMarkdown {...data} />,
+  card: (data: any) => <InterfaceCard {...data} />,
 };
 
 function ComponentRenderer({
@@ -64,18 +65,24 @@ function ComponentRenderer({
   componentId,
   dragRef,
   inpreview = false,
+  index,
 }: ComponentRendererProps) {
-  const responseTypeJson: any = useContext(GridContext);
-  // const { type, props, key, action } = componentData;
-  const type =
-    responseTypeJson?.components?.[componentId]?.type ||
-    responseTypeJson?.[componentId]?.type;
+  const { gridContextValue: responseTypeJson, componentJson }: any =
+    useContext(GridContext);
+  const type = (
+    responseTypeJson?.components?.[index]?.type ||
+    responseTypeJson?.[index]?.type
+  )?.toLowerCase();
+  const propsPath = componentJson?.components?.[index]?.props;
   const props =
-    responseTypeJson?.components?.[componentId]?.props ||
-    responseTypeJson?.[componentId]?.props;
+    responseTypeJson?.components?.[index]?.props ||
+    responseTypeJson?.[index]?.props;
+  const meta =
+    responseTypeJson?.components?.[index]?.meta ||
+    responseTypeJson?.[index]?.meta;
   const action =
-    responseTypeJson?.components?.[componentId]?.action ||
-    responseTypeJson?.[componentId]?.action;
+    responseTypeJson?.components?.[index]?.action ||
+    responseTypeJson?.[index]?.action;
 
   const component = componentMap[type] || null;
 
@@ -85,6 +92,8 @@ function ComponentRenderer({
       componentId,
       inpreview,
       action,
+      meta,
+      propsPath,
     });
   }
 
@@ -95,6 +104,8 @@ function ComponentRenderer({
       inpreview,
       dragRef,
       action,
+      meta,
+      propsPath,
     })
     : null;
 }

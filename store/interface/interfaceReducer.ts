@@ -251,5 +251,9 @@ export const reducers: ValidateSliceCaseReducers<
   setHeaderActionButtons(state,action:actionType<HeaderButtonType>){
     state.headerButtons = action.payload
     sessionStorage.setItem("headerButtons", JSON.stringify(action.payload));
+  },
+  setEventsSubsribedByParent(state,action:actionType<string[]>){
+    state.eventsSubscribedByParent = action.payload
+    sessionStorage.setItem("eventsSubscribedByParent", JSON.stringify(action.payload));
   }
 };

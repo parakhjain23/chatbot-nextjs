@@ -57,6 +57,11 @@ export const EMIT_EVENTS = {
   HEADER_BUTTON_PRESS:'headerButtonPress'
 }
 
+export const ALLOWED_EVENTS_TO_SUBSCRIBE: Record<'MESSAGE_CLICK' | 'USER_TYPING', 'MESSAGE_CLICK' | 'USER_TYPING'> = {
+  "MESSAGE_CLICK": "MESSAGE_CLICK",
+  "USER_TYPING": "USER_TYPING"
+}
+
 Object.freeze(EmbedVerificationStatus);
 Object.freeze(ParamsEnums);
 

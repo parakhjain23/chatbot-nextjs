@@ -117,7 +117,7 @@ function MessageList({ containerRef }: MessageListProps) {
 
   useEffect(() => {
 
-    if (messages.length > prevMessagesLengthRef.current) {
+    if (messages.length === prevMessagesLengthRef.current) {
       // New messages added at bottom
       if (shouldScroll || newMessage) {
         movetoDown();

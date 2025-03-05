@@ -42,6 +42,7 @@ export const KNOWLEDGE_BASE_SECTION_TYPES = [
 ];
 
 export const KNOWLEDGE_BASE_CUSTOM_SECTION = [
+  { value: "auto", label: "Auto Detect" },
   { value: "semantic", label: "Semantic Chunking" },
   { value: "manual", label: "Manual Chunking" },
   { value: "recursive", label: "Recursive Chunking" },

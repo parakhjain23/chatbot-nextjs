@@ -103,8 +103,10 @@ const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoadi
           </div>
         </div>
         <div className="flex justify-center">
-          {headerButtons?.map((item) => {
-            return renderIconsByType(item)
+          {headerButtons?.map((item, index) => {
+            return <React.Fragment key={`header-button-${index}`}>
+              {renderIconsByType(item)}
+            </React.Fragment>
           })}
         </div>
       </div>

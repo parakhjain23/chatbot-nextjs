@@ -2,14 +2,14 @@
 import OpenSidebarIcon from "@/assests/OpenSidebar";
 import ChatIcon from "@mui/icons-material/Chat";
 import SyncIcon from "@mui/icons-material/Sync";
-import { AlignLeft, Plus, SquarePen } from "lucide-react";
+import { AlignLeft, EllipsisVertical, History, Plus, Settings, SquarePen } from "lucide-react";
 
 // MUI Components
 import { useTheme } from "@mui/material";
 
 // Third-party libraries
 import axios from "axios";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 
 // App imports
 import { successToast } from "@/components/customToast";
@@ -18,7 +18,7 @@ import { addUrlDataHoc } from "@/hoc/addUrlDataHoc";
 import { $ReduxCoreType } from "@/types/reduxCore";
 import { GetSessionStorageData, toggleSidebar } from "@/utils/ChatbotUtility";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
-import { createRandomId, ParamsEnums } from "@/utils/enums";
+import { createRandomId, EMIT_EVENTS, ParamsEnums } from "@/utils/enums";
 import { isColorLight } from "@/utils/themeUtility";
 import ChatbotDrawer from "./ChatbotDrawer";
 
@@ -30,21 +30,23 @@ import { setThreads } from "@/store/interface/interfaceSlice";
 import { useDispatch } from "react-redux";
 import { ChatbotContext } from "@/app/chatbot/layout";
 import Image from "next/image";
+import { HeaderButtonType } from "@/types/interface/InterfaceReduxType";
+import { emitEventToParent } from "@/utils/emitEventsToParent/emitEventsToParent";
 
 interface ChatbotHeaderProps {
   setLoading: (loading: boolean) => void;
   setChatsLoading: (loading: boolean) => void;
   setToggleDrawer: (isOpen: boolean) => void;
   isToggledrawer: boolean;
+  headerButtons: HeaderButtonType
 }
 
-const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoading, setToggleDrawer, isToggledrawer, threadId, reduxBridgeName }) => {
+const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoading, setToggleDrawer, isToggledrawer, threadId, reduxBridgeName, headerButtons }) => {
   const dispatch = useDispatch();
   const theme = useTheme();
-  const { chatbotConfig: { chatbotTitle, chatbotSubtitle, headerImage='' } } = useContext<any>(ChatbotContext);
+  const { chatbotConfig: { chatbotTitle, chatbotSubtitle, headerImage = '' } } = useContext<any>(ChatbotContext);
   const isLightBackground = theme.palette.mode === "light";
   const textColor = isLightBackground ? "black" : "white";
-
 
   const handleCreateNewSubThread = async () => {
     const result = await createNewThreadApi({
@@ -97,7 +99,13 @@ const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoadi
             {chatbotSubtitle && <p className="text-sm opacity-75 text-center">
               {chatbotSubtitle || "Do you have any questions? Ask us!"}
             </p>}
+
           </div>
+        </div>
+        <div className="flex justify-center">
+          {headerButtons?.map((item) => {
+            return renderIconsByType(item)
+          })}
         </div>
       </div>
 
@@ -107,6 +115,7 @@ const ChatbotHeader: React.FC<ChatbotHeaderProps> = ({ setLoading, setChatsLoadi
         isToggledrawer={isToggledrawer}
         setToggleDrawer={setToggleDrawer}
       />
+
     </div>
   );
 };
@@ -281,3 +290,24 @@ const ChatbotFeedbackForm = React.memo(function ChatbotFeedbackForm({
     </div>
   );
 });
+
+const renderIconsByType = (item) => {
+  const iconComponents = {
+    setting: <Settings />,
+    history: <History />,
+    verticalThreeDots: <EllipsisVertical />,
+  };
+
+  const IconComponent = iconComponents[item.type];
+
+  if (!IconComponent) return null;
+
+  return (
+    <button
+      className="p-2 hover:bg-gray-200 rounded-full transition-colors"
+      onClick={() => emitEventToParent("HEADER_BUTTON_PRESS", item)}
+    >
+      {IconComponent}
+    </button>
+  );
+}

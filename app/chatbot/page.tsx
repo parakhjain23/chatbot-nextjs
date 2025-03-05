@@ -16,8 +16,6 @@ export default function InterfaceEmbed() {
     const { chatbot_id, userId, token } = useContext(ChatbotContext);
     const router = useRouter();
 
-    // console.log('parakh', config)
-
     const [verifiedState, setVerifiedState] = useState(
         EmbedVerificationStatus.VERIFYING
     );

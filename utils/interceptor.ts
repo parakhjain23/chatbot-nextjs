@@ -22,7 +22,7 @@ axios.interceptors.request.use(
       config.headers["proxy_auth_token"] = sessionStorage.getItem("ragToken");
     } else {
       config.headers["Authorization"] =
-      sessionStorage.getItem("interfaceToken") || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjo2NjkzLCJvcmdfaWQiOiI4MjY5IiwiaWF0IjoxNzQwNjc1ODI0LCJleHAiOjE3NDA4NDg2MjR9.32PZj8A2xnK5qZk4VO3vg8R6tUDyQ0E_bB1WiKxjx4I";
+      sessionStorage.getItem("interfaceToken")
     }
     return config;
   },

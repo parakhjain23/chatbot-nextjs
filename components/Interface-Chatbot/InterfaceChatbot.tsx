@@ -36,6 +36,7 @@ import ChatbotTextField from "./ChatbotTextField";
 import "./InterfaceChatbot.css";
 import MessageList from "./MessageList";
 import ChatbotDrawer from "./ChatbotDrawer";
+import { HeaderButtonType } from "@/types/interface/InterfaceReduxType";
 
 const client = WebSocketClient("lyvSfW7uPPolwax0BHMC", "DprvynUwAdFwkE91V5Jj");
 
@@ -72,9 +73,11 @@ export const MessageContext = createContext<{
   newMessage?: boolean;
   currentPage?: Number;
   starterQuestions?: string[];
+  headerButtons?:HeaderButtonType
 }>({
   messages: [],
   helloMessages: [],
+  headerButtons:[]
 });
 
 function InterfaceChatbot({
@@ -98,6 +101,7 @@ function InterfaceChatbot({
     chat_id,
     channelId,
     mode,
+    reduxHeaderButtons
   } = useCustomSelector((state: $ReduxCoreType) => ({
     interfaceContextData:
       state.Interface?.interfaceContext?.[chatbotId]?.[
@@ -105,6 +109,7 @@ function InterfaceChatbot({
       ]?.interfaceData,
     reduxThreadId: state.Interface?.threadId || "",
     reduxSubThreadId: state.Interface?.subThreadId || "",
+    reduxHeaderButtons: state.Interface?.headerButtons || [],
     reduxBridgeName: state.Interface?.bridgeName || "root",
     reduxHelloId: state.Interface?.helloId || null,
     reduxBridgeVersionId: state.Interface?.version_id || null,
@@ -157,6 +162,10 @@ function InterfaceChatbot({
     GetSessionStorageData("version_id") || reduxBridgeVersionId
   );
 
+  const [headerButtons, setHeaderButtons] = useState<HeaderButtonType>(
+    JSON.parse(GetSessionStorageData("headerButtons") || '[]') || reduxHeaderButtons
+  );
+
   useEffect(() => {
     setThreadId(GetSessionStorageData("threadId") || reduxThreadId);
   }, [reduxThreadId]);
@@ -168,6 +177,10 @@ function InterfaceChatbot({
   useEffect(() => {
     setBridgeName(GetSessionStorageData("bridgeName") || reduxBridgeName);
   }, [reduxBridgeName]);
+
+  useEffect(() => {
+    setHeaderButtons(JSON.parse(GetSessionStorageData("headerButtons") || '[]') || reduxHeaderButtons);
+  }, [reduxHeaderButtons]);
 
   useEffect(() => {
     setHelloId(GetSessionStorageData("helloId"));
@@ -635,6 +648,7 @@ function InterfaceChatbot({
         newMessage,
         currentPage,
         starterQuestions,
+        headerButtons
       }}
     >
       <FormComponent open={open} setOpen={setOpen} />
@@ -651,10 +665,11 @@ function InterfaceChatbot({
           <ChatbotHeader
             setLoading={setLoading}
             setChatsLoading={setChatsLoading}
-            setToggleDrawer={setToggleDrawer}
-            isToggledrawer={isToggledrawer}
-            threadId={threadId}
-            reduxBridgeName={reduxBridgeName}
+            setToggleDrawer={setToggleDrawer} 
+            isToggledrawer={isToggledrawer} 
+            threadId = {threadId}
+            reduxBridgeName = {reduxBridgeName}
+            headerButtons= {headerButtons}
           />
           <ChatbotHeaderTab />
 

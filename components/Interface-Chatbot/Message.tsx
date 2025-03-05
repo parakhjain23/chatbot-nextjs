@@ -4,6 +4,7 @@ import { AiIcon, UserAssistant } from "@/assests/assestsIndex";
 import InterfaceGrid from "@/components/Grid/Grid";
 import { Anchor, Code } from "@/components/Interface-Chatbot/Interface-Markdown/MarkdownUtitily";
 import { isJSONString } from "@/utils/ChatbotUtility";
+import { emitEventToParent } from "@/utils/emitEventsToParent/emitEventsToParent";
 import { isColorLight } from "@/utils/themeUtility";
 import {
   Box,
@@ -11,7 +12,6 @@ import {
   Divider,
   lighten,
   Stack,
-  Typography,
   useTheme
 } from "@mui/material";
 import copy from "copy-to-clipboard";
@@ -92,8 +92,14 @@ const AssistantMessageCard = React.memo(
       "--primary-main": lighten(theme.palette.secondary.main, 0.4),
     };
 
+    const handleMessageClick = () => {
+      if (window.parent.location.hostname?.includes('gtwy')) {
+        emitEventToParent("MESSAGE_CLICK", message)
+      }
+    }
+
     return (
-      <div className="flex flex-col gap-2">
+      <div className="flex flex-col gap-2" onClick={handleMessageClick}>
         <div className="flex items-end gap-2.5 max-w-[90%] mb-2.5 animate-slide-left">
           <div className="flex flex-col items-center justify-end w-8">
             <div className="w-8 h8 rounded-full bg-primary/10 flex items-center justify-center">
@@ -149,7 +155,7 @@ const AssistantMessageCard = React.memo(
                 <div className="prose dark:prose-invert max-w-none">
                   {Object.keys(message?.tools_data || {})?.length > 0 && (
                     <Box className="flex items-center gap-2 mb-2">
-                      <CircleCheckBig color="green" size={20}/>
+                      <CircleCheckBig color="green" size={20} />
                       <p className="text-base text-green-900">
                         {Object.keys(message?.tools_data || {}).length} Functions executed
                       </p>

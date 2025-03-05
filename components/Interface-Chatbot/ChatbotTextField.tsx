@@ -147,21 +147,24 @@ function ChatbotTextField({
       )}
 
       {images.length > 0 && (
-        <div className="flex flex-wrap gap-2 my-4 px-4">
+        <div className="flex flex-wrap gap-3 my-4 px-4">
           {images.map((image, index) => (
-            <div key={index} className="relative max-w-[20%] md:max-w-[15%] h-8 rounded-lg bg-base-200 flex items-center justify-center p-0.5">
-              <Image
-                src={image as string}
-                alt={`Uploaded Preview ${index + 1}`}
-                className="max-w-full max-h-full rounded-lg object-cover"
-                width={48}
-                height={48}
-              />
+            <div key={index} className="relative group">
+              <div className="w-24 h-24 md:w-32 md:h-32 rounded-lg overflow-hidden shadow-md transition-transform hover:scale-105">
+                <Image
+                  src={image as string}
+                  alt={`Uploaded Preview ${index + 1}`}
+                  className="w-full h-full object-cover"
+                  width={128}
+                  height={128}
+                />
+              </div>
               <button
                 onClick={() => handleRemoveImage(index)}
-                className="btn btn-circle btn-xs absolute -top-1 -right-1"
+                className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white rounded-full p-1.5 shadow-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                aria-label="Remove image"
               >
-                <X className="w-3 h-3" />
+                <X className="w-4 h-4" />
               </button>
             </div>
           ))}

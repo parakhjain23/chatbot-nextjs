@@ -138,8 +138,6 @@ function InterfaceChatbot({
   const themePalette = {
     "--primary-main": lighten(theme.palette.secondary.main, 0.4),
   };
-  const [shouldScroll, setShouldScroll] = useState(true);
-
 
   const isLargeScreen = useMediaQuery('(max-width: 1024px)')
   const [isToggledrawer, setToggleDrawer] = useState<boolean>(!isLargeScreen);
@@ -223,7 +221,6 @@ function InterfaceChatbot({
 
   const fetchMoreData = async () => {
     if (isFetching || !hasMoreMessages) return;
-    setShouldScroll(false)
     setIsFetching(true);
     try {
       const nextPage = currentPage + 1;
@@ -684,7 +681,7 @@ function InterfaceChatbot({
             ref={containerRef}
           >
             <div className="w-full max-w-5xl mx-auto px-4">
-              <MessageList containerRef={containerRef} setShouldScroll={setShouldScroll} shouldScroll={shouldScroll} />
+              <MessageList containerRef={containerRef}/>
             </div>
           </div>
 

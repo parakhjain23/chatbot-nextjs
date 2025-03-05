@@ -11,7 +11,7 @@ function Viewonlygrid({ dragRef }) {
 
   return (
     <Box className="w-full">
-      {(components || {}).map((component: { type: string }, index) => {
+      {(Array.isArray(components) ? components : [])?.map((component: { type: string }, index: number) => {
         return (
           <div key={component?.type}>
             <ComponentRenderer

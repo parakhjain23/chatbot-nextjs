@@ -4,32 +4,32 @@ import React, {
   useContext,
   useEffect,
   useMemo,
-  useState,
   useRef,
+  useState,
 } from "react";
 
 // MUI Components
-import { Box, LinearProgress, Typography } from "@mui/material";
+import { Box, LinearProgress } from "@mui/material";
 
 // Third-party libraries
 import InfiniteScroll from "react-infinite-scroll-component";
 
 // App imports
+import { ChatBotGif } from "@/assests/assestsIndex";
+import { sendFeedbackAction } from "@/config/api";
 import { $ReduxCoreType } from "@/types/reduxCore";
 import { useCustomSelector } from "@/utils/deepCheckSelector";
+import { Chat } from "@mui/icons-material";
+import Image from "next/image";
 import { MessageContext } from "./InterfaceChatbot";
 import Message from "./Message";
 import MoveToDownButton from "./MoveToDownButton";
-import { ChatBotGif } from "@/assests/assestsIndex";
-import { sendFeedbackAction } from "@/config/api";
-import Image from "next/image";
-import { Chat } from "@mui/icons-material";
 
 interface MessageListProps {
   containerRef: React.RefObject<HTMLDivElement>;
 }
 
-function MessageList({ containerRef, shouldScroll, setShouldScroll }: MessageListProps) {
+function MessageList({ containerRef }: MessageListProps) {
   const {
     fetchMoreData,
     hasMoreMessages = false,
@@ -48,6 +48,7 @@ function MessageList({ containerRef, shouldScroll, setShouldScroll }: MessageLis
   const [showScrollButton, setShowScrollButton] = useState(false)
   const [showIcon, setShowGif] = useState(false);
   const [isInverse, setIsInverse] = useState(false);
+  const [shouldScroll, setShouldScroll] = useState(true);
   const scrollPositionRef = useRef<number>(0);
   const prevMessagesLengthRef = useRef<number>(messages.length);
   const { IsHuman } = useCustomSelector((state: $ReduxCoreType) => ({

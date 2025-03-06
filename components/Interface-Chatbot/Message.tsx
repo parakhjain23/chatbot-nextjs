@@ -21,6 +21,9 @@ import React from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import "./Message.css";
+import { useCustomSelector } from "@/utils/deepCheckSelector";
+import { $ReduxCoreType } from "@/types/reduxCore";
+import { ALLOWED_EVENTS_TO_SUBSCRIBE } from "@/utils/enums";
 
 const ResetHistoryLine = ({ text = "" }) => {
   return (
@@ -78,6 +81,7 @@ const AssistantMessageCard = React.memo(
     isError = false,
     handleFeedback = () => { },
     addMessage = () => { },
+    sendEventToParentOnMessageClick
   }: any) => {
     const [isCopied, setIsCopied] = React.useState(false);
     const handleCopy = () => {
@@ -93,7 +97,7 @@ const AssistantMessageCard = React.memo(
     };
 
     const handleMessageClick = () => {
-      if (window.parent.location.hostname?.includes('gtwy')) {
+      if (sendEventToParentOnMessageClick) {
         emitEventToParent("MESSAGE_CLICK", message)
       }
     }
@@ -400,7 +404,9 @@ function Message({ message, handleFeedback, addMessage }: any) {
   const theme = useTheme();
   const backgroundColor = theme.palette.primary.main;
   const textColor = isColorLight(backgroundColor) ? "black" : "white";
-
+  const {sendEventToParentOnMessageClick} = useCustomSelector((state:$ReduxCoreType)=>({
+    sendEventToParentOnMessageClick : state.Interface.eventsSubscribedByParent?.includes(ALLOWED_EVENTS_TO_SUBSCRIBE.MESSAGE_CLICK) || false
+  }))
   return (
     <Box className="w-100">
       {message?.role === "user" ? (
@@ -428,6 +434,7 @@ function Message({ message, handleFeedback, addMessage }: any) {
           textColor={textColor}
           handleFeedback={handleFeedback}
           addMessage={addMessage}
+          sendEventToParentOnMessageClick={sendEventToParentOnMessageClick}
         />
       ) : message?.role === "Human" ? (
         <HumanOrBotMessageCard

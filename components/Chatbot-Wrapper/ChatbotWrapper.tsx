@@ -5,11 +5,12 @@ import {
   addDefaultContext,
   getInterfaceDataByIdStart,
   setConfig,
+  setEventsSubsribedByParent,
   setHeaderActionButtons,
   setThreadId
 } from "@/store/interface/interfaceSlice";
 import { GetSessionStorageData } from "@/utils/ChatbotUtility";
-import { ParamsEnums } from "@/utils/enums";
+import { ALLOWED_EVENTS_TO_SUBSCRIBE, ParamsEnums } from "@/utils/enums";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
@@ -44,7 +45,8 @@ function ChatbotWrapper({ chatbotId, loadInterface = true }) {
             vision = null,
             helloId = null,
             version_id = null,
-            headerButtons = []
+            headerButtons = [],
+            eventsToSubscribe = []
           } = receivedData;
           
           if (threadId) {
@@ -74,6 +76,9 @@ function ChatbotWrapper({ chatbotId, loadInterface = true }) {
           }
           if(Array.isArray(headerButtons) && headerButtons?.length){
             dispatch(setHeaderActionButtons(headerButtons))
+          }
+          if(Array.isArray(eventsToSubscribe) && eventsToSubscribe?.length){
+            dispatch(setEventsSubsribedByParent(eventsToSubscribe?.filter((item)=> Object.values(ALLOWED_EVENTS_TO_SUBSCRIBE)?.includes(item))))
           }
         }
       }

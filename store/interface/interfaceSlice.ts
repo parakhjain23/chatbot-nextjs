@@ -52,7 +52,8 @@ export const {
 
 
   // chat bot 
-  setHeaderActionButtons
+  setHeaderActionButtons,
+  setEventsSubsribedByParent
 
 } = interfaceSlice.actions;
 export default interfaceSlice.reducer;

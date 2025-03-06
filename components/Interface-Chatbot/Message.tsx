@@ -15,7 +15,7 @@ import {
   useTheme
 } from "@mui/material";
 import copy from "copy-to-clipboard";
-import { AlertCircle, Check, CircleCheckBig, Copy, Maximize2, ThumbsDown, ThumbsUp } from "lucide-react";
+import { AlertCircle, Check, CircleCheckBig, Copy, Info, Maximize2, ThumbsDown, ThumbsUp } from "lucide-react";
 import Image from "next/image";
 import React from "react";
 import ReactMarkdown from "react-markdown";
@@ -96,14 +96,12 @@ const AssistantMessageCard = React.memo(
       "--primary-main": lighten(theme.palette.secondary.main, 0.4),
     };
 
-    const handleMessageClick = () => {
-      if (sendEventToParentOnMessageClick) {
+    const handleMsgInfoClick = () => {
         emitEventToParent("MESSAGE_CLICK", message)
-      }
     }
 
     return (
-      <div className="flex flex-col gap-2" onClick={handleMessageClick}>
+      <div className="flex flex-col gap-2">
         <div className="flex items-end gap-2.5 max-w-[90%] mb-2.5 animate-slide-left">
           <div className="flex flex-col items-center justify-end w-8">
             <div className="w-8 h8 rounded-full bg-primary/10 flex items-center justify-center">
@@ -290,6 +288,16 @@ const AssistantMessageCard = React.memo(
                   >
                     <ThumbsDown className="w-4 h-4" />
                   </button>
+
+              {  sendEventToParentOnMessageClick &&    <button
+                    className={`btn btn-ghost btn-xs tooltip ${message?.user_feedback === 2 ? "text-error" : ""
+                      }`}
+                    data-tip="Message Info"
+                    onClick={handleMsgInfoClick
+                    }
+                  >
+                    <Info className="w-4 h-4" />
+                  </button>}
                 </>
               )}
             </div>

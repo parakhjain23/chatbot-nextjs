@@ -59,9 +59,9 @@ function InterfaceTable({ props, meta, propsPath }: InterfaceTableProps) {
   const [rows, setRows] = useState(generateRows(props?.data));
   const apiRef = useGridApiRef();
   const path: any | { data: string } = outputDataKey || propsPath || "data";
-  const dataPath =
-    path?.replace(/^variables\./, "") ||
-    propsPath?.data?.replace(/^variables\./, "");
+
+  const dataPath = typeof path === 'string' ? path.replace(/^variables\./, "") :
+    propsPath?.data?.replace(/^variables\./, "") || "";
 
   const [paginationModel, setPaginationModel] = React.useState<PaginationModel>(
     {
@@ -136,7 +136,9 @@ function InterfaceTable({ props, meta, propsPath }: InterfaceTableProps) {
   };
 
   useEffect(() => {
-    fetchRows();
+    if (meta) {
+      fetchRows();
+    }
   }, [paginationModel.eventType, paginationModel.page]);
 
   const paginationMetaRef = React.useRef<GridPaginationMeta>();
@@ -165,6 +167,7 @@ function InterfaceTable({ props, meta, propsPath }: InterfaceTableProps) {
       loading={isLoading}
       pageSizeOptions={[currentPageInputVariable?.limit || 5, 10, 20]}
       paginationModel={paginationModel}
+      hideFooterPagination={!meta}
       paginationMode="server"
       onPaginationModelChange={(model, details) => {
         const eventType =

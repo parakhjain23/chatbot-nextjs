@@ -27,7 +27,7 @@ export const Code = ({
   };
   const match = /language-(\w+)/.exec(className || "");
   return !inline && match ? (
-    <div className="m-0">
+    <div className="my-1">
       <div
         className="flex justify-between items-center cursor-pointer py-2 px-3"
         style={{

@@ -16,6 +16,7 @@ function InterfaceMarkdown({ props }: any) {
       {props?.children ||
         props?.text ||
         props?.content ||
+        props?.data ||
         `I'm a markdown component.`}
     </ReactMarkdown>
   );

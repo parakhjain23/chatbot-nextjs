@@ -55,8 +55,8 @@ function ChatbotWrapper({ chatbotId, loadInterface = true }) {
           if (helloId) {
             dispatch(setThreadId({ helloId: helloId }));
           }
-          if (version_id) {
-            dispatch(setThreadId({ version_id: version_id }));
+          if (version_id === null ||  version_id) {
+            dispatch(setThreadId({ version_id: version_id === null ? null : version_id }));
           }
           if (bridgeName) {
             dispatch(setThreadId({ bridgeName: bridgeName || "root" }));

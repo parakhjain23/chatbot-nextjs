@@ -545,7 +545,7 @@ function InterfaceChatbot({
       subThreadId: subThreadId,
       slugName: bridge || bridgeName,
       chatBotId: chatbotId,
-      version_id: bridgeVersionId,
+      version_id: bridgeVersionId === "null" ? null : bridgeVersionId ,
     });
     if (!response?.success) {
       setMessages((prevMessages) => prevMessages.slice(0, -1));

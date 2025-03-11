@@ -135,7 +135,7 @@ const ChatbotDrawer: React.FC<ChatbotDrawerProps> = ({ setLoading, chatbotId, se
       </div>
     </div>
   );
-};
+}; 
 
 export default React.memo(
   addUrlDataHoc(React.memo(ChatbotDrawer), [ParamsEnums.chatbotId])
